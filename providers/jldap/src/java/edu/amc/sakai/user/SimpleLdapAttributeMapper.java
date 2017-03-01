@@ -621,25 +621,29 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 			sb.append(eidAttr);
 			sb.append("=");
 			sb.append(criteria);
-			sb.append("*)");
+			//sb.append("*)");
+			sb.append(")");
 			
 			sb.append("(");
 			sb.append(emailAttr);
 			sb.append("=");
 			sb.append(criteria);
-			sb.append("*)");
+			//sb.append("*)");
+			sb.append(")");
 			
 			sb.append("(");
 			sb.append(givenNameAttr);
 			sb.append("=");
 			sb.append(criteria);
-			sb.append("*)");
+			//sb.append("*)");
+			sb.append(")");
 			
 			sb.append("(");
 			sb.append(lastNameAttr);
 			sb.append("=");
 			sb.append(criteria);
-			sb.append("*)");
+			//sb.append("*)");
+			sb.append(")");
 			
 			sb.append(")");
 		

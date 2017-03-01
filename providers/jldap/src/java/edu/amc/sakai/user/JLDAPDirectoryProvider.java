@@ -950,6 +950,30 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 
 		boolean receivedConn = conn != null;
 
+                /**** BEGIN hack for modifying filter for wintergreen/neem LDAP - (Sean Horner; hornersa@plu.edu)\
+                 ***/
+
+                // To be a valid external (ePass) account, it must belong to a person
+                String eduPersonCondition = "(|(objectClass=pluEduPerson))";
+                if (filter != null && filter.length() > 0) {
+                    String oldFilter = new String(filter);
+                    String prefix = "(&" + eduPersonCondition;
+                    // Does the filter string begin and end with parentheses?
+                    char firstChar = filter.charAt(0);
+                    char lastChar = filter.charAt(filter.length() - 1);
+                    if (firstChar == '(' && lastChar ==')')
+                        filter = prefix + oldFilter + ")";
+                    else
+                        filter = prefix + "(" + oldFilter + "))";
+                }
+                else
+                    filter = eduPersonCondition;
+                //M_log.warn("searchDirectory(): [filter = " + filter + "][reusing conn = " + receivedConn + "]")\
+                ;
+                /**** END hack for modifying filter for wintergreen/neem LDAP ***/
+
+
+
 		if ( M_log.isDebugEnabled() ) {
 			M_log.debug("searchDirectory(): [filter = " + filter + 
 					"][reusing conn = " + receivedConn + "]");

@@ -159,6 +159,32 @@
 <!-- Uncomment and configure to use the JLDAPDirectoryProvider -->
 	<!--  import resource="jldap-beans.xml" / -->
 
+        <import resource="jldap-primary-beans.xml" />
+        <import resource="jldap-secondary-beans.xml" />
+
+
+        <bean
+                id="org.sakaiproject.user.api.UserDirectoryProvider"
+                class="org.sakaiproject.provider.user.FilterUserDirectoryProvider"
+                init-method="init" destroy-method="destroy">
+                <property name="myProvider">
+                        <ref bean="org.sakaiproject.user.api.UserDirectoryProvider.primary" />
+                </property>
+                <property name="nextProvider">
+                        <ref bean="org.sakaiproject.user.api.UserDirectoryProvider.chain1" />
+                </property>
+        </bean>
+          <bean
+                id="org.sakaiproject.user.api.UserDirectoryProvider.chain1"
+                class="org.sakaiproject.provider.user.FilterUserDirectoryProvider"
+                init-method="init" destroy-method="destroy">
+                <property name="myProvider">
+                        <ref bean="org.sakaiproject.user.api.UserDirectoryProvider.secondary" />
+                </property>
+          </bean>
+
+
+
 <!-- Uncomment and configure to use the Candidate Details Provider -->  
 	<!--  import resource="candidate-details.xml"/ -->
 
