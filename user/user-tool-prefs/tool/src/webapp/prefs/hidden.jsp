@@ -62,7 +62,6 @@
                                 <h:outputText rendered="#{UserPrefsTool.prefShowTabLabelOption==true}" value="#{msgs.prefs_site_tab_display_format}" />
                         </h3>
 
-                        <%-- ## SAK-23895 :Display full name of course, not just code, in site tab  --%>
                         <f:verbatim>
                         <div>
                         </f:verbatim>
