@@ -674,9 +674,14 @@ public class SkinnableCharonPortal extends HttpServlet implements Portal
 		// Reset is different for Portlets
 		if (isPortletPlacement(placement))
 		{
-			resetActionUrl = Web.serverUrl(req)
+		    String pathOrSlash = URLUtils.getSafePathInfo(req);
+		    if (pathOrSlash == null) {
+			pathOrSlash = "/";
+		    }
+
+		    resetActionUrl = Web.serverUrl(req)
 			+ ServerConfigurationService.getString("portalPath")
-			+ URLUtils.getSafePathInfo(req) + "?sakai.state.reset=true";
+			+ pathOrSlash + "?sakai.state.reset=true";
 		}
 
 		// for the help button
