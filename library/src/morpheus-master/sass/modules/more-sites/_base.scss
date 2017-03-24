@@ -216,12 +216,17 @@ ul.otherSitesCategorList{
 		display: inline-block;
 		border: 1px solid darken( $background-color, 30% );
 		background: darken( $background-color, 5% );
-		@include border-radius( 4px );
-		margin: 0.3em;
-		padding: 0.1em 0.5em 0.1em 0.5em;
+		//@include border-radius( 4px );
+		//margin: 0.3em;
+		//padding: 0.1em 0.5em 0.1em 0.5em;
+		padding: 0.2em 0em 0em 0.5em;
 		a{
 			@extend .userNav_link;
 			font-weight: 700;
+			.fullTitle{
+				padding: .3em 100em .3em 0em;
+				display: inline-block;
+			}
 			&.toolMenus{
 				display: inline-block;
 			}
@@ -315,7 +320,8 @@ ul.favoriteSiteList{
 		white-space: nowrap;
 		overflow: hidden;
 		margin: 0.3em;
-		padding: 0.3em 0.5em 0.3em 0.5em;
+		//padding: 0.3em 0.5em 0.3em 0.5em;
+		padding: 0 0 0 0;
 	}
 }
 
