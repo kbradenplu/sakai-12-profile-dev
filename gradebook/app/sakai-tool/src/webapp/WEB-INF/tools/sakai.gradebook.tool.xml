@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <registration>
 	<tool id="sakai.gradebook.tool" title="Gradebook Classic"
-		description="For storing and computing assessment grades from Tests &amp; Quizzes or that are manually entered.">
+	      description="Compute, store, and export grades; release to students for review.">
 		<category name="course" />
 		<category name="project" />
 	

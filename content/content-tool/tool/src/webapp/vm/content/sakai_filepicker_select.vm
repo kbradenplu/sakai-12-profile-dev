@@ -167,12 +167,12 @@ $(document).ready(function() {
 								<h4>
 									<img src="#imageLink($att_item.iconLocation)" border= "0" alt="$att_item.hoverText" hspace="0" />
 									##<img src="#imageLink($contentTypeImageService.getContentTypeImage($att_item.contentType))" border= "0" alt ="$contentTypeImageService.getContentTypeDisplayName($att_item.contentType) icon" hspace="0" />
-									<a href="$att_item.accessUrl" target="_blank" title="$tlang.getString('gen.type'): $att_item.hoverText  [$tlang.getString('gen.newwin')]">$att_item.displayName</a>
+									<a href="$att_item.accessUrl" target="_blank" title="$tlang.getString('gen.type'): $att_item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:none;">$att_item.displayName</a>
 								</h4>	
 							</td>
 							<td  headers="action">
 								<div class="itemAction">
-									<a href="#toolLinkParam("ResourcesAction" "doRemoveitem" "itemId=$validator.escapeUrl($att_item.id)")" title="$tlang.getString('att.remove')">$tlang.getString("att.remove")</a>
+									<a href="#toolLinkParam("ResourcesAction" "doRemoveitem" "itemId=$validator.escapeUrl($att_item.id)")" title="$tlang.getString('att.remove')" style="text-decoration:underline;">$tlang.getString("att.remove")</a>
 								</div>	
 							</td>
 						</tr>
@@ -217,11 +217,11 @@ $(document).ready(function() {
 			<tr>
 				<th id="title">
 					#if ($expandallflag && "$expandallflag" == "$TRUE")
-						<a href="#toolLinkParam("ResourcesAction" "doUnexpandall" "collectionId=$validator.escapeUrl($collectionId)")" title ="$tlang.getString('collapse.all')">
+						<a href="#toolLinkParam("ResourcesAction" "doUnexpandall" "collectionId=$validator.escapeUrl($collectionId)")" title ="$tlang.getString('collapse.all')" style="text-decoration:none;">
 							<img src = "#imageLink("sakai/collapse-expand.gif")" border="0" title="$tlang.getString('collapse.all')" alt="$tlang.getString('collapse.all')" hspace="0" />
 						</a>								 
 					#else
-						<a href="#toolLinkParam("ResourcesAction" "doExpandall" "collectionId=$validator.escapeUrl($collectionId)")" title ="$stlang.getString('label.expand.all')">
+						<a href="#toolLinkParam("ResourcesAction" "doExpandall" "collectionId=$validator.escapeUrl($collectionId)")" title ="$stlang.getString('label.expand.all')" style="text-decoration:none;">
 							<img src = "#imageLink("sakai/expand-collapse.gif")" border="0" title="$stlang.getString('label.expand.all')" alt="$stlang.getString('label.expand.all')" hspace="0" />
 						</a>								 
 					#end
@@ -273,13 +273,15 @@ $(document).ready(function() {
 								$validator.escapeHtml(${item.name})
 							#elseif ($item.canRead())
 								#if (!$item.isExpanded())
-									<a href="#toolLinkParam("ResourcesAction" "doExpand_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.open')">
+									<a href="#toolLinkParam("ResourcesAction" "doExpand_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.open')" style="text-decoration:none;">
 										<img src = "#imageLink("sakai/dir_closedplus.gif")" border="0" title="$tlang.getString('sh.open')" alt="$tlang.getString('sh.open')" />
 										$validator.escapeHtml(${item.name})
 									</a>
 								#else
-									<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')">
+									<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')" style="text-decoration:none;">
 										<img src = "#imageLink("sakai/dir_openminus.gif")" border="0" title="$tlang.getString('sh.close')" alt="$tlang.getString('sh.close')" />
+									</a>
+									<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')" style="text-decoration:underline;">
 										$validator.escapeHtml(${item.name})
 									</a>
 								#end
@@ -298,10 +300,10 @@ $(document).ready(function() {
 									## if there is a copyright alert, show the alert page first
 									<a href="#" 
 									title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-									onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false">
+									onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false" >
 									#else
 									<a href="${item.accessUrl}" target="${item.target}"
-										title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+										title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:none;"
 									>
 								#end
 								<img src="#imageLink($item.iconLocation)" border= "0" alt="$item.hoverText" hspace="0" />
@@ -377,9 +379,11 @@ $(document).ready(function() {
 					<tr>
 						<th colspan="3">
 						<h4>
-							<a href="#"
-								onclick="document.getElementById('attachForm').action='#toolLink("ResourcesAction" "doHideOtherSites")';submitform('attachForm');" title= "$tlang.getString('list.hide')">
-								<img src="#imageLink("sakai/collapse.gif")" alt="$tlang.getString('list.hide')" border="0" align="top" /> $validator.escapeHtml("$tlang.getString('list.hide')")
+							<a href="#" onclick="document.getElementById('attachForm').action='#toolLink("ResourcesAction" "doHideOtherSites")';submitform('attachForm');" title= "$tlang.getString('list.hide')" style="text-decoration:none;">
+							   <img src="#imageLink("sakai/collapse.gif")" alt="$tlang.getString('list.hide')" border="0" align="top" />
+							</a>
+							<a href="#" onclick="document.getElementById('attachForm').action='#toolLink("ResourcesAction" "doHideOtherSites")';submitform('attachForm');" title= "$tlang.getString('list.hide')">
+							   $validator.escapeHtml("$tlang.getString('list.hide')")
 							</a>
 						</h4>
 						</th>
@@ -461,13 +465,17 @@ $(document).ready(function() {
 										$validator.escapeHtml(${item.name})
 									#elseif ($item.canRead())
 										#if (!$item.isExpanded())
-											<a href="#toolLinkParam("ResourcesAction" "doExpand_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.open')">
+											<a href="#toolLinkParam("ResourcesAction" "doExpand_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.open')" style="text-decoration:none;">
 												<img src = "#imageLink("sakai/dir_closedplus.gif")" border="0" title="$tlang.getString('sh.open')" alt="$tlang.getString('sh.open')" />
+											</a>
+											<a href="#toolLinkParam("ResourcesAction" "doExpand_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.open')" style="text-decoration:underline;">
 												$validator.escapeHtml(${item.name})
 											</a>
 										#else
-											<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')">
+											<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')" style="text-decoration:none;">
 												<img src = "#imageLink("sakai/dir_openminus.gif")" border="0" title="$tlang.getString('sh.close')" alt="$tlang.getString('sh.close')" />
+											</a>
+											<a href="#toolLinkParam("ResourcesAction" "doCollapse_collection" "collectionId=$validator.escapeUrl($item.Id)")" title="$tlang.getString('sh.close')" style="text-decoration:underline;">
 												$validator.escapeHtml(${item.name})
 											</a>
 										#end
@@ -486,10 +494,10 @@ $(document).ready(function() {
 											## if there is a copyright alert, show the alert page first
 											<a href="#" 
 											title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false">
+											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false" style="text-decoration:none;">
 											#else
 											<a href="${item.accessUrl}" target="${item.target}"
-												title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+												title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:none;"
 											>
 										#end
 										<img src="#imageLink($item.iconLocation)" border= "0" alt="$item.hoverText" hspace="0" />
@@ -499,13 +507,13 @@ $(document).ready(function() {
 											## if there is a copyright alert, show the alert page first
 											<a href="#"
 											title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false;">
+											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false;" tyle="text-decoration:underline;">
 												$validator.escapeHtml($item.name)
 											</a>
 											&#169;
 										#else
 											<a href="$item.accessUrl" target="$item.target"
-											title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+											title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:underline;"
 											>
 												$validator.escapeHtml($item.name)
 											</a>
