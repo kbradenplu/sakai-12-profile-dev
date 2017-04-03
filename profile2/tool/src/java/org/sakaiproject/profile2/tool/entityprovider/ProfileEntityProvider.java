@@ -432,7 +432,16 @@ public class ProfileEntityProvider extends AbstractEntityProvider implements Cor
 			sb.append("<div class=\"profile2-profile-image\">");
 			sb.append("<img src=\"");
 			if (official) {
-				sb.append(imageLogic.getOfficialProfileImage(userProfile.getUserUuid(), siteId).getUrl());
+			    //doesn't work, lifting code from roster.js to display picture.
+
+			    sb.append("/direct/profile/");
+			    sb.append(userProfile.getUserUuid());
+			    sb.append("/image");
+			    sb.append("/official");
+			    sb.append("?siteId=");
+			    sb.append(siteId);
+
+			    //sb.append(imageLogic.getOfficialProfileImage(userProfile.getUserUuid(), siteId).getUrl());
 			} else {
 				sb.append(userProfile.getImageUrl());
 			}
