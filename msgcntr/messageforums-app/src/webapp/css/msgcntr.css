@@ -545,7 +545,7 @@ img.authorImage {
 	display: inline-block;
 	float: none;
 	max-width: 3.5em;
-	max-height: 2.5em;
+	max-height: 3.5em;
 	width: auto !important;
 	vertical-align: bottom !important;
 }
