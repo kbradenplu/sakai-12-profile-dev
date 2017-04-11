@@ -4106,11 +4106,14 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		    UIOutput.make(tofill, "assignment-li");
 		    createToolBarLink(AssignmentPickerProducer.VIEW_ID, tofill, "add-assignment", "simplepage.assignment-descrip", currentPage, "simplepage.assignment");
 
-		    GeneralViewParameters eParams = new GeneralViewParameters(VIEW_ID);
-		    eParams.addTool = GeneralViewParameters.CALENDAR;
-		    UIOutput.make(tofill, "calendar-li");
-		    UILink calendarLink = UIInternalLink.make(tofill, "calendar-link", messageLocator.getMessage("simplepage.calendarLinkText"), eParams);
-		    calendarLink.decorate(new UITooltipDecorator(messageLocator.getMessage("simplepage.calendar-descrip")));
+		    boolean showEmbedCalendarLink = ServerConfigurationService.getBoolean("lessonbuilder.show.calendar.link", true);
+		    if (showEmbedCalendarLink){
+			    GeneralViewParameters eParams = new GeneralViewParameters(VIEW_ID);
+			    eParams.addTool = GeneralViewParameters.CALENDAR;
+			    UIOutput.make(tofill, "calendar-li");
+			    UILink calendarLink = UIInternalLink.make(tofill, "calendar-link", messageLocator.getMessage("simplepage.calendarLinkText"), eParams);
+			    calendarLink.decorate(new UITooltipDecorator(messageLocator.getMessage("simplepage.calendar-descrip")));
+		    }
 		    UIOutput.make(tofill, "quiz-li");
 		    createToolBarLink(QuizPickerProducer.VIEW_ID, tofill, "add-quiz", "simplepage.quiz-descrip", currentPage, "simplepage.quiz");
 
@@ -4143,10 +4146,13 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		    makeCsrf(form, "csrf26");
 		    UICommand.make(form, "add-student", "#{simplePageBean.addStudentContentSection}");
 
-			//Adding 'Embed twitter timeline' component
-			UIOutput.make(tofill, "twitter-li");
-			UILink twitterLink = UIInternalLink.makeURL(tofill, "add-twitter", "#");
-			twitterLink.decorate(new UITooltipDecorator(messageLocator.getMessage("simplepage.twitter-descrip")));
+			boolean showEmbedTwitterLink = ServerConfigurationService.getBoolean("lessonbuilder.show.twitter.link", false);
+			if (showEmbedTwitterLink){
+				//Adding 'Embed twitter timeline' component
+				UIOutput.make(tofill, "twitter-li");
+				UILink twitterLink = UIInternalLink.makeURL(tofill, "add-twitter", "#");
+				twitterLink.decorate(new UITooltipDecorator(messageLocator.getMessage("simplepage.twitter-descrip")));
+			}
 		    // in case we're on an old system without current BLTI
 		    if (bltiEntity != null && ((BltiInterface)bltiEntity).servicePresent()) {
 			Collection<BltiTool> bltiTools = simplePageBean.getBltiTools();
