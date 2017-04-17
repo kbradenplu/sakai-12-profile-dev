@@ -1551,11 +1551,13 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 							itemGroupString = simplePageBean.getItemGroupString(i, null, true);
 							UIOutput.make(tableRow, "item-groups", itemGroupString);
 							SimplePage sPage = simplePageBean.getPage(Long.parseLong(i.getSakaiId()));
-							Date rDate = sPage.getReleaseDate();
-							String rDateString = "";
-							if(rDate != null)
-								rDateString = rDate.toString();
-							UIOutput.make(tableRow, "subpagereleasedate", rDateString);
+							if (sPage != null) {
+								Date rDate = sPage.getReleaseDate();
+								String rDateString = "";
+								if(rDate != null)
+									rDateString = rDate.toString();
+								UIOutput.make(tableRow, "subpagereleasedate", rDateString);
+							}
 						} else if (i.getType() == SimplePageItem.RESOURCE) {
 						        try {
 							    itemGroupString = simplePageBean.getItemGroupStringOrErr(i, null, true);
@@ -4481,7 +4483,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		UIForm form = UIForm.make(tofill, "import-cc-form");
 		makeCsrf(form, "csrf11");
 
-		UICommand.make(form, "import-cc-submit", messageLocator.getMessage("simplepage.save_message"), "#{simplePageBean.importCc}");
+		UICommand.make(form, "import-cc-submit", messageLocator.getMessage("simplepage.import_message"), "#{simplePageBean.importCc}");
 		UICommand.make(form, "mm-cancel", messageLocator.getMessage("simplepage.cancel"), null);
 
 		UIBoundBoolean.make(form, "import-toplevel", "#{simplePageBean.importtop}", false);
