@@ -70,6 +70,7 @@
 
     .roster-table {
         display: table;
+        width: 100%;
 
         .roster-table-header-group {
             display: table-header-group;
@@ -124,14 +125,10 @@
         margin-left: 2px;
     }
 
-    .roster-groups-selector {
-        max-width: 100px !important;
-    }
-    
     .roster-group-cell {
         display: inline-block;
-        min-width: 40px !important;
-        max-width: 80px !important;
+        min-width: 60px !important;
+        max-width: 140px !important;
         white-space: normal !important;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -141,6 +138,11 @@
             white-space: nowrap !important;
             font-size: smaller;
         }
+    }
+
+    .roster-no-groups-label {
+        font-size: smaller;
+        font-weight: bold;
     }
 
     #roster-filters {
