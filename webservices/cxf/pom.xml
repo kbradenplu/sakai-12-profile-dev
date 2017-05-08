@@ -93,6 +93,13 @@
             <artifactId>scheduler-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
+	<dependency>
+          <groupId>org.sakaiproject.common</groupId>
+          <artifactId>archive-api</artifactId>
+          <scope>provided</scope>
+	</dependency>
+
         <dependency>
             <groupId>org.sakaiproject.calendar</groupId>
             <artifactId>sakai-calendar-api</artifactId>

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.sakaiproject.archive.api.ArchiveService;
 import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.authz.api.Role;
@@ -5663,7 +5664,8 @@ public class SakaiScript extends AbstractWebService {
                 }
 
                 String id = ((Long) retval).toString();
-                retval = ltiService.insertToolSiteLink(id, tpc_title);
+                //SAK-32360 ltiservice always requires siteID
+		retval = ltiService.insertToolSiteLink(id, tpc_title, siteId);
             }
 
             // TODO: Check if ltiTool already has been mapped to this site.
@@ -5682,4 +5684,125 @@ public class SakaiScript extends AbstractWebService {
         else
             return "Failed";
     }
+
+    public String archiveSite(String sessionId, String siteId) throws Exception {
+	Session s = establishSession(sessionId);
+
+        if(! securityService.isSuperUser(s.getUserId())) {
+            String msg = "WS archiveSite: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
+
+	ArchiveService archiveService = (org.sakaiproject.archive.api.ArchiveService) ComponentManager.get(org.sakaiproject.archive.api.ArchiveService.class);
+
+        return archiveService.archive(siteId);
+    }
+
+    public String importSite(String sessionId, String siteId, String fileId) throws Exception {
+	Session s = establishSession(sessionId);
+
+        if(! securityService.isSuperUser(s.getUserId())) {
+            String msg = "WS importSite: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
+
+	ArchiveService archiveService = (org.sakaiproject.archive.api.ArchiveService) ComponentManager.get(org.sakaiproject.archive.api.ArchiveService.class);
+
+        return archiveService.merge(fileId, siteId, null);
+    }
+
+    /**
+     * Remove a page from a site
+     *
+     * @param sessionid the id of a valid session
+     * @param siteid    the id of the site to remove the page from
+     * @param pagetitle the title of the page to remove
+     * @return success or exception message
+     * <p/>
+     * TODO: fix for if the page title is blank it removes nothing and is still returning success - SAK-15334\
+     * TODO: fix for ConcurrentModficationException being thrown - SAK-15337. Is this because it removes via pagetitle but can allow multiple page titles of the same name?
+    */
+    @WebMethod
+    @Path("/removePageFromSite")
+    @Produces("text/plain")
+    @GET
+    public String removeSecondPageFromSiteWithTitle(
+				     @WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,
+				     @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,
+				     @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+        Session session = establishSession(sessionid);
+
+        try {
+	    boolean firstFound = false;
+	    Site siteEdit = null;
+	    siteEdit = siteService.getSite(siteid);
+	    SitePage toRemove = null;
+	    List pageEdits = siteEdit.getPages();
+	    Iterator i = pageEdits.iterator();
+	    while (i.hasNext() && toRemove == null) {
+		SitePage pageEdit = (SitePage) i.next();
+		if (pageEdit.getTitle().equals(pagetitle)) {
+		    if (firstFound) {
+			toRemove = pageEdit;
+		    } else {
+			firstFound = true;
+		    }
+		}
+	    }
+
+	    siteEdit.removePage(toRemove);
+	    siteService.save(siteEdit);
+	    
+	    /*
+            Site siteEdit = null;
+            siteEdit = siteService.getSite(siteid);
+            ArrayList remPages = new ArrayList();
+            List pageEdits = siteEdit.getPages();
+            for (Iterator i = pageEdits.iterator(); i.hasNext(); ) {
+                SitePage pageEdit = (SitePage) i.next();
+                if (pageEdit.getTitle().equals(pagetitle)) {
+                    remPages.add(pageEdit);
+                }
+            }
+
+            for (Iterator i = remPages.iterator(); i.hasNext(); ) {
+                SitePage pageEdit = (SitePage) i.next();
+                siteEdit.removePage(pageEdit);
+            }
+
+            siteService.save(siteEdit);
+	    */
+
+        } catch (Exception e) {
+            LOG.error("WS removePageFromSite(): " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+    }
+
+    public String removeFirstPageFromSiteWithTitle(@WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,						      @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,							         @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+        Session session = establishSession(sessionid);
+
+        try {
+            Site siteEdit = null;
+            siteEdit = siteService.getSite(siteid);
+            SitePage toRemove = null;
+            List pageEdits = siteEdit.getPages();
+            Iterator i = pageEdits.iterator();
+            while (i.hasNext() && toRemove == null) {
+                SitePage pageEdit = (SitePage) i.next();
+                if (pageEdit.getTitle().equals(pagetitle)) {
+		    toRemove = pageEdit;
+                }
+            }
+
+            siteEdit.removePage(toRemove);
+            siteService.save(siteEdit);
+        } catch (Exception e) {
+            LOG.error("WS removePageFromSite(): " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+    }
+
 }
