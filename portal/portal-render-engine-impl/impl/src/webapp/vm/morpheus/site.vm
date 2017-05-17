@@ -25,7 +25,6 @@
                 ## Header
                 <div class="Mrphs-topHeader">
                     #parse("/vm/morpheus/snippets/header-snippet.vm")
-                    #parse("/vm/morpheus/includeLoginNav.vm")
                 </div>
 
                 #if (${tabsSites})
@@ -40,6 +39,13 @@
 
         </div> <!-- end Mrphs-portalWrapper -->
         <!-- END VM site.vm -->
+
+        <!-- Viewport helpers -->
+        <div id='Mrphs-viewport-helpers' aria-hidden='true'>
+          <div class='phone'></div>
+          <div class='tablet'></div>
+          <div class='desktop'></div>
+        </div>
 
         ## Make sure we at least have a jQuery 1.11 or higher, log messages
     #set ( $d = "$")

@@ -545,7 +545,7 @@ img.authorImage {
 	display: inline-block;
 	float: none;
 	max-width: 3.5em;
-	max-height: 2.5em;
+	max-height: 3.5em;
 	width: auto !important;
 	vertical-align: bottom !important;
 }
@@ -673,4 +673,11 @@ div.msgcntr-profile-qtip {
 
 #synopticForm\:myWorkspaceUnread\:myWorkspaceTable .siteHeader{
 	width:60%;
+}
+
+/* Styles for modal */
+.close-button {
+	float: right;
+	cursor: pointer;
+	font-size: 20px !important;
 }

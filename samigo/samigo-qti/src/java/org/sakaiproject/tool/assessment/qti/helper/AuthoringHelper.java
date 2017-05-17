@@ -41,6 +41,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.*;
+
+import org.sakaiproject.samigo.util.SamigoConstants;
 import org.sakaiproject.site.cover.SiteService;
 import org.sakaiproject.tool.cover.ToolManager;
 import org.sakaiproject.event.cover.EventTrackingService;
@@ -85,6 +87,8 @@ import org.sakaiproject.tool.assessment.services.ItemService;
 import org.sakaiproject.tool.assessment.services.QuestionPoolService;
 import org.sakaiproject.tool.assessment.services.assessment.AssessmentService;
 import org.sakaiproject.tool.assessment.util.TextFormat;
+import org.sakaiproject.tool.api.Placement;
+import org.sakaiproject.site.api.Site;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -704,7 +708,7 @@ public class AuthoringHelper
           
           section.addItem(item); // many to one
           itemService.saveItem(item);
-          EventTrackingService.post(EventTrackingService.newEvent("sam.assessment.saveitem", "/sam/" + AgentFacade.getCurrentSiteId() + "/saved itemId=" + item.getItemId().toString(), true));
+          EventTrackingService.post(EventTrackingService.newEvent(SamigoConstants.EVENT_ASSESSMENT_SAVEITEM, "/sam/" + AgentFacade.getCurrentSiteId() + "/saved itemId=" + item.getItemId().toString(), true));
         } // ... end for each item
         
         // Section Attachment
@@ -737,7 +741,15 @@ public class AuthoringHelper
       // Assessment Attachment
       exHelper.makeAssessmentAttachmentSet(assessment);
 
-      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
+      //assessment.getAssessmentAccessControl().setReleaseTo();
+
+      /*Placement p = ToolManager.getCurrentPlacement();
+      String c = p.getContext();
+      Site s = SiteService.getSite(c);*/
+      Site s = SiteService.getSite(siteId);
+      String siteTitle = s.getTitle();
+
+      //      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
       if(siteTitle != null && !siteTitle.equals(assessment.getAssessmentAccessControl().getReleaseTo())){
           assessment.getAssessmentAccessControl().setReleaseTo(siteTitle);
       }
@@ -855,7 +867,7 @@ public class AuthoringHelper
                item.setLastModifiedDate(questionpool.getLastModified());
                item.setStatus(ItemDataIfc.ACTIVE_STATUS);
                itemService.saveItem(item);
-               EventTrackingService.post(EventTrackingService.newEvent("sam.assessment.saveitem", "/sam/" + AgentFacade.getCurrentSiteId() + "/saved itemId=" + item.getItemId().toString(), true));
+               EventTrackingService.post(EventTrackingService.newEvent(SamigoConstants.EVENT_ASSESSMENT_SAVEITEM, "/sam/" + AgentFacade.getCurrentSiteId() + "/saved itemId=" + item.getItemId().toString(), true));
                
                QuestionPoolItemData questionPoolItem = new QuestionPoolItemData();
                questionPoolItem.setQuestionPoolId(questionpool.getQuestionPoolId());
