@@ -763,7 +763,8 @@ body.is-logged-out{
 {
 	@include display-flex(flex);
 	padding-left: 0.5em;
-	background-color: $sites-nav-background;
+	//background-color: $sites-nav-background;
+	background-color: #000;
 	min-height: 52px;
 	padding: 4px 8px;
 }
