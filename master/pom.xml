@@ -1745,13 +1745,13 @@
       <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>5.1.40</version>
+          <version>5.1.42</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>org.mariadb.jdbc</groupId>
           <artifactId>mariadb-java-client</artifactId>
-          <version>1.5.8</version>
+          <version>1.5.9</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
