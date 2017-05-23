@@ -555,7 +555,7 @@ body.is-logged-out{
 	}
 
 	.#{$namespace}loginUser{
-		padding: 0.9em 0.5em;
+		padding: 0.4em 0.5em 0.9em 0.5em;
 		@media #{$phone}{
 			padding: 0em;
 		}
