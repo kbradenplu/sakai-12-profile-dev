@@ -136,6 +136,7 @@ body.is-logged-out{
 			padding: 0.65em;
 			text-decoration: none;
 			color: $primary-color-highContrast;
+			background: #fff;
 			line-height: 1em;
 			&:focus, &:hover, &:active
 			{
@@ -215,6 +216,18 @@ body.is-logged-out{
 		@include align-items( center );
 
 		color: $topNav-text-color;
+
+		//customization to make this look all buttony. -MJ
+		/*		background: #000;
+		padding-left: 0.7em;
+		padding-right: 0.7em;
+		text-decoration: none;
+		-webkit-border-radius: 0.7em;
+		&:hover{
+			background: #000;
+			text-decoration: none;
+			color: $topNav-text-color;
+		}*/		
 	}
 	> * {
 		transition: all 0.3s ease;
@@ -555,9 +568,23 @@ body.is-logged-out{
 	}
 
 	.#{$namespace}loginUser{
-		padding: 0.4em 0.5em 0.9em 0.5em;
+		padding: 0 0.5em 0.9em 0.5em;
 		@media #{$phone}{
 			padding: 0em;
+		}
+
+		a{
+			//customization to make this look all buttony. -MJ
+				background: #000;
+               			padding-left: 0.7em;
+                		padding-right: 0.7em;
+                		text-decoration: none;
+                		-webkit-border-radius: 0.7em;
+                		&:hover{
+					background: #000;
+                        		text-decoration: none;
+					color: $topNav-text-color;
+                		}
 		}
 	}
 
