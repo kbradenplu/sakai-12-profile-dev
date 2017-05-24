@@ -83,8 +83,10 @@ $top-header-background: $background-color-secondary !default;
 $sites-nav-background: $tool-menu-background-color !default;
 
 $breadcrumbs-color:			 $text-color !default;
-$breadcrumbs-tool-color:		 #347EB2 !default;
-$breadcrumbs-hover-color:		 #347EB2 !default;
+/*$breadcrumbs-tool-color:		 #347EB2 !default;
+$breadcrumbs-hover-color:		 #347EB2 !default;*/
+$breadcrumbs-tool-color:               	 #000 !default;
+$breadcrumbs-hover-color:                #fbba37 !default;
 
 /* Link colors */
 $link-color: $primary-color !default;
@@ -320,14 +322,25 @@ $tool-menu-item-hidden-hover-color:                        #808080 !default;
 $tool-menu-item-hidden-hover-icon-color:                   #929292 !default;
 $tool-menu-item-hidden-hover-background-color:             #ECECEC !default;
 $tool-menu-item-hidden-hover-border-left:                  4px solid #7F7F7F !default;
-$tool-menu-item-selected-text-color:                       #1E80B5 !default;
-$tool-menu-item-selected-icon-color:                       #1E80B5 !default;
+
+/*$tool-menu-item-selected-text-color:                       #1E80B5 !default;
+$tool-menu-item-selected-icon-color:                       #1E80B5 !default;*/
+$tool-menu-item-selected-text-color:                       #000 !default;
+$tool-menu-item-selected-icon-color:                       #000 !default;							   
+
 $tool-menu-item-selected-background-color:                 #FFFFFF !default;
-$tool-menu-item-selected-border-left:                      4px solid #1E80B5 !default;
-$tool-menu-item-selected-hover-text-color:                 #1E80B5 !default;
-$tool-menu-item-selected-hover-icon-color:                 #1E80B5 !default;
+
+//$tool-menu-item-selected-border-left:                      4px solid #1E80B5 !default;
+$tool-menu-item-selected-border-left:                      4px solid #fbba37 !default;
+
+/*$tool-menu-item-selected-hover-text-color:                 #1E80B5 !default;
+$tool-menu-item-selected-hover-icon-color:                 #1E80B5 !default;*/
+$tool-menu-item-selected-hover-text-color:                 #fbba37 !default;
+$tool-menu-item-selected-hover-icon-color:                 #fbba37 !default;
+
 $tool-menu-item-selected-hover-background-color:           #FFFFFF !default;
-$tool-menu-item-selected-hover-border-left:                4px solid #1E80B5 !default;
+//$tool-menu-item-selected-hover-border-left:                4px solid #1E80B5 !default;
+$tool-menu-item-selected-hover-border-left:                4px solid #fbba37 !default;
 
 $tool-menu-collapse-text-color:                            #4C4C4C !default;
 $tool-menu-collapse-background-color:                      #FAFAFA !default;
