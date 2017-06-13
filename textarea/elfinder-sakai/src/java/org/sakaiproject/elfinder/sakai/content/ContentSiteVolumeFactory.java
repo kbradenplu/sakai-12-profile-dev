@@ -2,6 +2,7 @@ package org.sakaiproject.elfinder.sakai.content;
 
 import cn.bluejoe.elfinder.controller.ErrorException;
 import cn.bluejoe.elfinder.service.FsItem;
+import org.sakaiproject.exception.TypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sakaiproject.content.api.*;
@@ -98,7 +99,7 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
             String id = asId(fsi);
             try {
                 String filename = lastPathSegment(id);
-                String name = "", ext = "";
+                String name = filename, ext = "";
                 int index = filename.lastIndexOf(".");
                 if (index >= 0) {
                     name = filename.substring(0, index);
@@ -213,6 +214,8 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
                 }
                 Date date = contentEntity.getProperties().getDateProperty(ResourceProperties.PROP_MODIFIED_DATE);
                 return date.getTime() / 1000;
+            } catch (IdUnusedException iue) {
+                LOG.debug("Failed to find item to get last modified date for: "+ id);
             } catch (SakaiException se) {
                 LOG.warn("Failed to get last modified date for: " + id, se);
             } catch (EntityPropertyTypeException e) {
@@ -262,6 +265,8 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
                     contentEntity = contentHostingService.getResource(id);
                 }
                 return contentEntity.getProperties().getProperty(ResourceProperties.PROP_DISPLAY_NAME);
+            } catch (IdUnusedException iue) {
+                LOG.debug("Failed to find item to get name: "+ id);
             } catch (SakaiException se) {
                 LOG.warn("Failed to get name for: " + id, se);
             }
@@ -291,7 +296,14 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
 
         public FsItem getRoot() {
             String id = contentHostingService.getSiteCollection(siteId);
-            return fromPath(id);
+            try {
+                contentHostingService.getCollection(id);
+                return fromPath(id);
+            } catch (IdUnusedException | PermissionException ignored) {
+            } catch (TypeException e) {
+                LOG.warn("Unexpected error getting root.", e);
+            }
+            return null;
         }
 
         public long getSize(FsItem fsi) {
@@ -302,6 +314,8 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
                 } else {
                     return contentHostingService.getResource(id).getContentLength();
                 }
+            } catch (IdUnusedException uie) {
+                LOG.debug("Failed to file size as item can't be found: "+ id);
             } catch (SakaiException se) {
                 LOG.warn("Failed to get size for: " + id, se);
             }
@@ -324,9 +338,12 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
                         return true;
                     }
                 }
+            } catch (IdUnusedException iue) {
+                LOG.debug("Couldn't find resource to look for child folders: "+ id);
             } catch (SakaiException se) {
-                LOG.warn("Couldn't is if there are child folders: " + id, se);
+                LOG.warn("Couldn't see if there are child folders: " + id, se);
             }
+
             return false;
         }
 
@@ -351,6 +368,8 @@ public class ContentSiteVolumeFactory implements SiteVolumeFactory {
                     items.add(fromPath(member));
                 }
                 return items.toArray(new FsItem[items.size()]);
+            } catch (IdUnusedException iue) {
+                LOG.debug("Failed to list children as item can't be found for: "+ id);
             } catch (PermissionException pe) {
                 throw new ErrorException("errPerm");
             } catch (SakaiException se) {
