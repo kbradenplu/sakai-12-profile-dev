@@ -1505,7 +1505,11 @@ border: none !important;
 background: none !important;
 }
 .sectionHeader {
-    padding: .5em;
+    line-height: normal;
+    padding: 0em;
+    margin: 10px 0 0 10px;
+    background: none;
+    
 }
 
 .sectionHeader .collapseIcon {
@@ -1637,7 +1641,7 @@ li.resourceType .right-col {
  border:none;
 }
 .itemclass {
- margin-top:3.0em !important;
+ margin-top: 2.0em !important;
 }
 .add-comment-button span {
 font-size: 90%;
@@ -1682,6 +1686,11 @@ font-size: 12px;
 /* fit the actual height, so it doesn't overlap title */
 .Mrphs-toolTitleNav__button_container {
   height: 30px;
+  position: initial !important;
+  float: right !important;
+  margin-right: 10px;
+  margin-top: 7px;
+  margin-bottom: 5px;
 }
 .portletBody {
   margin-top:2px;
@@ -1872,7 +1881,7 @@ body > .portletBody {
 }
 /* put back default value if an instructor */
 .navIntraTool ~ div.itemclass {
-  margin-top: 3.0em !important;
+  margin-top: 0em !important;
 }
 .title-tools {
   float:none;
