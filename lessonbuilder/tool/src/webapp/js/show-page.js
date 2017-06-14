@@ -2504,6 +2504,7 @@ $(document).ready(function() {
 		} else {
 			$("#defaultClosedSpan").show();
 		}
+	    $('#column-dialog').dialog('option', 'title', msg('simplepage.columnopen'));
 	    $('#column-dialog').dialog('open');
 	    return false;
 	}
