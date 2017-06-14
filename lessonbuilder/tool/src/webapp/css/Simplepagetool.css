@@ -2032,3 +2032,18 @@ nav.Mrphs-container--toolTitleNav .Mrphs-directUrl__dropDown .active {
 .top-next-prev .nextprev.next {
     float: right;
 }
+
+select#columnbackground {
+    margin-top: 1em;
+}
+
+input#sectionTitle {
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
+
+#column-dialog p.act {
+    margin-top: 0.25em;
+    margin-bottom: 0em;
+    padding-bottom: 0em;
+}
