@@ -1,4 +1,4 @@
-.Mrphs-sakai-lessonbuildertool{
+.#{$namespace}sakai-lessonbuildertool{
 	.navIntraTool{
 		margin: 0 0 0 0;
 		padding: 0 0 0 0;
@@ -33,5 +33,39 @@
 	.checklist-blur label.checklistLabel.disabled, .checklist-blur label.checklistLabel.disabled:hover{
 		text-shadow: 0 0 5px rgba(0,0,0,0.5);
 		color: transparent;
+	}
+
+	.#{$namespace}toolTitleNav{
+		margin-top: -33px;
+		margin-bottom: 0px !important;
+		max-width: 99%;
+		float: right;
+		@media #{$phone}{
+	       	       margin-top: 0px;
+	       	       margin-bottom: 10px !important;
+	       	       top: 14px;
+		}	
+	}
+
+	.#{$namespace}toolTitleNav__button_container{
+		height: inherit;
+        	margin-right: 0px;
+		margin-bottom: 0px;
+	}
+
+	.#{$namespace}toolTitleNav__link{
+		float: right;
+		margin-right: 5px !important;
+	}
+
+	.#{$namespace}toolTitleNav__link--help-popup{
+		margin-right: 0px !important;
+	}
+
+	body .error-spacingabove{
+	     margin-top: 15px;
+	     @media #{$phone}{
+	       	    margin-top: 45px;
+	     }
 	}
 }

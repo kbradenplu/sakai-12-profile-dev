@@ -89,7 +89,7 @@
      }
  </script>
 
- <div rsf:id="portletBody" class="portletBody">
+ <div rsf:id="portletBody" class="portletBody" style="padding-top: 1px;">
 
    <div rsf:id="needPermissions" class="messageError error-spacingabove error-nospacebelow">
      <p rsf:id="msg=simplepage.needpermissions"></p>
@@ -128,7 +128,7 @@
 	   <div id="owner" rsf:id="owner"></div><span rsf:id="pagetitle"></span><a role="button" class="portlet title-tools title reset" rsf:id="pagetitlelink"><span class="Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--reset"></span><span rsf:id="pagetitletext"></span></a>
 	 </h2>
        </div>
-       <div class="action topaction" style="float: right; clear: both;">
+       <div class="action topaction" style="float: none; clear: both;">
          <span id="expandCollapseButtons" style="display:none; margin-right: 5px !important;">
 	   <!-- added class=button - lessons reconfigure -MJ -->
            <a href="#" role="button" id="expandAllSections" class="button" style="margin-right: 0; margin-left: 5px; float: right; line-height: 1em;">
@@ -143,9 +143,9 @@
            <a role="button" href="#" rsf:id="prev" style="float: left; margin-right: 5px !important; line-height: 1em;" class="nexprev prev menuitem button">prev</a>
            <a role="button" href="#" rsf:id="next" style="float: left; line-height: 1em;" class="nextprev next menuitem button">next</a>
          </span>
-	 <a role="button"  href="#" rsf:id="print-view" id="print-view" onclick="window.open(printView(window.location.href));return false" class="Mrphs-toolTitleNav__link top-icon fa fa-print">
+	 <a role="button"  href="#" rsf:id="print-view" id="print-view" onclick="window.open(printView(window.location.href));return false" class="Mrphs-toolTitleNav__link top-icon fa fa-print print-div-marker">
 	   <span rsf:id="msg=simplepage.print_view" class="Mrphs-itemTitle"></span></a>
-	 <a role="button" href="#" rsf:id="show-pages" id="show-pages" class="Mrphs-toolTitleNav__link top-icon fa fa-list-ul"><span rsf:id="msg=simplepage.showallpages" class="Mrphs-itemTitle"></span></a>
+	 <a role="button" href="#" rsf:id="show-pages" id="show-pages" class="Mrphs-toolTitleNav__link top-icon fa fa-list-ul list-div-marker"><span rsf:id="msg=simplepage.showallpages" class="Mrphs-itemTitle" ></span></a>
 	 
 	 <span rsf:id="gradingSpan" class="gradingarea">
 	   <a role="button" href="#" rsf:id="gradingBack" style="margin-right:2px;background:none" class="usebutton grading-nextprev">&#60;</a>
@@ -167,7 +167,7 @@
 	   <span rsf:id="directurl-shorten">Short URL</span>
 	   <textarea rsf:id="directurl-textarea" class="portlet title-tools"></textarea>
 	 </div>
-	 <a role="button" href="#" rsf:id="helpbutton" target="_blank" style="display:inline" class="title-tools help Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--help-popup">
+	 <a role="button" href="#" rsf:id="helpbutton" target="_blank" style="display:inline;" class="title-tools help Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--help-popup">
 	   <img rsf:id="helpimage" src="/library/image/transparent.gif"/>
 	   <span rsf:id="helpnewwindow" class="offscreen"></span>
 	 </a>
@@ -179,9 +179,9 @@
      </div>
    </div>
    
-   <div id="breadcrumb-supplant" class="breadcrumb-supplant" style="display: initial;" ></div>
+   <div id="breadcrumb-supplant" class="breadcrumb-supplant" ></div>
 
-   <div rsf:id="tool-bar:" class="navIntraTool" role="application" style="z-index:100000; display: inline-block; width: 100%;" aria-labelledby="tool-bar::toolbar-label">
+   <div rsf:id="tool-bar:" class="navIntraTool" role="application" style="z-index:100000; display: inline-block; margin-top: -5px;" aria-labelledby="tool-bar::toolbar-label">
      <h3 id="toolbar-label" rsf:id="msg=simplepage.toolbar" class="offscreen"></h3>
      <ul id="toolbar" role="menubar">
        
@@ -262,14 +262,24 @@
 	    jQuery(".Mrphs-toolTitleNav__addRight").before(jQuery(".topaction > a"));
 	    jQuery(".Mrphs-toolTitleNav__button_container > a").addClass("Mrphs-toolTitleNav__link");
 
-         } else {
+        } else {
 	     jQuery(".topaction > a").addClass("button");
          }
 	//if (jQuery(".navIntraTool").size() > 0)
   	   //jQuery(".navIntraTool").append(jQuery(".action"));
 	  //  jQuery(".breadcrumb-supplant").append(jQuery(".action"));
 	 //else
-	   jQuery(".neoPortletTitleWrap").before(jQuery(".action"));
+	//jQuery(".neoPortletTitleWrap").before(jQuery(".action"));
+
+	jQuery(".Mrphs-toolTitleNav__button_container").after(jQuery(".action"));
+
+	jQuery(".Mrphs-toolTitleNav__link--help-popup").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
+	jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".list-div-marker"));
+	jQuery(".list-div-marker").after(jQuery(".print-div-marker"));
+
+	jQuery(".navIntraTool").after(jQuery(".breadcrumb-supplant"));
+	jQuery(".portletBody").prepend(jQuery(".navIntraTool"));
+
 </script>
 
 		<div id="addContentDiv" style="display:none" class="dropDownDiv specialLink lessonsDialog" role="menu" aria-label="Add content menu">
@@ -951,7 +961,7 @@
 		   <!-- removed - lessons reconfigure -MJ <span> -->
 		   <!-- class altered, next floated left and given margin-right - lessons reconfigure -MJ --> 
 		   <a role="button" class="nexprev prev menuitem button" style="float: left; line-height: 1em;" href="#" rsf:id="prev1">next</a>
-		   <a role="button" style="float: left; margin-right: 5px !important; line-height: 1em;" class="bottomRight nexprev prev menuitem button" href="#" rsf:id="next1">next</a>
+		   <a role="button" style="float: right; margin-right: 5px !important; line-height: 1em;" class="bottomRight nexprev prev menuitem button" href="#" rsf:id="next1">next</a>
 		   <!-- </span> -->
 		   </li>
 		   </ul>
