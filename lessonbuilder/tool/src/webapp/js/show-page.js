@@ -2230,8 +2230,8 @@ $(document).ready(function() {
 			}
 			insist = false;
 			$("#delete-confirm-message").text(message);
-			$("#delete-confirm").dialog('open');
 		        $("#delete-confirm").dialog('option', 'title', msg('simplepage.delete-item'));
+			$("#delete-confirm").dialog('open');
 			return false;
 		    };
 
@@ -3201,7 +3201,7 @@ function buttonOpenDropdownc() {
     oldloc = $("#dropdownc");
     addAboveItem = "";
     $(".addbreak").hide();
-    openDropdown($("#addContentDiv"), $("#dropdown"), msg("simplepage.add-content"));
+    openDropdown($("#addContentDiv"), $("#dropdownc"), msg("simplepage.add-content"));
 }
 
 function buttonOpenDropdowna() {
@@ -3209,7 +3209,7 @@ function buttonOpenDropdowna() {
     oldloc = addAboveLI.find(".plus-edit-icon");
     addAboveItem = addAboveLI.find("span.itemid").text();
     $(".addbreak").show();
-    openDropdown($("#addContentDiv"), $("#dropdown"), msg('simplepage.add-above'));
+    openDropdown($("#addContentDiv"), $("#dropdownc"), msg('simplepage.add-above'));
 }
 
 function buttonOpenDropdownb() {
@@ -3217,7 +3217,7 @@ function buttonOpenDropdownb() {
     addAboveItem = '-' + $(this).closest('.column').find('ul.mainList').children().last().find("span.itemid").text();
     addAboveLI = $(this).closest('.column').find('ul.mainList').children().last().closest("li");
     $(".addbreak").show();
-    openDropdown($("#addContentDiv"), $("#dropdown"), msg('simplepage.add-item-column'));
+    openDropdown($("#addContentDiv"), $("#dropdownc"), msg('simplepage.add-item-column'));
     return false;
 }
 
@@ -3226,7 +3226,6 @@ function openDropdown(dropDiv, button, title) {
     hideMultimedia();
     dropDiv.dialog('option', 'title', title);
     dropDiv.dialog('open');
-//    dropDiv.dialog('option', 'title', title);
     dropDiv.find("a").first().focus();
     if (addAboveItem === '')
 	dropDiv.find(".addContentMessage").show();
