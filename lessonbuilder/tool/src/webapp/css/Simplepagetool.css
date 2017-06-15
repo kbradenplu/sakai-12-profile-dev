@@ -22,8 +22,13 @@
 }
 
 .ui-dialog label {
-   padding-left: 0.5em;
    font-weight: normal;
+   padding-right: 0.5em;
+}
+
+.ui-dialog input[type="checkbox"] + label {
+    padding-right: 0;
+    padding-left: 0.5em;
 }
 
 /* end override */
@@ -2033,12 +2038,13 @@ nav.Mrphs-container--toolTitleNav .Mrphs-directUrl__dropDown .active {
     float: right;
 }
 
+/* Column properties dialog */
+
 select#columnbackground {
-    margin-top: 1em;
+    margin: 1em 0;
 }
 
 input#sectionTitle {
-    margin-left: 1em;
     margin-bottom: 1em;
 }
 
