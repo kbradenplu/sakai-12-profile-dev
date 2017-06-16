@@ -1,11 +1,11 @@
-.#{$namespace}sakai-lessonbuildertool{
-	.navIntraTool{
+.#{$namespace}sakai-lessonbuildertool {
+	.navIntraTool {
 		margin: 0 0 0 0;
 		padding: 0 0 0 0;
 		border-bottom: 0px none;
-		li{
-			span{
-				a{
+		li {
+			span {
+				a {
 					border-bottom: 1px solid $tool-border-color;
 					display: inline-block;
 				}
@@ -16,7 +16,7 @@
 		position: inherit;
 		top: 0;
 	}
-	.mainList{
+	.mainList {
 		list-style: none;
 		padding: 0 0 0 0;
 	}
@@ -30,42 +30,74 @@
 		color: $swapped-view-text-color;
 	}
 
-	.checklist-blur label.checklistLabel.disabled, .checklist-blur label.checklistLabel.disabled:hover{
+	.checklist-blur label.checklistLabel.disabled, .checklist-blur label.checklistLabel.disabled:hover {
 		text-shadow: 0 0 5px rgba(0,0,0,0.5);
 		color: transparent;
 	}
 
-	.#{$namespace}toolTitleNav{
+	.#{$namespace}toolTitleNav {
+		z-index: 1;
 		margin-top: -33px;
 		margin-bottom: 0px !important;
 		max-width: 99%;
 		float: right;
-		@media #{$phone}{
+		@media #{$phone} {
 	       	       margin-top: 0px;
 	       	       margin-bottom: 10px !important;
+		       margin-right: 10px;
 	       	       top: 14px;
 		}	
 	}
 
-	.#{$namespace}toolTitleNav__button_container{
+	.#{$namespace}toolTitleNav__button_container {
 		height: inherit;
         	margin-right: 0px;
 		margin-bottom: 0px;
 	}
 
-	.#{$namespace}toolTitleNav__link{
+	.#{$namespace}toolTitleNav__link {
 		float: right;
 		margin-right: 5px !important;
 	}
 
-	.#{$namespace}toolTitleNav__link--help-popup{
+	.#{$namespace}toolTitleNav__link--help-popup {
 		margin-right: 0px !important;
 	}
 
-	body .error-spacingabove{
+	body .error-spacingabove {
 	     margin-top: 15px;
 	     @media #{$phone}{
 	       	    margin-top: 45px;
 	     }
+	}
+	
+	.collapseIcon {
+		padding-right: 5px;
+		float: left;
+		line-height: 16px;
+	}
+
+	/*.breadcrumb-supplant {
+		padding-top: 5px;
+	}*/
+
+	.top-icon:before {
+		margin-right: 5px;
+		@media #{tablet} {
+		       margin-right: 0px;
+		}
+		@media #{phone} {
+		       margin-right: 0px;
+		}
+	}
+
+	.lessons-siteHierarchy-title {
+		margin-top: 0px;
+		margin-left: 1px;
+		display: initial;
+	}
+
+	.fa-item-text {
+		top: -4px;
 	}
 }

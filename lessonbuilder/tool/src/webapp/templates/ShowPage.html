@@ -119,7 +119,7 @@
 	   <a role="button" href="#" rsf:id="resetbutton2" class="reload">
 	     <img rsf:id="resetimage2" src="/library/image/transparent.gif"/>
 	   </a>
-	   <h2 ><span rsf:id="crumb:"><a style="background:none"  href="#" rsf:id="crumb-link"></a><span rsf:id="crumb-follow" class="lessons-siteHierarchy-title"></span><span rsf:id="crumb-separator" class="Mrphs-hierarchy--separator"><i class="fa fa-lg fa-angle-right" aria-hidden="true"></i></span></span></h2>
+	   <h2 ><span rsf:id="crumb:"><a style="background:none"  href="#" rsf:id="crumb-link"></a><h2 rsf:id="crumb-follow" class="lessons-siteHierarchy-title"></h2><span rsf:id="crumb-separator" class="Mrphs-hierarchy--separator"><i class="fa fa-lg fa-angle-right" aria-hidden="true"></i></span></span></h2>
 	 </div>
 	 <a href="#" rsf:id="resetbutton" class="reload">
 	   <img rsf:id="resetimage" src="/library/image/transparent.gif"/>
@@ -244,42 +244,43 @@
    </div>
 		
 <script type="text/javascript">
-	var breadcrumbs = jQuery(".breadcrumbs span");
-	// if we're in morpheus, move breadcrums into top bar, and generate an H2 with the title
-	if (jQuery(".oldPortal").size() === 0) {
-	    var title = jQuery(".title span:last").text();
-	    var owner = jQuery("#owner").text();
-	    var title = title + owner;
-	    if (breadcrumbs.size() > 0) {
-	        //jQuery(".Mrphs-siteHierarchy").append(jQuery(".breadcrumbs span").slice(1));
-	        jQuery(".breadcrumb-supplant").append(jQuery(".breadcrumbs span").slice(1));
-	    }
-	    jQuery(".Mrphs-siteHierarchy").children().wrapAll('<div class="hierarchyWrap" />');
-	    //jQuery(".Mrphs-siteHierarchy").append(jQuery("span.nextprev"));
-	    //jQuery(".neoPortletTitleWrap").before('<h2 class="genTitle"></h2>');
-	    //jQuery(".genTitle").text(title);
-
-	    jQuery(".Mrphs-toolTitleNav__addRight").before(jQuery(".topaction > a"));
-	    jQuery(".Mrphs-toolTitleNav__button_container > a").addClass("Mrphs-toolTitleNav__link");
-
-        } else {
-	     jQuery(".topaction > a").addClass("button");
-         }
-	//if (jQuery(".navIntraTool").size() > 0)
-  	   //jQuery(".navIntraTool").append(jQuery(".action"));
-	  //  jQuery(".breadcrumb-supplant").append(jQuery(".action"));
-	 //else
-	//jQuery(".neoPortletTitleWrap").before(jQuery(".action"));
-
-	jQuery(".Mrphs-toolTitleNav__button_container").after(jQuery(".action"));
-
-	jQuery(".Mrphs-toolTitleNav__link--help-popup").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
-	jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".list-div-marker"));
-	jQuery(".list-div-marker").after(jQuery(".print-div-marker"));
-
-	jQuery(".navIntraTool").after(jQuery(".breadcrumb-supplant"));
-	jQuery(".portletBody").prepend(jQuery(".navIntraTool"));
-
+    var breadcrumbs = jQuery(".breadcrumbs span");
+    // if we're in morpheus, move breadcrums into top bar, and generate an H2 with the title
+    if (jQuery(".oldPortal").size() === 0) {
+        var title = jQuery(".title span:last").text();
+        var owner = jQuery("#owner").text();
+        var title = title + owner;
+        if (breadcrumbs.size() > 0) {
+            //jQuery(".Mrphs-siteHierarchy").append(jQuery(".breadcrumbs span").slice(1));
+            jQuery(".breadcrumb-supplant").append(jQuery(".breadcrumbs span").slice(1).wrap('<div></div>'));
+	}
+    
+        jQuery(".Mrphs-siteHierarchy").children().wrapAll('<div class="hierarchyWrap" />');
+	//jQuery(".Mrphs-siteHierarchy").append(jQuery("span.nextprev"));
+	//jQuery(".neoPortletTitleWrap").before('<h2 class="genTitle"></h2>');
+	//jQuery(".genTitle").text(title);
+  
+	jQuery(".Mrphs-toolTitleNav__addRight").before(jQuery(".topaction > a"));
+	jQuery(".Mrphs-toolTitleNav__button_container > a").addClass("Mrphs-toolTitleNav__link");
+  
+    } else {
+	jQuery(".topaction > a").addClass("button");
+    }
+    //if (jQuery(".navIntraTool").size() > 0)
+        //jQuery(".navIntraTool").append(jQuery(".action"));
+        //jQuery(".breadcrumb-supplant").append(jQuery(".action"));
+    //else
+        //jQuery(".neoPortletTitleWrap").before(jQuery(".action"));
+  
+    jQuery(".Mrphs-toolTitleNav__button_container").after(jQuery(".action"));
+  
+    jQuery(".Mrphs-toolTitleNav__link--help-popup").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
+    jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".list-div-marker"));
+    jQuery(".list-div-marker").after(jQuery(".print-div-marker"));
+  
+    jQuery(".navIntraTool").after(jQuery(".breadcrumb-supplant"));
+    jQuery(".portletBody").prepend(jQuery(".navIntraTool"));
+  
 </script>
 
 		<div id="addContentDiv" style="display:none" class="dropDownDiv specialLink lessonsDialog" role="menu" aria-label="Add content menu">

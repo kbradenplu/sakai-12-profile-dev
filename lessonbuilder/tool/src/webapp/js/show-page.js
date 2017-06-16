@@ -2731,13 +2731,13 @@ function setCollapsedStatus(header, collapse) {
     if (collapse) {
 	header.find('.collapseIcon').addClass("fa-toggle-down");
 	header.find('.collapseIcon').removeClass("fa-toggle-up");
-	header.find('.sectionCollapsedIcon').show();
+	//header.find('.sectionCollapsedIcon').show();
 	header.find('.toggleCollapse').text(msg('simplepage.clickToExpand'));
 	header.attr('aria-expanded', 'false');
     } else {
 	header.find('.collapseIcon').removeClass("fa-toggle-down");
 	header.find('.collapseIcon').addClass("fa-toggle-up");
-	header.find('.sectionCollapsedIcon').hide();
+	//header.find('.sectionCollapsedIcon').hide();
 	header.find('.toggleCollapse').text(msg('simplepage.clickToCollapse'));
 	header.attr('aria-expanded', 'true');
     }

@@ -1147,6 +1147,7 @@ body.is-logged-out{
 .#{$namespace}siteStatus{
 	&.is-unpublished{
 		margin-left:0em;
+		margin-bottom: 40px;
 		width: 100%;
 		padding: 3px;
 		color :$background-color-secondary;
