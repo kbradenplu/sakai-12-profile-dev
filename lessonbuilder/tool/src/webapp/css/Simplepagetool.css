@@ -427,9 +427,13 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
     width: calc(200% / 2 - 1px) !important;
 }
 .cols1 {
-    padding-top:10px;
+    /*padding-top:10px;*/
     width: calc(100%) !important;
 }
+.cols1.editsection {
+    margin-top: -15px;
+}
+
 /* this is to prevent the last column from going to a new
    line if the calculation is a bit off. */
 .lastcol {
@@ -1577,9 +1581,11 @@ background: none !important;
    position:relative;
 }
 .editsection {
-   position:absolute;
+    /*position:absolute;
    top:-5px;
-   left: 3px;
+   left: 3px;*/
+    margin-top: -10px;
+    margin-left: -4px;
 }
 .sectionedit {
    display:inline-block;
