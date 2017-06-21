@@ -100,4 +100,10 @@
 	.fa-item-text {
 		top: -4px;
 	}
+
+	#pageBody{
+		> .#{$namespace}pagebody{
+                  width: 100%;
+		}	
+	}
 }

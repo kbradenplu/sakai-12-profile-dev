@@ -21,9 +21,7 @@
 	@include display-flex(flex);
 	@include flex-direction(row);
 	> .#{$namespace}pagebody{
-		//reducing width on non-mobile by the width of the toolbar to eliminate scrolling on lessongs pages with long text blocks. -MJ
-		//width: 100%;
-		width: calc(100% - 14.2em);
+		width: 100%;
 		@media #{$phone}{
 		       width: 100%;
 		}		
