@@ -362,14 +362,14 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 /* padding-top 35 for one col, 25 for multiple, 20 in narrow screen */
 .column {
     margin: 7px 0;
-    padding: 15px 7px;
-    padding-top: 25px;
+    padding: 5px 7px;
+/*    padding-top: 25px; */
     list-style:none;
-    background-color: white;
+/*    background-color: white; */
 /*    -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
     border-radius: 7px; */
-    border: 1px solid #ddd;
+    border: 1px solid #bbb;
     display:inline-block;
     vertical-align: top;
 }
@@ -432,7 +432,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
     width: calc(200% / 2 - 17px) !important;
 }
 .cols1 {
-    padding-top:35px;
+    /* padding-top:35px; */
     width: calc(100% - 17px) !important;
 }
 /* this is to prevent the last column from going to a new
@@ -489,8 +489,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 }
 .colred {
    background-color: #fff0f0;
-   border-color: #600;
-   color: #4660000;
+   border-color: #c00;
+   color: #000;
 }
 .colred .commentDiv, .colred .studentContentTable, .colred .questionDiv .contentCol, .colred .checklistDiv, .colred .forumSummaryHeaderDiv, .colred .announcementsHeaderDiv .timeline-Header{
   background-color: #ffb3b3;
@@ -499,10 +499,9 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   color: black;
 }
 .colblue {
-   background-color: #f4f4ff;
    background-color: #e6f9ff;
-   border-color: #004;
-   color: #004;
+   border-color: #0089b3;
+   color: #000;
 }
 .colblue .commentDiv, .colblue .studentContentTable, .colblue .questionDiv .contentCol, .colblue .checklistDiv, .colblue .forumSummaryHeaderDiv, .colblue .announcementsHeaderDiv .timeline-Header{
   background-color: #b3d9ff;
@@ -513,8 +512,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 }
 .colgreen {
    background-color: #f6fff6;
-   border-color: #030;
-   color: #030;
+   border-color: #008000;
+   color: #000;
 }
 .colgreen .commentDiv, .colgreen .studentContentTable, .colgreen .questionDiv .contentCol, .colgreen .checklistDiv. .colgreen .forumSummaryHeaderDiv, .colgreen .announcementsHeaderDiv  .timeline-Header{
   background-color: #9fc;
@@ -523,9 +522,9 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   color: black;
 }
 .colyellow {
-   background-color: #ffffe8;
-   border-color: #840;
-   color: #4b2600;
+    background-color: rgb(255,249,229);
+    border-color: #cc9c00;
+    color: #000;
 }
 .colyellow .commentDiv, .colyellow .studentContentTable, .colyellow .questionDiv .contentCol, .colyellow .checklistDiv. colyellow .forumSummaryHeaderDiv, .colyellow .announcementsHeaderDiv .timeline-Header{
   background-color:  #ffd480
@@ -1689,7 +1688,7 @@ font-size: 12px;
   height: 30px;
 }
 .portletBody {
-  margin-top:2px;
+  margin-top: 3em;
 }
 .PagePicker {
   margin-top:12px;
