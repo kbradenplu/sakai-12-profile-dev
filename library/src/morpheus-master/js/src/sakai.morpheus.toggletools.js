@@ -34,4 +34,4 @@ portal.toggleMinimizeNav = function () {
 	}
 };
 
-$PBJQ("#toolsNav-collapse-toggle-li").on("click", portal.toggleMinimizeNav);
+$PBJQ("#toolsNav-toggle-li").on("click", portal.toggleMinimizeNav);
