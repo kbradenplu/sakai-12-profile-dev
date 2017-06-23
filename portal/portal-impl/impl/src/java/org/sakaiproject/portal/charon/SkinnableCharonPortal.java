@@ -1364,7 +1364,7 @@ public class SkinnableCharonPortal extends HttpServlet implements Portal
 		String userWarning = (String) s.getAttribute("userWarning");
 		if (StringUtils.isNotEmpty(userWarning)) {
 			headJs.append("<script type=\"text/javascript\">");
-			headJs.append("if ( window.self !== window.top ) {");
+			headJs.append("if ( window.self !== window.top && $PBJQ(\".ui-pnotify-container\").length > 0) {");
 			headJs.append(" setTimeout(function(){ window.top.portal_check_pnotify() }, 3000);");
 			headJs.append("}</script>");
 		}
