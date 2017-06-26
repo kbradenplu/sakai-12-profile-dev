@@ -1688,7 +1688,7 @@ font-size: 12px;
   height: 30px;
 }
 .portletBody {
-  margin-top: 3em;
+  margin-top: 2.5em;
 }
 .PagePicker {
   margin-top:12px;
@@ -2040,11 +2040,12 @@ nav.Mrphs-container--toolTitleNav .Mrphs-directUrl__dropDown .active {
 /* Column properties dialog */
 
 select#columnbackground {
-    margin: 1em 0;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
 }
 
 input#sectionTitle {
-    margin-bottom: 1em;
+    margin: 1em 0;
 }
 
 #column-dialog p.act {
