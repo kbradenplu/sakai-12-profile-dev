@@ -2713,6 +2713,18 @@ $(document).ready(function() {
 		};
 	    });
 
+	// PLU - This block compensates for default styling with no section borders
+		  $("div.editsection").hover(function(){
+		      $(this).parent().css("border-color", "#000");
+		      }, function(){
+		      $(this).parent().css("border-color", "");
+		  });
+		  $("span.addbottom").hover(function(){
+		      $(this).parent().css("border-color", "#000");
+		      }, function(){
+		      $(this).parent().css("border-color", "");
+		  });
+
 	// trap jquery close so we can clean up
 	$("[aria-describedby='addContentDiv'] .ui-dialog-titlebar-close")
 	    .click(closeDropdownc);
