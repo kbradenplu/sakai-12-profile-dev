@@ -130,14 +130,6 @@
         <script src="${pageSkinRepo}/${pageSkin}/js/morpheus.scripts.min.js$!{portalCDNQuery}"></script>
         <script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.core.min.js$!{portalCDNQuery}"></script>
 	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.buttons.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.callbacks.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.confirm.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.desktop.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.history.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.mobile.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.nonblock.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.reference.min.js$!{portalCDNQuery}"></script>
-	<script src="${pageWebjarsPath}/pnotify/2.1.0/pnotify.tooltip.min.js$!{portalCDNQuery}"></script>
         <script src="${pageScriptPath}jquery/qtip/jquery.qtip-latest.min.js$!{portalCDNQuery}"></script>
         <script src="${pageScriptPath}jquery/qtip/tutorial.js$!{portalCDNQuery}"></script>
         <script src="${pageWebjarsPath}cropper/2.3.2/dist/cropper.min.js$!{portalCDNQuery}"></script>
@@ -188,12 +180,8 @@
                         new PNotify({
                             title: '${rloader.getString("pnotify_notice")}',
                             text: data.error[i],
-                            type: 'notice',
-			    buttons: {
-			    	     closer: true,
-				     sticker: true
-			    }
-                        });
+                            type: 'notice'
+			    });
                     });
                 }
             });
