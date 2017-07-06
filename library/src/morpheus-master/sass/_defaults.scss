@@ -135,8 +135,8 @@ $error-background-color:    #f2dede !default;
 $error-color:               darken($error-background-color, 30%) !default;
 
 /* Swapped 'View As' view */
-$swapped-view-enabled: false !default;
-$swapped-view-primary: 		 #bf360c !default;
+$swapped-view-enabled:		 true !default;
+$swapped-view-primary: 		 #fbba37 !important;
 $swapped-view-text-color:	 #414141 !default;
 $swapped-view-sites-nav-background: $swapped-view-primary !default;
 
