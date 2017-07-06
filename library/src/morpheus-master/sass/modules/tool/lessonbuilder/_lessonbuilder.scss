@@ -106,8 +106,9 @@
                   width: 100%;
 		}	
 	}
-	
-	.#{$namespace}hierarchy--separator {
-		margin: 10px;
+
+	.#{$namespace}hierarchy--separator{
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
