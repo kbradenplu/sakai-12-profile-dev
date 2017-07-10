@@ -664,6 +664,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 
 .reordItemContainer {
      padding: 0px 20px 0px 30px;
+    min-height: 1.5em;
 }
 .reordItemContainerDesc {
     margin-top:5px;
