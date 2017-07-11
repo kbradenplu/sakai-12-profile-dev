@@ -159,7 +159,7 @@ public class FeedbackTool extends HttpServlet {
         request.setAttribute("siteExists", siteExists);
         setStringAttribute(request, "helpPagesUrl", sakaiProxy.getConfigString(Constants.PROP_HELPPAGES_URL, "/portal/help/main"));
 
-        String featureSuggestionUrl = sakaiProxy.getConfigString(Constants.PROP_SUGGESTIONS_URL, "");
+        String featureSuggestionUrl = sakaiProxy.getConfigString(Constants.PROP_SUGGESTIONS_URL, "https://forms.plu.edu/825");
         setStringAttribute(request, "featureSuggestionUrl", featureSuggestionUrl);
         String helpdeskUrl = sakaiProxy.getConfigString(Constants.PROP_HELPDESK_URL, "");
         setStringAttribute(request, "helpdeskUrl", helpdeskUrl);

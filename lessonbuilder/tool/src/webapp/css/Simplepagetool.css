@@ -374,65 +374,69 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 
 /* only up to 4 cols has been tuned */
 .cols9 {
-    width: calc(100$ / 9  - 17px) !important;
+    width: calc(100$ / 9 - 16px / 9) !important;
     margin-right: 2px !important;
 }
 [class~="cols9"][class~="double"] {
-    width: calc(200% / 9 - 17px) !important;
+    width: calc(200% / 9 - 16px / 9) !important;
 }
 .cols8 {
-    width: calc(100% / 8 - 17px) !important;
+    width: calc(100% / 8 - 14px / 8) !important;
     margin-right: 2px !important;
 }
 [class~="cols8"][class~="double"] {
-    width: calc(200% / 8 - 17px) !important;
+    width: calc(200% / 8 - 14px / 8) !important;
 }
 .cols7 {
-    width: calc(100% / 7 - 17px) !important;
+    width: calc(100% / 7 - 12px / 7) !important;
     margin-right: 2px !important;
 }
 [class~="cols7"][class~="double"] {
-    width: calc(200% / 7 - 17px) !important;
+    width: calc(200% / 7 - 12px / 7) !important;
 }
 .cols6 {
-    width: calc(100% / 6 - 17px) !important;
+    width: calc(100% / 6 - 10px / 6) !important;
     margin-right: 2px !important;
 }
 [class~="cols6"][class~="double"] {
-    width: calc(200% / 6 - 17px) !important;
+    width: calc(200% / 6 - 10px / 6) !important;
 }
 .cols5 {
-    width: calc(100% / 5 - 17px) !important;
+    width: calc(100% / 5 - 8px / 5) !important;
     margin-right: 2px !important;
 }
 [class~="cols5"][class~="double"] {
-    width: calc(200% / 5 - 17px) !important;
+    width: calc(200% / 5 - 8px / 5) !important;
 }
 .cols4 {
-    width: calc(100% / 4 - 17px) !important;
+    width: calc(100% / 4 - 6px / 4) !important;
     margin-right: 2px !important;
 }
 [class~="cols4"][class~="double"] {
-    width: calc(200% / 4 - 17px) !important;
+    width: calc(200% / 4 - 6px / 4) !important;
 }
 .cols3 {
-    width: calc(100% / 3 - 17px) !important;
+    width: calc(100% / 3 - 4px / 3) !important;
     margin-right: 2px !important;
 }
 [class~="cols3"][class~="double"] {
-    width: calc(200% / 3 - 17px) !important;
+    width: calc(200% / 3 - 4px / 3) !important;
 }
 .cols2 {
-    width: calc(100% / 2 - 17px) !important;
+    width: calc(100% / 2 - 1px) !important;
     margin-right: 2px !important;
 }
 [class~="cols2"][class~="double"] {
-    width: calc(200% / 2 - 17px) !important;
+    width: calc(200% / 2 - 1px) !important;
 }
 .cols1 {
-    /* padding-top:35px; */
-    width: calc(100% - 17px) !important;
+    /* width: calc(100% - 17px) !important; */
+    width: calc(100%) !important;
 }
+.cols1.editsection {
+    margin-top: -15px;
+}
+
 /* this is to prevent the last column from going to a new
    line if the calculation is a bit off. */
 .lastcol {
@@ -934,7 +938,10 @@ a.peer-eval-stats {
 #toolbar {
   margin: 0;
   margin-bottom:-10px;
+  margin-top: 13px;
+  margin-left: -14px;
   display: inline-block;
+  padding-bottom: 15px;
 }
 
 /* Dropdown Menu */
@@ -1444,7 +1451,7 @@ div.navIntraTool {
 /* our additions to the top menu */
 
 .top-icon:before {
-   margin-right: 5px;
+    /*margin-right: 5px;*/
 }
 #print-view {
    margin-right: 7px;
@@ -1466,9 +1473,9 @@ background-color:#eee;
 top:-5px;
 right:-8px;
 z-index: 15;
--webkit-border-radius: 3px;
+/*-webkit-border-radius: 3px;
 -moz-border-radius: 3px;
-border-radius: 3px;
+border-radius: 3px;*/
 border: solid #bbb 1px;
 padding:1px;
 }
@@ -1508,7 +1515,11 @@ border: none !important;
 background: none !important;
 }
 .sectionHeader {
-    padding: .5em;
+    line-height: normal;
+    padding: 0em;
+    margin: 20px 0 0 10px;
+    background: none;
+    
 }
 
 .sectionHeader .collapseIcon {
@@ -1560,7 +1571,7 @@ background: none !important;
 
 .collapsibleSectionHeader:hover {
     cursor: pointer;
-    background-color: #eee;
+    /*background-color: #eee;*/
 }
 
 .collapsibleSectionHeader:hover .toggleCollapse {
@@ -1573,16 +1584,19 @@ background: none !important;
    position:relative;
 }
 .editsection {
-   position:absolute;
-   top:-12px;
+    /*position:absolute;
+   top:-5px;
+   left: 3px;*/
+    margin-top: -10px;
+    margin-left: -4px;
 }
 .sectionedit {
    display:inline-block;
    background-color:#ddd;
    z-index: 15;
-   -webkit-border-radius: 3px;
+   /*-webkit-border-radius: 3px;
    -moz-border-radius: 3px;
-   border-radius: 3px;
+   border-radius: 3px;*/
    border: solid #bbb 1px;
    padding: 0px 5px 0px 5px ;
    font-size: 20px;
@@ -1594,8 +1608,8 @@ background: none !important;
 .addbottom {
    position:absolute;
    top: auto;
-   bottom:0px;
-   right:0px;
+   bottom:-5px;
+   right:3px;
 }
 .addbottom a {
    text-decoration: none;
@@ -1640,7 +1654,7 @@ li.resourceType .right-col {
  border:none;
 }
 .itemclass {
- margin-top:3.0em !important;
+ margin-top: 2.0em !important;
 }
 .add-comment-button span {
 font-size: 90%;
@@ -1685,6 +1699,11 @@ font-size: 12px;
 /* fit the actual height, so it doesn't overlap title */
 .Mrphs-toolTitleNav__button_container {
   height: 30px;
+  position: initial !important;
+  float: right !important;
+  margin-right: 10px;
+  margin-top: 7px;
+  margin-bottom: 5px;
 }
 .portletBody {
   margin-top: 2.5em;
@@ -1722,7 +1741,7 @@ div.portletBody[sakaiversion="12"] {
 .column {
   margin-left: 2px;
   margin-right: 2px;
-  padding-top: 20px;
+  padding-top: 5px;
 }
 .right-col {
   padding-left: 7px;
@@ -1876,7 +1895,7 @@ body > .portletBody {
 }
 /* put back default value if an instructor */
 .navIntraTool ~ div.itemclass {
-  margin-top: 3.0em !important;
+  margin-top: 0em !important;
 }
 .title-tools {
   float:none;

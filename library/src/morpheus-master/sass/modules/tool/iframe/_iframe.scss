@@ -1,10 +1,10 @@
 .#{$namespace}sakai-iframe {
 
-	@media #{$desktop}{
+	/*@media #{$desktop}{
 		.Mrphs-toolTitleNav__button_container{
 			top: -15px;
 		}
-	}
+	}*/
 
 }
 
@@ -15,6 +15,6 @@
 	}
 }
 
-.Mrphs-multipleTools .#{$namespace}sakai-iframe {
+/*.Mrphs-multipleTools .#{$namespace}sakai-iframe {
 	margin: -1em 0 0 0;
-}
+}*/

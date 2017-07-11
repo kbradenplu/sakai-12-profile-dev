@@ -121,9 +121,9 @@
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover table-striped" summary ="$tlang.getString('joinable.list.summary')" id="currentSites">
 					<tr>
-						<th id="checkbox" scope="col" class="screenOnly attach">
+						<!-- <th id="checkbox" scope="col" class="screenOnly attach">
 							<input title="$tlang.getString("mb.selectalltitle")" type="checkbox" name="selunselall" id="selunselallid"/>
-						</th>
+						</th> -->
 						<th id="worksite" scope="col" class="attach">
 							<a href="#toolLink("$action" "doToggle_sort")" title ="$tlang.getString('list.sortbytitle')">
 								$tlang.getString("gen.worksite")
@@ -142,7 +142,7 @@
 						#foreach ($site in $unjoinableSites)
 						#set ($rowCount =$rowCount + 1)
 							<tr>
-								<td headers="checkbox" class="screenOnly attach">
+								<!-- <td headers="checkbox" class="screenOnly attach">
 									#set($siteType=$site.Type)
 									## don't show unjoin link if (1) unjoin is disabled for all sites; (2) unjoin is disabled for current site type
 									#if(!$disableUnjoinSelection && !($!siteType && $!disableUnjoinSiteTypes.contains($!siteType)) && $SiteService.allowUnjoinSite($site.Id))
@@ -150,7 +150,7 @@
 										<input title="$tlang.getString('mb.unjointitle') $validator.escapeHtml($site.Title)" type="checkbox" id="check-$rowCount" name="itemReference" value="$validator.escapeUrl($site.Id)" class="joinable" onclick="utils.checkEnableUnjoin();" />
 										#set ($checkboxCount = $checkboxCount + 1)
 									#end
-								</td>
+								</td> -->
 
 								<th scope="row" headers="worksite" class="attach noWrap" id="mcstR-$rowCount">
 									<a href="$site.Url" target="_top" title="$tlang.getString('mb.gotosite') $validator.escapeHtml($site.Title)">$validator.escapeHtml($site.Title)</a>
@@ -170,8 +170,8 @@
 
 		#if( $checkboxCount > 0 )
 			<p class="act">
-				<input type="submit" id="unjoin" name="eventSubmit_doGoto_unjoinconfirm" value="$tlang.getString('mb.unjoin')" accesskey="s" disabled="disabled" onclick="SPNR.disableControlsAndSpin( this, null );" />
-				<input type="button" id="reset" name="reset" value="$tlang.getString('mb.clear')" accesskey="x" disabled="disabled" onclick="utils.clearSelections();" />
+				<!-- <input type="submit" id="unjoin" name="eventSubmit_doGoto_unjoinconfirm" value="$tlang.getString('mb.unjoin')" accesskey="s" disabled="disabled" onclick="SPNR.disableControlsAndSpin( this, null );" />
+				<input type="button" id="reset" name="reset" value="$tlang.getString('mb.clear')" accesskey="x" disabled="disabled" onclick="utils.clearSelections();" /> -->
 			</p>
 		#end
 

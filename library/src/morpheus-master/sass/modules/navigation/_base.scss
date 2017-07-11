@@ -136,7 +136,9 @@ body.is-logged-out{
 			padding: 0.65em;
 			text-decoration: none;
 			color: $primary-color-highContrast;
+			background: #fff;
 			line-height: 1em;
+			border: none;
 			&:focus, &:hover, &:active
 			{
 				text-decoration: underline;
@@ -555,9 +557,31 @@ body.is-logged-out{
 	}
 
 	.#{$namespace}loginUser{
-		padding: 0.9em 0.5em;
+		padding: 0 0.5em 0.9em 0.5em;
 		@media #{$phone}{
 			padding: 0em;
+		}
+
+		a{
+			//customization to make this look all buttony. -MJ
+			background: #000;
+			display: inline;
+                	padding-left: 0.7em;
+			padding-right: 0.7em;
+                	padding-top: 0.5em;
+                	padding-bottom: 0.5em;
+                	border: 1.5px solid #fbba37;
+			text-decoration: none;
+                	-webkit-border-radius: 0.5em;
+                	&:hover{
+				background: #000;
+                        	text-decoration: none;
+				color: $topNav-text-color;
+			}
+
+
+
+
 		}
 	}
 
@@ -763,7 +787,8 @@ body.is-logged-out{
 {
 	@include display-flex(flex);
 	padding-left: 0.5em;
-	background-color: $sites-nav-background;
+	//background-color: $sites-nav-background;
+	background-color: #000;
 	min-height: 52px;
 	padding: 4px 8px;
 }
@@ -1122,6 +1147,7 @@ body.is-logged-out{
 .#{$namespace}siteStatus{
 	&.is-unpublished{
 		margin-left:0em;
+		margin-bottom: 40px;
 		width: 100%;
 		padding: 3px;
 		color :$background-color-secondary;

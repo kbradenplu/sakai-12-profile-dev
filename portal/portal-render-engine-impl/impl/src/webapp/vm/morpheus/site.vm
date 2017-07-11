@@ -185,7 +185,7 @@
         </script>
 
         <script>
-        PNotify.prototype.options.styling = "jqueryui";
+	PNotify.prototype.options.styling = "jqueryui";
         function portal_check_pnotify() {
             ${d}PBJQ.getJSON( "/direct/portal/notify.json", function( data ) {
                 for(i=0; i<data.error.length; i++ ) {
@@ -194,7 +194,7 @@
                             title: '${rloader.getString("pnotify_notice")}',
                             text: data.error[i],
                             type: 'notice'
-                        });
+			    });
                     });
                 }
             });

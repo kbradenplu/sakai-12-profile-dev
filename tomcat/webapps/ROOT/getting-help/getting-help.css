@@ -1,0 +1,95 @@
+        
+html {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 0.8em;
+}
+
+body {
+  font-size: 1.1em;
+  padding: 0.5em;
+}
+
+p, h, li {
+  line-height: 150%;
+  max-width: 55em;
+}
+
+h2 {
+font-family: "Helvetica Neue", Arial, sans-serif;
+font-weight: normal;
+font-size: 1.875em;
+line-height: 1.5em;
+margin: 0.4em 0;
+  color: #e2a732;
+}
+
+h3 {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1.5625em;
+    line-height: 1.4em;
+    color: #666666;
+    margin: 0.7em 0;
+}
+
+h4 {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1.25em;
+    line-height: 1.5em;
+    margin: 1em 0; 
+    color: #777777;
+}
+
+h5 {
+font-family: "Helvetica Neue", Arial, sans-serif;
+font-weight: normal;
+font-size: 1.125em;
+line-height: 1.6667em;
+margin: 0;
+  color: #888;
+}
+
+div.fancybox-title {
+  background: #222;
+  color: white;
+  padding: 1em;
+}
+
+._plus {
+  display: inline-block;
+  width: 0px;
+}
+
+.chunk {
+  margin-bottom: 3em;
+  margin-right: 2em;
+}
+
+.chunk h4 {
+  margin-top: 0;
+}
+
+.chunk a.fancybox {
+  outline: none;
+}
+
+.chunk img {
+  border: 2px #333 solid;
+  outline: none;
+}
+
+
+.chunk span img {
+  border: none;
+  padding-right: 5px;
+}
+
+.chunk img:focus, .chunk img:hover, .chunk a.fancybox:focus img {
+  border-color: #e2a732;
+  outline: #e2a732 dashed thin;
+}
+
+.chunk span img:focus, .chunk span img:hover {
+  outline: none;
+}

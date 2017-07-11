@@ -22,6 +22,9 @@
 	@include flex-direction(row);
 	> .#{$namespace}pagebody{
 		width: 100%;
+		@media #{$phone}{
+		       width: 100%;
+		}		
 	}
 }
 
@@ -52,7 +55,7 @@
 #content {
 	@media #{$phone}{
 		margin: 0;
-		padding-top: 2em; // make way for the button container
+		padding-top: .25em; // make way for the button container
 	}
 }
 
@@ -65,17 +68,28 @@
 }
 
 .#{$namespace}container--footer{
-	background-color: $footer-background-color;
+	//background-color: $footer-background-color;
+	background-color: #333;
 	border-top: 1px solid $footer-border-color;
 }
 
 .#{$namespace}footer{
 	color: $footer-color;
-	padding: 0.8em;
+	padding-top: 0.8em;
+	padding-right: 0em;
+	padding-left: 0em;
+	padding-bottom: 0.8em;
 	font-size: 0.8em;
+	margin: 0;
 	#footer-links{
 		list-style: none;
-		padding: 0 0 0 0;
+		padding: .3em;
+		background-color: #fbba37;
+		text-align: center;
+		a{
+			color: #000;
+			padding: .5em;
+		}
 		li{
 			display: inline-block;
 		}

@@ -591,6 +591,9 @@ $(document).ready(function(){
 			#set ( $submissionType = $assignment.getContent().getTypeOfSubmission())
 			
 #if ($!assignment.isGroup())
+
+<p class="instruction">$tlang.getString('group.warning')</p>
+
 <h4>$tlang.getString("group.select.represent")</h4>
 		#if ($!groups)
                     #set ($size = 0)

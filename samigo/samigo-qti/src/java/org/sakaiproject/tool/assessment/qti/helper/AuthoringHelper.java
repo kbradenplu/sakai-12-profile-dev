@@ -87,6 +87,8 @@ import org.sakaiproject.tool.assessment.services.ItemService;
 import org.sakaiproject.tool.assessment.services.QuestionPoolService;
 import org.sakaiproject.tool.assessment.services.assessment.AssessmentService;
 import org.sakaiproject.tool.assessment.util.TextFormat;
+import org.sakaiproject.tool.api.Placement;
+import org.sakaiproject.site.api.Site;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -739,7 +741,15 @@ public class AuthoringHelper
       // Assessment Attachment
       exHelper.makeAssessmentAttachmentSet(assessment);
 
-      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
+      //assessment.getAssessmentAccessControl().setReleaseTo();
+
+      /*Placement p = ToolManager.getCurrentPlacement();
+      String c = p.getContext();
+      Site s = SiteService.getSite(c);*/
+      Site s = SiteService.getSite(siteId);
+      String siteTitle = s.getTitle();
+
+      //      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
       if(siteTitle != null && !siteTitle.equals(assessment.getAssessmentAccessControl().getReleaseTo())){
           assessment.getAssessmentAccessControl().setReleaseTo(siteTitle);
       }

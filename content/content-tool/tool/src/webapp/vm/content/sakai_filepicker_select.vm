@@ -165,6 +165,7 @@ $(document).ready(function() {
 						<tr>
 							<td headers="item">
 								<h4>
+
 									<span class="$att_item.iconClass" aria-hidden="true"></span>
 									<span class="sr-only">$!att_item.hoverText</span>
 									<a href="$att_item.accessUrl" target="_blank" title="$tlang.getString('gen.type'): $att_item.hoverText  [$tlang.getString('gen.newwin')]">$att_item.displayName</a>
@@ -172,7 +173,7 @@ $(document).ready(function() {
 							</td>
 							<td  headers="action">
 								<div class="itemAction">
-									<a href="#toolLinkParam("ResourcesAction" "doRemoveitem" "itemId=$validator.escapeUrl($att_item.id)")" title="$tlang.getString('att.remove')">$tlang.getString("att.remove")</a>
+									<a href="#toolLinkParam("ResourcesAction" "doRemoveitem" "itemId=$validator.escapeUrl($att_item.id)")" title="$tlang.getString('att.remove')" style="text-decoration:underline;">$tlang.getString("att.remove")</a>
 								</div>	
 							</td>
 						</tr>
@@ -295,10 +296,10 @@ $(document).ready(function() {
 									## if there is a copyright alert, show the alert page first
 									<a href="#" 
 									title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-									onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false">
+									onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false" >
 									#else
 									<a href="${item.accessUrl}" target="${item.target}"
-										title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+										title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:none;"
 									>
 								#end
 								<span class="$item.iconClass" aria-hidden="true"></span>
@@ -476,10 +477,10 @@ $(document).ready(function() {
 											## if there is a copyright alert, show the alert page first
 											<a href="#" 
 											title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false">
+											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false" style="text-decoration:none;">
 											#else
 											<a href="${item.accessUrl}" target="${item.target}"
-												title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+												title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:none;"
 											>
 										#end
 										<span class="$item.iconClass" aria-hidden="true"></span>
@@ -489,13 +490,13 @@ $(document).ready(function() {
 											## if there is a copyright alert, show the alert page first
 											<a href="#"
 											title="$tlang.getString('gen.copycomf') $tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
-											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false;">
+											onclick="openCopyrightWindow('${item.accessUrl}','copyrightAlertWindow','scrollbars=yes,menubar=yes,height=600,width=800,resizable=yes,toolbar=yes,location=yes,status=yes');return false;" tyle="text-decoration:underline;">
 												$validator.escapeHtml($item.name)
 											</a>
 											&#169;
 										#else
 											<a href="$item.accessUrl" target="$item.target"
-											title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]"
+											title="$tlang.getString('gen.type'): $item.hoverText  [$tlang.getString('gen.newwin')]" style="text-decoration:underline;"
 											>
 												$validator.escapeHtml($item.name)
 											</a>

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.sakaiproject.archive.api.ArchiveService;
 import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.Member;
 import org.sakaiproject.authz.api.Role;
@@ -54,6 +55,7 @@ import org.sakaiproject.calendar.api.Calendar;
 import org.sakaiproject.calendar.api.CalendarEdit;
 import org.sakaiproject.calendar.api.CalendarEvent;
 import org.sakaiproject.calendar.api.CalendarEventEdit;
+import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.entity.api.EntityProducer;
 import org.sakaiproject.entity.api.EntityTransferrer;
 import org.sakaiproject.entity.api.EntityTransferrerRefMigrator;
@@ -63,6 +65,7 @@ import org.sakaiproject.event.api.UsageSession;
 import org.sakaiproject.event.api.UsageSessionService;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.PermissionException;
+import org.sakaiproject.lti.api.LTIService;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
@@ -75,6 +78,7 @@ import org.sakaiproject.tool.api.Tool;
 import org.sakaiproject.user.api.PreferencesEdit;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserEdit;
+import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ArrayUtil;
 import org.sakaiproject.util.FormattedText;
 import org.sakaiproject.util.ResourceLoader;
@@ -5112,4 +5116,693 @@ public class SakaiScript extends AbstractWebService {
         return "success";
 
     }
+
+    /******************************/
+    /** Begin PLU Custom Methods **/
+    /******************************/
+
+    /**
+     * Add member to specified worksite group
+     *
+     * @param       sessionid       the id of a valid session
+     * @param       siteid          the id of the site that the group is in
+     * @param       groupid         the id of the group you want to add the user to
+     * @param       eid_list        comma-separated list of eid's for members to add
+     * @return      'success'       if successful/exception
+     *
+     * TODO: This is not returning false if it fails (ie if user isn't in site to begin with). SAK-15334
+     */
+    public String addListOfMembersToGroup( String sessionid, String siteid, String groupid, String eid_list )
+    {
+	Session session = establishSession(sessionid);
+        try
+	    {
+                Site site = siteService.getSite(siteid);
+                Group group = site.getGroup(groupid);
+                if ( group == null )
+		    throw new Exception("Could not find group with ID '" + groupid + "'.");
+
+                List<String> lEid = Arrays.asList(eid_list.split("\\s*,\\s*"));
+
+                for (String eid : lEid) {
+		    eid = eid.trim();
+		    // Check if user exists in Sakai.
+		    String userid = getInternalUserId(sessionid, eid);
+		    if (userid == "")
+			throw new Exception("No user defined in Sakai with eid '" + eid + "'.");
+		    Role r = site.getUserRole(userid);
+		    Member m = site.getMember(userid);
+		    group.addMember(userid, r != null ? r.getId() : "", m != null ? m.isActive() : true,    false);
+                }
+                siteService.save(site);
+	    }
+        catch (Exception e)
+	    {
+                String msg = "WS addMemberToGroup(): " + e.getClass().getName() + " : " + e.getMessage();
+                LOG.error(msg);
+                return msg;
+	    }
+        return "success";
+    }
+
+    /**
+     * Gets the user ID for a given eid.
+     *
+     * @param       sessionid       the sessionid of a valid session for a super user or the sessionid for the user making the request for their own user ID
+     * @param       eid                     the login username (ie jsmith26) of the user you want the user ID for
+     * @return                              the user ID (generally a UUID) for the user specified or an empty string ""
+     * @throws      Exception       if not a super user and the eid supplied does not match the eid of the session, if user does not exist
+     *
+     */
+    public String getInternalUserId(String sessionid, String eid) throws Exception
+    {
+        Session session = establishSession(sessionid);
+
+        //if eids don't match and we aren't a super user, abort
+        if(!StringUtils.equals(eid, session.getUserEid()) && !securityService.isSuperUser(session.getUserId())) {
+	    LOG.warn("WS getUserId(): Permission denied. Restricted to super users or own user.");
+	    //throw new AxisFault("WS getUserId(): Permission denied. Restricted to super users or own user.");
+	    throw new Exception("WS getUserId(): Permission denied. Restricted to super users or own user.");
+        }
+
+        try {
+	    LOG.warn("WS getInternalUserId called for '" + eid + "', returning '" + userDirectoryService.getUserId(eid) + "'.");
+	    return userDirectoryService.getUserId(eid);
+        } catch (Exception e) {
+	    LOG.warn("WS getInternalUserId() failed for user: " + eid);
+	    return "";
+        }
+    }
+
+    /**
+     * Add a comma-separated string of users to a site with a given role
+     *
+     * @param      sessionid       the id of a valid session
+     * @param      siteid          the id of the site to add the user to
+     * @param      eid_list        comma-separated list of login usernames (e.g., "jsmith26,hornersa") you want to add to the site
+     * @param      roleid          the id of the role to to give the user in the site
+     * @return                             success or exception message
+     *
+     * TODO: fix for if the role doesn't exist in the site, it is still returning success - SAK-15334
+     */
+    public String addListOfMembersToSiteWithRole(String sessionid, String siteid, String eid_list, String roleid) throws Exception
+    {
+        Session session = establishSession(sessionid);
+
+        try {
+	    Site site = siteService.getSite(siteid);
+	    List<String> lEid = Arrays.asList(eid_list.split("\\s*,\\s*"));
+
+	    for (String eid : lEid) {
+		eid = eid.trim();
+		// Check if user exists in Sakai.
+		if (! checkForUser(sessionid, eid))
+		    throw new Exception("No user defined in Sakai with eid '" + eid + "'.");
+		String userid = userDirectoryService.getUserByEid(eid).getId();
+		site.addMember(userid,roleid,true,false);
+	    }
+	    siteService.save(site);
+        }
+        catch (Exception e) {
+	    LOG.error("WS addListOfMembersToSiteWithRole(): " + e.getClass().getName() + " : " + e.getMessage());
+	    return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+    }
+
+    /**
+     * Get all members (both within and without groups) associated with a site
+     *
+     * @param      sessionid       the id of a valid session
+     * @param      siteid          the id of the site to add the user to
+     * @return                             XML string of members
+     *
+     */
+    public String getSiteMembership(String sessionid, String siteid) throws Exception
+    {
+        Session session = establishSession(sessionid);
+
+        try {
+	    Set<String> membershipInGroups = new HashSet<String>(); // Used to tally which members are in groups
+	    Site site = siteService.getSite(siteid);
+
+	    Document dom = Xml.createDocument();
+	    Node list = dom.createElement("list");
+	    dom.appendChild(list);
+
+	    for (Iterator itrGroup = site.getGroups().iterator(); itrGroup.hasNext();) {
+		Group group = (Group) itrGroup.next();
+
+		Node groupNode = dom.createElement("group");
+
+		Node groupId = dom.createElement("id");
+		groupId.appendChild(dom.createTextNode(group.getId()));
+
+		Node groupTitle = dom.createElement("title");
+		groupTitle.appendChild(dom.createTextNode(group.getTitle()));
+
+		Node groupDesc = dom.createElement("description");
+		groupDesc.appendChild(dom.createTextNode(group.getDescription()));
+
+		groupNode.appendChild(groupId);
+		groupNode.appendChild(groupTitle);
+		groupNode.appendChild(groupDesc);
+
+		Set<Member> groupMembers = group.getMembers();
+		if (groupMembers != null && ! groupMembers.isEmpty()) {
+		    Node membershipNode = dom.createElement("membership");
+		    for (Iterator itrMember = groupMembers.iterator(); itrMember.hasNext();) {
+			Member member = (Member) itrMember.next();
+			membershipInGroups.add(member.getUserId());
+			membershipNode.appendChild(createMemberNode(dom, member));
+		    }
+		    groupNode.appendChild(membershipNode);
+		}
+
+		list.appendChild(groupNode);
+	    }
+
+	    for (Iterator itrAllMembers = site.getMembers().iterator(); itrAllMembers.hasNext();) {
+		Member member = (Member) itrAllMembers.next();
+		if (! membershipInGroups.contains(member.getUserId())) {
+		    Node memberNode = createMemberNode(dom, member);
+		    list.appendChild(memberNode);
+		}
+	    }
+
+	    return Xml.writeDocumentToString(dom);
+        }
+        catch (Exception e) {
+	    LOG.error("WS getSiteMembership(): " + e.getClass().getName() + " : " + e.getMessage());
+	    return e.getClass().getName() + " : " + e.getMessage();
+        }
+    }
+
+    private Node createMemberNode(Document dom, Member member) {
+	Node memberNode = dom.createElement("member");
+
+	Node memberId = dom.createElement("id");
+	memberId.appendChild(dom.createTextNode(member.getUserId()));
+
+	Node memberEid = dom.createElement("eid");
+	memberEid.appendChild(dom.createTextNode(member.getUserEid()));
+
+	Node memberName = dom.createElement("name");
+	memberName.appendChild(dom.createTextNode(member.getUserDisplayId()));
+
+	Node memberRoleId = dom.createElement("roleid");
+	memberRoleId.appendChild(dom.createTextNode(member.getRole().getId()));
+
+	memberNode.appendChild(memberId);
+	memberNode.appendChild(memberEid);
+	memberNode.appendChild(memberRoleId);
+	memberNode.appendChild(memberName);
+
+	return memberNode;
+    }
+
+    /**
+     * Return XML document listing all sites user has read or write access based on their session id.
+     *
+     * @param       sessionid               the session id of a user who's list of sites you want to retrieve
+     * @return                                      xml or an empty list <list/>. The return XML format is below:
+     *<list>
+     *      <item>
+     *              <siteId>!admin</siteId>
+     *              <siteTitle>Administration Workspace</siteTitle>
+     *      </item>
+     *      <item>
+     *              ...
+     *      </item>
+     *      ...
+     *</list>
+     *
+     */
+    public String getAllSites(String sessionid) throws Exception
+    {
+        Session s = establishSession(sessionid);
+
+        try
+	    {
+                //check that ONLY admin is accessing this
+                if(!s.getUserId().equals(userDirectoryService.ADMIN_ID)) {
+		    LOG.warn("WS getAllSites() failed. Restricted to admin user.");
+		    throw new Exception("WS failed. Restricted to admin user.");
+                }
+
+                List allSites = siteService.getSites(SelectionType.ANY, null, null,
+						     null, SortType.TITLE_ASC, null);
+
+                if (allSites == null || allSites.size() == 0) {
+		    return "<list/>";
+                }
+
+
+                Document dom = Xml.createDocument();
+                Node list = dom.createElement("list");
+                dom.appendChild(list);
+
+                for (Iterator i = allSites.iterator(); i.hasNext();)
+		    {
+			Site site = (Site)i.next();
+                        Node item = dom.createElement("item");
+                        Node siteId = dom.createElement("siteId");
+                        siteId.appendChild( dom.createTextNode(site.getId()) );
+                        Node siteTitle = dom.createElement("siteTitle");
+                        siteTitle.appendChild( dom.createTextNode(site.getTitle()) );
+
+                        item.appendChild(siteId);
+                        item.appendChild(siteTitle);
+                        list.appendChild(item);
+		    }
+
+                return Xml.writeDocumentToString(dom);
+	    }
+        catch (Exception e)
+	    {
+                LOG.error("WS getSitesUserCanAccess(): " + e.getClass().getName() + " : " + e.getMessage());
+                return "<exception/>";
+	    }
+    }
+
+    public String getAllCourseInstructors(String sessionid) throws Exception
+    {
+        Session s = establishSession(sessionid);
+
+        try
+	    {
+                //check that ONLY admin is accessing this
+                if(!s.getUserId().equals(userDirectoryService.ADMIN_ID)) {
+		    LOG.warn("WS getAllCourseInstructors() failed. Restricted to admin user.");
+		    throw new Exception("WS failed. Restricted to admin user.");
+                }
+
+                List allCourseSites = siteService.getSites(SelectionType.ANY, "course", null,
+							   null, SortType.TITLE_ASC, null);
+
+                if (allCourseSites == null || allCourseSites.size() == 0) {
+		    return "<list/>";
+                }
+
+                Document dom = Xml.createDocument();
+                Node list = dom.createElement("list");
+                dom.appendChild(list);
+                HashMap<String, Set<String>> map = new HashMap<String, Set<String>>();
+
+                for (Iterator i = allCourseSites.iterator(); i.hasNext();)
+		    {
+                        Site site = (Site)i.next();
+                        Set<String> instructors_InternalIDs = site.getUsersHasRole("Instructor");
+                        for (Iterator j = instructors_InternalIDs.iterator(); j.hasNext();)
+			    {
+                                String userID = (String) j.next();
+                                if (! map.containsKey(userID))
+				    {
+                                        Set<String> setOfSites = new HashSet<String>();
+                                        setOfSites.add(site.getId());
+                                        map.put(userID, setOfSites);
+				    }
+                                else
+				    {
+                                        Set<String> setOfSites = (Set<String>) map.get(userID);
+                                        setOfSites.add(site.getId());
+				    }
+			    }
+		    }
+                for (Iterator k = map.keySet().iterator(); k.hasNext();)
+		    {
+                        String userID = (String) k.next();
+                        Set<String> setOfSites = (Set<String>) map.get(userID);
+                        String eid = null;
+                        try {
+			    eid = userDirectoryService.getUser(userID).getEid();
+                        }
+                        catch (UserNotDefinedException e) {
+			    LOG.warn("An invalid internal user id for an instructor '" + userID + "' is associated with the following sites: " + setOfSites.toString() + ".");
+			    e.printStackTrace();
+			    continue;
+                        }
+                        Node item = dom.createElement("item");
+                        Node instructorId = dom.createElement("eid");
+                        instructorId.appendChild( dom.createTextNode(eid) );
+
+                        Node sites = dom.createElement("sites");
+                        sites.appendChild(dom.createTextNode(setOfSites.toString()));
+
+                        item.appendChild(instructorId);
+                        item.appendChild(sites);
+                        list.appendChild(item);
+		    }
+                return Xml.writeDocumentToString(dom);
+	    }
+        catch (Exception e)
+	    {
+                LOG.error("WS getAllCourseInstructors(): " + e.getClass().getName() + " : " + e.getMessage());
+                e.printStackTrace();
+                return "<exception/>";
+	    }
+    }
+
+    /**
+     * Change the short description of a site
+     *
+     * @param       sessionid               the id of a valid session
+     * @param       siteid                  the id of the site you want to change the title of
+     * @param       shortDescription        the new description
+     * @return                              success or string containing error
+     * @throws      Exception
+     *
+     */
+    /*    public String changeSiteShortDescription( String sessionid, String siteid, String shortDescription) throws Exception
+    {
+        Session session = establishSession(sessionid);
+
+        try {
+
+	    Site siteEdit = null;
+	        siteEdit = siteService.getSite(siteid);
+		    siteEdit.setShortDescription(shortDescription);
+		        siteService.save(siteEdit);
+
+        }
+        catch (Exception e) {
+	    LOG.error("WS changeSiteShortDescription(): " + e.getClass().getName() + " : " + e.getMessage());
+	        return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+	}*/
+
+    /**
+     * Removes a member from a group in a given site
+     *
+     * @param       sessionid       the id of a valid session
+     * @param       siteid          the id of the site you want to remove the user from
+     * @param       eid                     the enterprise id of the user that you want to remove from site
+     * @param       groupid         the id of the group
+     * @return                              success or string containing error
+     * @throws      Exception
+     *
+     */
+    public String removeMemberFromGroup(String sessionid, String siteid, String eid, String groupid) throws Exception {
+
+	Session session = establishSession(sessionid);
+
+	try {
+	    Site site = siteService.getSite(siteid);
+	    String userid = userDirectoryService.getUserByEid(eid).getId();
+	    Group group = site.getGroup(groupid);
+	    group.removeMember(userid);
+	    siteService.save(site);
+	} catch (Exception e) {
+	    LOG.error("WS removeMemberFromGroup(): " + e.getClass().getName() + " : " + e.getMessage());
+	    return e.getClass().getName() + " : " + e.getMessage();
+	}
+	return "success";
+    }
+
+    /**
+     * Removes a group from a given site
+     *
+     * @param       sessionid       the id of a valid session
+     * @param       siteid          the id of the site you want to remove the group from
+     * @param       groupid         the id of the group
+     * @return                              success or string containing error
+     * @throws      Exception
+     *
+     */
+    public String removeGroupFromSite(String sessionid, String siteid, String groupid) throws Exception {
+
+	Session session = establishSession(sessionid);
+
+	try {
+	    Site site = siteService.getSite(siteid);
+	    Group group = site.getGroup(groupid);
+	    site.removeGroup(group);
+	    siteService.save(site);
+	} catch (Exception e) {
+	    LOG.error("WS removeGroupFromSite(): " + e.getClass().getName() + " : " + e.getMessage());
+	    return e.getClass().getName() + " : " + e.getMessage();
+	}
+	return "success";
+    }
+
+    /**
+     * Gets the site ID for a given tool ID. Useful for identifying a site from an bug report email
+     * which usually provides the ID for the tool, but not the site in which an exceeption occurred.
+     *
+     * @param       sessionid       the sessionid of a valid session for a super user
+     * @param       tooid           a tool ID for a tool used on a particular site
+     * @return                              the site ID containing the tool in question. Otherwise, returns null.
+     * @throws      Exception       if not a super user
+     *
+     */
+
+    public String getSiteIdFromToolId(String sessionid, String toolid) throws Exception
+    {
+        String siteid = null;
+        Session s = establishSession(sessionid);
+
+        try
+	    {
+                //check that ONLY admin is accessing this
+                if(!s.getUserId().equals(userDirectoryService.ADMIN_ID)) {
+		    LOG.warn("WS getAllSites() failed. Restricted to admin user.");
+		    throw new Exception("WS failed. Restricted to admin user.");
+                }
+                ToolConfiguration toolConfig = siteService.findTool(toolid);
+                String toolTitle = toolConfig.getTitle();
+                siteid = toolConfig.getContainingPage().getSiteId();
+                siteid += " [Tool Title: '" + toolTitle + "'; Tool: '" + toolConfig.getTool().getId() + "']";
+	    }
+        catch (Exception e)
+	    {
+                LOG.error("WS getSiteIdFromToolId(): " + e.getClass().getName() + " : " + e.getMessage());
+	    }
+
+        return siteid;
+    }
+
+    public String addTurningPointCloudToSite(String sessionid, String ltiId, String siteId) throws Exception
+    {
+        String result = null;
+        Session s = establishSession(sessionid);
+
+        try {
+            //check that ONLY super user's are accessing this
+            if(! securityService.isSuperUser(s.getUserId())) {
+                String msg = "WS addTurningPointCloudToSite: Permission denied. Restricted to super users.";
+                throw new Exception(msg);
+            }
+
+            Site site = siteService.getSite(siteId);
+            String type = site.getType();
+
+            // We cannot add TT tool to non-course sites.
+            if (! type.equalsIgnoreCase("course"))
+                throw new Exception("WS addTurningPointCloudToSite: Must be a course site.");
+
+            // Check TT tool
+            boolean isTurningTechToolPresent = true;
+            String tt_registration = "sakai.turningtool";
+            Collection<ToolConfiguration> col_tt = site.getTools(tt_registration);
+            if ((col_tt == null) || (col_tt.size() == 0))
+                isTurningTechToolPresent = false;
+            else if (col_tt.size() > 1)
+                throw new Exception("WS addTurningPointCloudToSite: More than one Turning Technologies tool present in site.");
+
+            if (! isTurningTechToolPresent) {
+                String tt = "TurningTechnologies";
+                // TODO: Check for failure and throw exception?
+                String r1 = this.addNewPageToSite(sessionid, siteId, tt, 0);
+                String r2 = this.addNewToolToPage(sessionid, siteId, tt, tt, tt_registration, "0,0");
+
+                // Refresh the site object
+                site = siteService.getSite(siteId);
+            }
+
+            // Is tt tool page hidden? - See SitePageEditHanlder.pageVisibilityHelper in site-manage
+            // If visible, then hide this tool because the TT tool is irrelevant to students.
+            col_tt = site.getTools(tt_registration);
+            if (col_tt.size() != 1)
+                throw new Exception("WS addTurningPointCloudToSite: One Turning Technologies tool should now be present in the site.");
+            Iterator<ToolConfiguration> iterator = col_tt.iterator();
+            ToolConfiguration tc = iterator.next();
+            Properties placeConfig = tc.getPlacementConfig();
+            String PORTAL_VISIBLE = "sakai-portal:visible";
+            String visibility = placeConfig.getProperty(PORTAL_VISIBLE);
+
+            if (visibility == null || "true".equalsIgnoreCase(visibility)) {
+                placeConfig.setProperty(PORTAL_VISIBLE, "false");
+                tc.save();
+                siteService.save(site);
+            }
+            // Check if TPC external tool exists in site
+            String tpc_title = "Turning Account";
+            boolean isTurningPointCloudToolPresent = false;
+            Collection<ToolConfiguration> col_tpc = site.getTools("sakai.web.168");
+            if (! (col_tpc == null || col_tt.size() == 0)) {
+                Iterator<ToolConfiguration> itr = col_tpc.iterator();
+                while (itr.hasNext()) {
+                    tc = itr.next();
+                    if (tpc_title.equals(tc.getTitle())) {
+                        isTurningPointCloudToolPresent = true;
+                        break;
+                    }
+                }
+            }
+
+            if (! isTurningPointCloudToolPresent) {
+                // Add TPC tool from the admin External Tools helper
+                Properties prop = new Properties();
+                prop.setProperty("tool_id", ltiId);
+                prop.setProperty("SITE_ID", siteId);
+
+		LTIService ltiService = (LTIService) ComponentManager.get(LTIService.class.getName());
+                Object retval = ltiService.insertToolContent(null, ltiId, prop, "!admin");
+                if (retval instanceof String) {
+                    return "ERROR: " + (String) retval;
+                }
+
+                String id = ((Long) retval).toString();
+                //SAK-32360 ltiservice always requires siteID
+		retval = ltiService.insertToolSiteLink(id, tpc_title, siteId);
+            }
+
+            // TODO: Check if ltiTool already has been mapped to this site.
+            // (i.e., look for tool_id, SITE_ID entry in lti_content)
+
+            result = "Success";
+        }
+        catch (Exception e)
+	    {
+                e.printStackTrace();
+                LOG.error("WS addTurningPointCloudToSite(): " + e.getClass().getName() + " : " + e.getMessage());
+	    }
+
+        if (result != null)
+            return result;
+        else
+            return "Failed";
+    }
+
+    public String archiveSite(String sessionId, String siteId) throws Exception {
+	Session s = establishSession(sessionId);
+
+        if(! securityService.isSuperUser(s.getUserId())) {
+            String msg = "WS archiveSite: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
+
+	ArchiveService archiveService = (org.sakaiproject.archive.api.ArchiveService) ComponentManager.get(org.sakaiproject.archive.api.ArchiveService.class);
+
+        return archiveService.archive(siteId);
+    }
+
+    public String importSite(String sessionId, String siteId, String fileId) throws Exception {
+	Session s = establishSession(sessionId);
+
+        if(! securityService.isSuperUser(s.getUserId())) {
+            String msg = "WS importSite: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
+
+	ArchiveService archiveService = (org.sakaiproject.archive.api.ArchiveService) ComponentManager.get(org.sakaiproject.archive.api.ArchiveService.class);
+
+        return archiveService.merge(fileId, siteId, null);
+    }
+
+    /**
+     * Remove a page from a site
+     *
+     * @param sessionid the id of a valid session
+     * @param siteid    the id of the site to remove the page from
+     * @param pagetitle the title of the page to remove
+     * @return success or exception message
+     * <p/>
+     * TODO: fix for if the page title is blank it removes nothing and is still returning success - SAK-15334\
+     * TODO: fix for ConcurrentModficationException being thrown - SAK-15337. Is this because it removes via pagetitle but can allow multiple page titles of the same name?
+    */
+    @WebMethod
+    @Path("/removePageFromSite")
+    @Produces("text/plain")
+    @GET
+    public String removeSecondPageFromSiteWithTitle(
+				     @WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,
+				     @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,
+				     @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+        Session session = establishSession(sessionid);
+
+        try {
+	    boolean firstFound = false;
+	    Site siteEdit = null;
+	    siteEdit = siteService.getSite(siteid);
+	    SitePage toRemove = null;
+	    List pageEdits = siteEdit.getPages();
+	    Iterator i = pageEdits.iterator();
+	    while (i.hasNext() && toRemove == null) {
+		SitePage pageEdit = (SitePage) i.next();
+		if (pageEdit.getTitle().equals(pagetitle)) {
+		    if (firstFound) {
+			toRemove = pageEdit;
+		    } else {
+			firstFound = true;
+		    }
+		}
+	    }
+
+	    siteEdit.removePage(toRemove);
+	    siteService.save(siteEdit);
+	    
+	    /*
+            Site siteEdit = null;
+            siteEdit = siteService.getSite(siteid);
+            ArrayList remPages = new ArrayList();
+            List pageEdits = siteEdit.getPages();
+            for (Iterator i = pageEdits.iterator(); i.hasNext(); ) {
+                SitePage pageEdit = (SitePage) i.next();
+                if (pageEdit.getTitle().equals(pagetitle)) {
+                    remPages.add(pageEdit);
+                }
+            }
+
+            for (Iterator i = remPages.iterator(); i.hasNext(); ) {
+                SitePage pageEdit = (SitePage) i.next();
+                siteEdit.removePage(pageEdit);
+            }
+
+            siteService.save(siteEdit);
+	    */
+
+        } catch (Exception e) {
+            LOG.error("WS removePageFromSite(): " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+    }
+
+    public String removeFirstPageFromSiteWithTitle(@WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,						      @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,							         @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+        Session session = establishSession(sessionid);
+
+        try {
+            Site siteEdit = null;
+            siteEdit = siteService.getSite(siteid);
+            SitePage toRemove = null;
+            List pageEdits = siteEdit.getPages();
+            Iterator i = pageEdits.iterator();
+            while (i.hasNext() && toRemove == null) {
+                SitePage pageEdit = (SitePage) i.next();
+                if (pageEdit.getTitle().equals(pagetitle)) {
+		    toRemove = pageEdit;
+                }
+            }
+
+            siteEdit.removePage(toRemove);
+            siteService.save(siteEdit);
+        } catch (Exception e) {
+            LOG.error("WS removePageFromSite(): " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+    }
+
 }
