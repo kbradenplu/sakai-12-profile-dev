@@ -5108,6 +5108,7 @@ public class SimplePageBean {
 		return false;
 	}
 		
+    // A fix for LSNBLDR-798
     private boolean arePageItemsComplete(long pageId) {
 
 	int sequence = 1;

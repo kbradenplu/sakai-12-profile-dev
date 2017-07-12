@@ -434,8 +434,9 @@
 			  <span rsf:id="section2" class="sectionedit sectionedit2"><a role="button" aria-haspopup="dialog" aria-controls="column-dialog" rsf:id="section3" href="#" class="columnopen"><span aria-hidden="true" class="fa-columns fa-edit-icon sectioneditfont"></span></a></span>
 			  </div>
 			<span rsf:id="addbottom" class="sectionedit addbottom"><a role="button" aria-haspopup="dialog" aria-controls="addContentDiv" rsf:id="addbottom2" class="add-bottom" href="#" ><span aria-hidden="true" class="fa-plus fa-edit-icon plus-edit-icon"></span></a></span>
-                        <ul class="indent mainList" rsf:id="itemTable:" border="0" style="z-index: 1;" role="list" aria-labelledby="itemContainer::maintablelabel">
-                <li rsf:id="item:" id="item" role="listitem" class="item"><span style="display:none" rsf:id="itemid" class="itemid"></span><span style="display:none" rsf:id="pageid" class="pageid"></span>
+
+                        <div class="indent mainList" rsf:id="itemTable:" border="0" style="z-index: 1;" role="list" aria-labelledby="itemContainer::maintablelabel">
+                <div rsf:id="item:" id="item" role="listitem" class="item"><span style="display:none" rsf:id="itemid" class="itemid"></span><span style="display:none" rsf:id="pageid" class="pageid"></span>
                     <div rsf:id="group-td" aria-hidden="true" class="group-col"><div><a href="#" class="usebutton" onclick="return false" rsf:id="group-link"><span rsf:id="group-icon"></span></a></div></div>
                     <div rsf:id="item-td" class="right-col">
                         <div class="statusCol">
@@ -926,8 +927,8 @@
                         <span style="display:none" rsf:id="questionCorrectText" class="questionCorrectText"></span>
                         <span style="display:none" rsf:id="questionIncorrectText" class="questionIncorrectText"></span>
                     </div>
-                </li>
-            </ul>
+                </div>
+            </div>
 		    <script type="text/javascript">
 		    // to avoid flickering, process buttons in this item now
 		    $('.usebutton').button({text:true});
@@ -1871,7 +1872,7 @@
 
 			<div id="delete-confirm" class="controlsPanel lessonsDialog">
 			  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 0 0;"></span>
-			    <p id="delete-confirm-message">Delete ok?</p></p>
+			    <span id="delete-confirm-message">Delete ok?</span></p>
 			</div>
 	
 			<div id="student-dialog" rsf:id="student-dialog" class="lessonsDialog">
@@ -2187,11 +2188,7 @@
                 <input type="hidden" name="columnitem" id="columnitem" />
 		<div>
                   <span>
-                    <input type="checkbox" id="columndouble" />
-                    <label for="columndouble"><span rsf:id="msg=simplepage.columndouble"></span></label><br />
-		    
-                    <input type="checkbox" id="columnsplit" />
-                    <label for="columnsplit" rsf:id="msg=simplepage.columnsplit"></label><br />
+                    <label for="columnbackground" rsf:id="msg=simplepage.columnbackground"></label>
 		    <select id="columnbackground">
 		      <option value="none" id="columnnone"><span rsf:id="msg=simplepage.columnnone">none</span></option>
 		      <option value="trans" id="columntrans"><span rsf:id="msg=simplepage.columntrans">transparent</span></option>
@@ -2201,9 +2198,14 @@
 		      <option value="green" id="columngreen"><span rsf:id="msg=simplepage.columngreen">green</span></option>
 		      <option value="yellow" id="columnyellow"><span rsf:id="msg=simplepage.columnyellow">yellow</span></option>
 		    </select>
-                    <label for="columnbackground" rsf:id="msg=simplepage.columnbackground"></label><br />
-
                     <br />
+
+                    <input type="checkbox" id="columndouble" />
+                    <label for="columndouble"><span rsf:id="msg=simplepage.columndouble"></span></label><br />
+		    
+                    <input type="checkbox" id="columnsplit" />
+                    <label for="columnsplit" rsf:id="msg=simplepage.columnsplit"></label><br />
+
                     <label for="sectionTitle" rsf:id="msg=simplepage.sectionTitle"></label>
                     <input type="text" id="sectionTitle" /><br />
 

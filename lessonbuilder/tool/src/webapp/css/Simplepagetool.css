@@ -22,8 +22,13 @@
 }
 
 .ui-dialog label {
-   padding-left: 0.5em;
    font-weight: normal;
+   padding-right: 0.5em;
+}
+
+.ui-dialog input[type="checkbox"] + label {
+    padding-right: 0;
+    padding-left: 0.5em;
 }
 
 /* end override */
@@ -357,14 +362,12 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 /* padding-top 35 for one col, 25 for multiple, 20 in narrow screen */
 .column {
     margin: 7px 0;
-    padding: 15px 7px;
-    padding-top: 5px;
+    padding: 5px 7px;
     list-style:none;
-    background-color: white;
-    /*-webkit-border-radius: 7px;
+/*    -webkit-border-radius: 7px;
     -moz-border-radius: 7px;
-    border-radius: 7px;*/
-    border: 1px solid #666;
+    border-radius: 7px; */
+    border: 1px solid transparent;
     display:inline-block;
     vertical-align: top;
 }
@@ -427,7 +430,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
     width: calc(200% / 2 - 1px) !important;
 }
 .cols1 {
-    /*padding-top:10px;*/
+    /* width: calc(100% - 17px) !important; */
     width: calc(100%) !important;
 }
 .cols1.editsection {
@@ -450,18 +453,18 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   padding-right: 7px;
 }
 
-.split ul {
+.split .mainList {
     -webkit-column-count: 2;
     -moz-column-count: 2;
     column-count: 2;
-}
+} 
 .split .edit-col {
     right:0px;
 }
 
 
 .coltrans {
-   border-color: transparent;
+    border-color: #bbb;
 }
 /* 
    Any changes shoud be checked to make sure they have enough
@@ -488,8 +491,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 }
 .colred {
    background-color: #fff0f0;
-   border-color: #600;
-   color: #4660000;
+   border-color: #c00;
+   color: #000;
 }
 .colred .commentDiv, .colred .studentContentTable, .colred .questionDiv .contentCol, .colred .checklistDiv, .colred .forumSummaryHeaderDiv, .colred .announcementsHeaderDiv .timeline-Header{
   background-color: #ffb3b3;
@@ -498,10 +501,9 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   color: black;
 }
 .colblue {
-   background-color: #f4f4ff;
    background-color: #e6f9ff;
-   border-color: #004;
-   color: #004;
+   border-color: #0089b3;
+   color: #000;
 }
 .colblue .commentDiv, .colblue .studentContentTable, .colblue .questionDiv .contentCol, .colblue .checklistDiv, .colblue .forumSummaryHeaderDiv, .colblue .announcementsHeaderDiv .timeline-Header{
   background-color: #b3d9ff;
@@ -512,8 +514,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 }
 .colgreen {
    background-color: #f6fff6;
-   border-color: #030;
-   color: #030;
+   border-color: #008000;
+   color: #000;
 }
 .colgreen .commentDiv, .colgreen .studentContentTable, .colgreen .questionDiv .contentCol, .colgreen .checklistDiv. .colgreen .forumSummaryHeaderDiv, .colgreen .announcementsHeaderDiv  .timeline-Header{
   background-color: #9fc;
@@ -522,9 +524,9 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   color: black;
 }
 .colyellow {
-   background-color: #ffffe8;
-   border-color: #840;
-   color: #4b2600;
+    background-color: rgb(255,249,229);
+    border-color: #cc9c00;
+    color: #000;
 }
 .colyellow .commentDiv, .colyellow .studentContentTable, .colyellow .questionDiv .contentCol, .colyellow .checklistDiv. colyellow .forumSummaryHeaderDiv, .colyellow .announcementsHeaderDiv .timeline-Header{
   background-color:  #ffd480
@@ -538,33 +540,33 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .columnopen, .addbottom {
   text-decoration: none;
 }
-.mainList li {
+.mainList div.item {
     position: relative;
 }
-.mainList li.canEdit > div.edit-col {
+.mainList div.canEdit > div.edit-col {
     vertical-align:top;
     padding-top: 0.35em;
     padding-left: 0;
     z-index:4
 }
-.mainList li.canEdit > div.edit-col {
+.mainList div.canEdit > div.edit-col {
     display: inline-block;
 }
-.mainList li.question, .mainList li.studentContentType  {
+.mainList div.question, .mainList div.studentContentType  {
     margin-top: 10px;
     margin-bottom: 20px;
 }
-.mainList li.commentsType {
+.mainList div.commentsType {
     margin-top: 10px;
     margin-bottom: 0px;
 }
-.mainList li.textType, .mainList li.multimediaType, .mainList li.checklistType {
+.mainList div.textType, .mainList div.multimediaType, .mainList div.checklistType {
     margin-top: 10px;
     margin-bottom: 10px;
 } 
-.mainList li.question .multipleChoiceAnswer {
+.mainList div.question .multipleChoiceAnswer {
 }
-.mainList li.question .multipleChoiceForm input.bold {
+.mainList div.question .multipleChoiceForm input.bold {
 }
 .multipleChoiceAnswer label {
   margin-left: 5px;
@@ -578,17 +580,17 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .questionStatusText {
 }
 .mainList .textbox ul {
-    display: inline;
+
 }
-.mainList li .textbox {
+.mainList div.item .textbox {
 
 }
 /*maybe a universal selector, instead of a p*/
-.mainList li .textbox p:first-child{
+.mainList div.item .textbox p:first-child{
     margin-top:0;
 }
 /*maybe a universal selector, instead of a p*/
-.mainList li .textbox p:last-child{
+.mainList div.item .textbox p:last-child{
     margin-bottom:0;
 }
 
@@ -666,6 +668,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 
 .reordItemContainer {
      padding: 0px 20px 0px 30px;
+    min-height: 1.5em;
 }
 .reordItemContainerDesc {
     margin-top:5px;
@@ -1703,7 +1706,7 @@ font-size: 12px;
   margin-bottom: 5px;
 }
 .portletBody {
-  margin-top:2px;
+  margin-top: 2.5em;
 }
 .PagePicker {
   margin-top:12px;
@@ -1744,11 +1747,12 @@ div.portletBody[sakaiversion="12"] {
   padding-left: 7px;
   padding-right: 7px;
 }
-.split ul {
+
+.split .mainList {
     -webkit-column-count: 1;
     -moz-column-count: 1;
     column-count: 1;
-}
+} 
 /* with narrow screen, don't use multiple columns */
 .cols1, .cols2, .cols3, .cols4, .cols5, .cols6, .cols7, .cols8, .cols9, 
 [class~="cols9"][class~="double"],
@@ -1835,7 +1839,7 @@ span.nextprev {
   font-size:16px;
   font-family:FontAwesome;
 }
-.mainList li:hover.canEdit {
+.mainList div:hover.canEdit {
     background-color: #eee;
 }
 .peer-eval-row .newPeerCell {
@@ -2049,4 +2053,21 @@ nav.Mrphs-container--toolTitleNav .Mrphs-directUrl__dropDown .active {
 
 .top-next-prev .nextprev.next {
     float: right;
+}
+
+/* Column properties dialog */
+
+select#columnbackground {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
+
+input#sectionTitle {
+    margin: 1em 0;
+}
+
+#column-dialog p.act {
+    margin-top: 0.25em;
+    margin-bottom: 0em;
+    padding-bottom: 0em;
 }

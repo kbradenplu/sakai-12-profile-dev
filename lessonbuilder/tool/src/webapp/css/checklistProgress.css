@@ -31,6 +31,7 @@ table.checklistProgressTable thead tr .header {
     background-repeat: no-repeat;
     background-position: right center;
     cursor: pointer;
+    min-width: 3em;
 }
 
 table.checklistProgressTable tbody td {
@@ -49,6 +50,7 @@ table.checklistProgressTable thead tr .headerSortUp {
 
 table.checklistProgressTable thead tr .headerSortDown {
     background-image: url(../images/desc.gif);
+    min-width: 6.5em;
 }
 
 td.checkedOff {
