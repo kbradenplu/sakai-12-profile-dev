@@ -26,8 +26,8 @@ sakai.editor.enableResourceSearch = false;
 
 sakai.editor.editors.ckeditor = sakai.editor.editors.ckeditor || {} ;
 
-//get path of directory ckeditor 
-var basePath = "/library/editor/ckextraplugins/"; 
+//get path of directory ckeditor
+var basePath = "/library/editor/ckextraplugins/";
 var webJars = "/library/webjars/"
 
 // Please note that no more parameters should be added to this signature.
@@ -140,7 +140,28 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         ],
         toolbar_Full:
         [
-            ['About'],
+
+            ['Source','-','Templates','Print'],
+            // Uncomment the next line and comment the following to enable the default spell checker.
+            // Note that it uses spellchecker.net, displays ads and sends content to remote servers without additional setup.
+            //['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
+            ['Cut','Copy','Paste','PasteText','SelectAll','RemoveFormat'],
+            ['Undo','Redo','-','Find','Replace'],
+            ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+            ['NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv'],
+            '/',
+	    //['atd-ckeditor'],
+            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','TextColor','BGColor'],
+            //['BidiLtr', 'BidiRtl' ],
+            ['Link','Unlink','Anchor'],
+            (sakai.editor.enableResourceSearch
+                ? ['AudioRecorder','ResourceSearch', 'Image','Youtube','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor','FontAwesome']
+                : ['AudioRecorder','Image','Youtube','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor']),
+            '/',
+            ['Styles','Format','Font','FontSize'],
+            ['Maximize', 'ShowBlocks','A11ychecker','-','About']
+
+/*            ['About'],
             ['Source','-','Templates'],
             // Uncomment the next line and comment the following to enable the default spell checker.
             // Note that it uses spellchecker.net, displays ads and sends content to remote servers without additional setup.
@@ -155,13 +176,20 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             ['BidiLtr', 'BidiRtl' ],
             ['Link','Unlink','Anchor'],
             (sakai.editor.enableResourceSearch
-                ? ['AudioRecorder','ResourceSearch', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']
-                : ['AudioRecorder','Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']),
+                ? ( sakai.editor.contentItemUrl
+                    ? ['ContentItem', 'AudioRecorder','ResourceSearch', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']
+                    : ['AudioRecorder','ResourceSearch', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']
+                  )
+		: ( sakai.editor.contentItemUrl
+                    ? ['ContentItem', 'AudioRecorder', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']
+                    : ['AudioRecorder', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar','fmath_formula']
+                  )
+            ),
             '/',
             ['Styles','Format','Font','FontSize'],
             ['TextColor','BGColor'],
             ['Maximize', 'ShowBlocks']
-            ,['A11ychecker']
+            ,['A11ychecker'] */
         ],
         toolbar: 'Full',
         resize_dir: 'both',
@@ -209,15 +237,19 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             CKEDITOR.plugins.addExternal('movieplayer',basePath+'movieplayer/', 'plugin.js');
             CKEDITOR.plugins.addExternal('fmath_formula',basePath+'fmath_formula/', 'plugin.js');
             CKEDITOR.plugins.addExternal('audiorecorder',basePath+'audiorecorder/', 'plugin.js');
-            CKEDITOR.plugins.addExternal('image2',basePath+'image2/', 'plugin.js');
+	    //CKEDITOR.plugins.addExternal('contentitem',basePath+'contentitem/', 'plugin.js');
+            //CKEDITOR.plugins.addExternal('image2',basePath+'image2/', 'plugin.js');
             CKEDITOR.plugins.addExternal('sakaipreview',basePath+'sakaipreview/', 'plugin.js');
             //Autosave has a dependency on notification
             CKEDITOR.plugins.addExternal('autosave',webJars+'autosave/8541f541d9985cfd0859c7d8eb6be404afe95a2d/', 'plugin.js');
             CKEDITOR.plugins.addExternal('wordcount',webJars+'wordcount/4897cb23a9f2ca7fb6b792add4350fb9e2a1722c/', 'plugin.js');
             CKEDITOR.plugins.addExternal('notification',basePath+'notification/', 'plugin.js');
             // Accessibility checker has a dependency on balloonpanel
-            CKEDITOR.plugins.addExternal('balloonpanel',webJars+'balloonpanel/4.6.2/', 'plugin.js');
-            CKEDITOR.plugins.addExternal('a11ychecker',webJars+'a11ychecker/1.1.0/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('balloonpanel',basePath+'balloonpanel/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('a11ychecker',basePath+'a11ychecker/', 'plugin.js');
+	    CKEDITOR.plugins.addExternal('youtube',basePath+'youtube/', 'plugin.js');
+	    CKEDITOR.plugins.addExternal('html5audio',basePath+'html5audio/', 'plugin.js');
+
             /*
                To enable after the deadline uncomment these two lines and add atd-ckeditor to toolbar
                and to extraPlugins. This also needs extra stylesheets.
@@ -234,7 +266,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //ckconfig.extraPlugins+="atd-ckeditor,";
             //ckconfig.contentsCss = [basePath+'atd-ckeditor/atd.css'];
 
-            ckconfig.extraPlugins+="sakaipreview,image2,audiorecorder,movieplayer,wordcount,fmath_formula,autosave,notification${ckeditor-a11y-extra-plugins}";
+            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,autosave,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio";
 
             // Load FontAwesome CSS in case a user wants to manually add FA markup
             ckconfig.contentsCss = [webJars+'fontawesome/4.7.0/css/font-awesome.min.css'];

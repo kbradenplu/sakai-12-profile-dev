@@ -82,6 +82,7 @@ h1{
 
 h2{
 	font-size: #{$default-font-size + 6};
+	margin-top: 1.25em;
 }
 
 h3{
@@ -176,7 +177,7 @@ s, strike, del {
 
 img {
 	max-width: 100%;
-	height: auto;
+	height: auto !important;
 }
 
 video, embed, object, iframe {
