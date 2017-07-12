@@ -42,12 +42,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.*;
 
+import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.samigo.util.SamigoConstants;
 import org.sakaiproject.site.cover.SiteService;
 import org.sakaiproject.tool.cover.ToolManager;
 import org.sakaiproject.event.cover.EventTrackingService;
 import org.xml.sax.SAXException;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -740,16 +740,20 @@ public class AuthoringHelper
       
       // Assessment Attachment
       exHelper.makeAssessmentAttachmentSet(assessment);
+      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
 
-      //assessment.getAssessmentAccessControl().setReleaseTo();
+      /* Alteration here to allow import of assessments from 2.9 archives. -MJ */
+      String siteTitleFromId = null;
+      try {
+	  siteTitleFromId = SiteService.getSite(siteId).getTitle();
+      } catch (IdUnusedException e) {
 
-      /*Placement p = ToolManager.getCurrentPlacement();
-      String c = p.getContext();
-      Site s = SiteService.getSite(c);*/
-      Site s = SiteService.getSite(siteId);
-      String siteTitle = s.getTitle();
+      }
+      if (siteTitleFromId != null && siteTitle != siteTitleFromId) {
+	  log.debug("siteTitle " + siteTitle + " doesn't match siteTitle from siteId, " + siteTitleFromId + " so using the latter");
+	  siteTitle = siteTitleFromId;
+      }
 
-      //      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
       if(siteTitle != null && !siteTitle.equals(assessment.getAssessmentAccessControl().getReleaseTo())){
           assessment.getAssessmentAccessControl().setReleaseTo(siteTitle);
       }
