@@ -20,9 +20,9 @@ body.is-logged-out{
 		border: 0;
 		font-size: 1.0em;
 		margin: 0;
-		padding: 0;
 		width: 100%;
 		text-align: right;
+		padding: 1em;
 	}
 
 	// LHS tool menu collapsed to show icons only and not tool titles.
@@ -299,7 +299,7 @@ nav#subSites{
 				align-items:center;
 				justify-content:flex-end; /* right-align the arrows when expanded */
 				height:3em;
-				padding: 0 1em;
+				padding: 0;
 				cursor:pointer;
 				font-size: 1.2em;
 				z-index: 1;
