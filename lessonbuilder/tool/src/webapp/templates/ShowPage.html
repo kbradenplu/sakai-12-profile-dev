@@ -252,16 +252,21 @@
         var title = title + owner;
         if (breadcrumbs.size() > 0) {
     		//jQuery(".Mrphs-siteHierarchy").append(jQuery(".breadcrumbs span").slice(1));
+    //jQuery(".breadcrumbs span").prepend('<span>'+ jQuery(".Mrphs-hierarchy--toolName").text().trim() + '</span>');
             	jQuery(".breadcrumb-supplant").append(jQuery(".breadcrumbs span").slice(1));
+    		jQuery(".breadcrumb-supplant").prepend('<a id="lessonReset">' + jQuery(".Mrphs-hierarchy--toolName").text().trim() + '</a>');
+    		jQuery("#lessonReset").attr("href", jQuery(".Mrphs-hierarchy--toolName")[0].href);
+    		jQuery("#lessonReset").after(jQuery(".Mrphs-hierarchy--separator").first().clone());
 	} else {
     		jQuery(".breadcrumb-supplant").css({"display": "none"});
     	}
-    
+    	
         jQuery(".Mrphs-siteHierarchy").children().wrapAll('<div class="hierarchyWrap" />');
 	//jQuery(".Mrphs-siteHierarchy").append(jQuery("span.nextprev"));
-	//jQuery(".neoPortletTitleWrap").before('<h2 class="genTitle"></h2>');
-	//jQuery(".genTitle").text(title);
-  
+	///jQuery(".neoPortletTitleWrap").before('<h2 class="genTitle"></h2>');
+        //jQuery(".genTitle").text(title);
+    	//jQuery(".genTitle").text(jQuery(".Mrphs-hierarchy--toolName").text().trim());
+
 	jQuery(".Mrphs-toolTitleNav__addRight").before(jQuery(".topaction > a"));
 	jQuery(".Mrphs-toolTitleNav__button_container > a").addClass("Mrphs-toolTitleNav__link");
   
