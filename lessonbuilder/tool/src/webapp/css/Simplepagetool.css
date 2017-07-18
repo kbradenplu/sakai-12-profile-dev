@@ -1288,6 +1288,7 @@ div[role="dialog"] {
 }
 .action a {
   margin-top: 0;
+  margin-right: 0;
 }
 .Mrphs-siteHierarchy {
     height: auto !important;

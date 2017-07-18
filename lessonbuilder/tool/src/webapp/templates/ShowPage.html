@@ -128,20 +128,18 @@
 	   <div id="owner" rsf:id="owner"></div><span rsf:id="pagetitle"></span><a role="button" class="portlet title-tools title reset" rsf:id="pagetitlelink"><span class="Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--reset"></span><span rsf:id="pagetitletext"></span></a>
 	 </h2>
        </div>
-       <div class="action topaction" style="float: none; clear: both;">
-         <span id="expandCollapseButtons" style="display:none; margin-right: 5px !important;">
-	   <!-- added class=button - lessons reconfigure -MJ -->
-           <a href="#" role="button" id="expandAllSections" class="button" style="margin-right: 0; margin-left: 5px; float: right; line-height: 1em;">
+       <div class="action topaction" style="clear: both;">
+         <span id="expandCollapseButtons" style="display:none;;">
+           <a href="#" role="button" id="expandAllSections" class="button" style=" margin-left: 5px; line-height: 1em;">
 	     <span class="fa fa-caret-right" aria-hidden="true" style="padding-right:5px;"></span>
 	     <span rsf:id="msg=simplepage.expand.all"></span></a>
-           <a href="#" role="button" id="collapseAllSections" class="button" style="display:none; margin-right: 0; margin-left: 5px; float: right; line-height: 1em;">
+           <a href="#" role="button" id="collapseAllSections" class="button" style="display:none; margin-left: 5px; line-height: 1em;">
 	     <span class="fa fa-caret-down" aria-hidden="true" style="padding-right:5px;"></span>
 	     <span rsf:id="msg=simplepage.collapse.all"></span></a>
 	 </span>
-	 <span style="float: right;">
-           <!-- next floated left and given margin-right - lessons reconfigure -MJ -->
-           <a role="button" href="#" rsf:id="prev" style="float: left; margin-right: 5px !important; line-height: 1em;" class="nexprev prev menuitem button">prev</a>
-           <a role="button" href="#" rsf:id="next" style="float: left; line-height: 1em;" class="nextprev next menuitem button">next</a>
+	 <span>
+           <a role="button" href="#" rsf:id="prev" style=" line-height: 1em;" class="nexprev prev menuitem button">prev</a>
+           <a role="button" href="#" rsf:id="next" style="line-height: 1em;" class="nextprev next menuitem button">next</a>
          </span>
 	 <a role="button"  href="#" rsf:id="print-view" id="print-view" onclick="window.open(printView(window.location.href));return false" class="Mrphs-toolTitleNav__link top-icon fa fa-print print-div-marker">
 	   <span rsf:id="msg=simplepage.print_view" class="Mrphs-itemTitle"></span></a>
@@ -281,10 +279,14 @@
   
     jQuery(".Mrphs-toolTitleNav__button_container").after(jQuery(".action"));
   
-    jQuery(".Mrphs-toolTitleNav__link--help-popup").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
-    jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".list-div-marker"));
-    jQuery(".list-div-marker").after(jQuery(".print-div-marker"));
+    //jQuery(".Mrphs-toolTitleNav__link--help-popup").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
+    //jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".list-div-marker"));
+    //jQuery(".list-div-marker").after(jQuery(".print-div-marker"));
   
+    jQuery("#print-view").after(jQuery("#show-pages"));
+    jQuery("#show-pages").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
+    jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".Mrphs-toolTitleNav__link--help-popup"));
+
     jQuery(".navIntraTool").after(jQuery(".breadcrumb-supplant"));
     jQuery(".portletBody").prepend(jQuery(".navIntraTool"));
     jQuery(".Mrphs-hierarchy--separator").eq(1).detach();
@@ -981,11 +983,8 @@
 		   ></iframe>
 		   <ul class="navIntraTool">
 		   <li class="bottomButtons contentButton">
-		   <!-- removed - lessons reconfigure -MJ <span> -->
-		   <!-- class altered, next floated left and given margin-right - lessons reconfigure -MJ --> 
 		   <a role="button" class="nexprev prev menuitem button" style="float: left; line-height: 1em;" href="#" rsf:id="prev1">next</a>
-		   <a role="button" style="float: right; margin-right: 5px !important; line-height: 1em;" class="bottomRight nexprev prev menuitem button" href="#" rsf:id="next1">next</a>
-		   <!-- </span> -->
+		   <a role="button" style="float: right; line-height: 1em;" class="bottomRight nexprev prev menuitem button" href="#" rsf:id="next1">next</a>
 		   </li>
 		   </ul>
 
