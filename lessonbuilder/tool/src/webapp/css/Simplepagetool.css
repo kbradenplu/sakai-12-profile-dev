@@ -2071,3 +2071,7 @@ input#sectionTitle {
     margin-bottom: 0em;
     padding-bottom: 0em;
 }
+
+.breadcrumb-supplant {
+    margin: 0.5em 0;
+}
