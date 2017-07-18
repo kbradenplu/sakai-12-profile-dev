@@ -198,9 +198,10 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         pasteFromWordRemoveStyles : false,
         autosave_saveDetectionSelectors : "form input[type='button'],form input[type='submit']",
         //Delay for autosave
-        autosave_delay: 120,
+        ///autosave_delay: 120,
+	
         //autosave_messageType can be "no" or "notification"
-        autosave_messageType : "statusbar", 
+        //autosave_messageType : "statusbar", 
 
         //wordcount Plugin see https://github.com/w8tcha/CKEditor-WordCount-Plugin for more config options
         //This value should match the one in antisamy (kernel/kernel-impl/src/main/resources/antisamy/low-security-policy.xml)
@@ -241,7 +242,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //CKEDITOR.plugins.addExternal('image2',basePath+'image2/', 'plugin.js');
             CKEDITOR.plugins.addExternal('sakaipreview',basePath+'sakaipreview/', 'plugin.js');
             //Autosave has a dependency on notification
-            CKEDITOR.plugins.addExternal('autosave',webJars+'autosave/8541f541d9985cfd0859c7d8eb6be404afe95a2d/', 'plugin.js');
+            //CKEDITOR.plugins.addExternal('autosave',webJars+'autosave/8541f541d9985cfd0859c7d8eb6be404afe95a2d/', 'plugin.js');
             CKEDITOR.plugins.addExternal('wordcount',webJars+'wordcount/4897cb23a9f2ca7fb6b792add4350fb9e2a1722c/', 'plugin.js');
             CKEDITOR.plugins.addExternal('notification',basePath+'notification/', 'plugin.js');
             // Accessibility checker has a dependency on balloonpanel
@@ -266,7 +267,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //ckconfig.extraPlugins+="atd-ckeditor,";
             //ckconfig.contentsCss = [basePath+'atd-ckeditor/atd.css'];
 
-            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,autosave,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio";
+            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio";
 
             // Load FontAwesome CSS in case a user wants to manually add FA markup
             ckconfig.contentsCss = [webJars+'fontawesome/4.7.0/css/font-awesome.min.css'];
