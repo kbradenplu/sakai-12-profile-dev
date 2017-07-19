@@ -561,8 +561,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
     margin-bottom: 0px;
 }
 .mainList div.textType, .mainList div.multimediaType, .mainList div.checklistType {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 0px;
+    margin-bottom: 10px; 
 } 
 .mainList div.question .multipleChoiceAnswer {
 }
@@ -1634,10 +1634,11 @@ margin-left: 0px;
 
 /* default content */
 .right-col {
-  padding-top:3px;
-  padding-bottom:3px;
-  padding-left: 25px;
-  padding-right: 25px;
+/*  padding-top:3px; */
+/*  padding-bottom:3px; */
+/*  padding-left: 25px;
+  padding-right: 25px; */
+    padding: 0.1em 1em;
 }
 
 li.listType .contentCol {
@@ -1655,7 +1656,7 @@ li.resourceType .right-col {
  border:none;
 }
 .itemclass {
- margin-top: 2.0em !important;
+  margin-top: 2.0em !important; 
 }
 .add-comment-button span {
 font-size: 90%;
@@ -1707,7 +1708,7 @@ font-size: 12px;
   margin-bottom: 5px;
 }
 .portletBody {
-  margin-top: 0px;
+/*  margin-top: 2.5em; */
 }
 .PagePicker {
   margin-top:12px;
@@ -1841,7 +1842,7 @@ span.nextprev {
   font-family:FontAwesome;
 }
 .mainList div:hover.canEdit {
-    background-color: #eee;
+    background-color: #eee; 
 }
 .peer-eval-row .newPeerCell {
    background-color: rgb(173,216,230) !important;
@@ -2075,4 +2076,10 @@ input#sectionTitle {
 
 .breadcrumb-supplant {
     margin: 0.5em 0;
+}
+
+@media only screen and (max-width: 800px) {
+#siteStatus {
+    margin-bottom: 0;
+}
 }
