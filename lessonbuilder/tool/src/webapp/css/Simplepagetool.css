@@ -2081,7 +2081,6 @@ input#sectionTitle {
 .breadcrumb-supplant {
     margin: 0.5em 0;
 }
-
 @media only screen and (max-width: 800px) {
 #siteStatus {
     margin-bottom: 0;
