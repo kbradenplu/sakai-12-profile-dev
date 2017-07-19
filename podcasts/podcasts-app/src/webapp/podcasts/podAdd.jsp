@@ -12,6 +12,7 @@
 
   <sakai:view>
       <script type="text/javascript">includeLatestJQuery("podAdd");</script>
+      <script src="/library/js/spinner.js" type="text/javascript"></script>
       <script type="text/javascript" src="/library/js/lang-datepicker/lang-datepicker.js"></script>
 
       <script type="text/javascript">
@@ -91,7 +92,7 @@
 
     <sakai:button_bar>
         <sakai:button_bar_item action="#{podHomeBean.processAdd}" value="#{msgs.add}"
-            accesskey="a" title="Add a Podcast" styleClass="active" />
+            accesskey="a" title="Add a Podcast" styleClass="active" onclick="SPNR.disableControlsAndSpin( this, null );"/>
         <sakai:button_bar_item action="#{podHomeBean.processCancelAdd}" value="#{msgs.cancel}" 
             accesskey="c" title="Cancel a Podcast" />
     </sakai:button_bar>

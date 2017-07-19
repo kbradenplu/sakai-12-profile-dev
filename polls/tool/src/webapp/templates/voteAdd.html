@@ -8,6 +8,7 @@
 	type="text/css" rel="stylesheet" media="all" />
 <link href="https://vula.uct.ac.za/library/skin/default/tool.css"
 	type="text/css" rel="stylesheet" media="all" rsf:id="scr=portal-matter" />
+<script src="/library/js/spinner.js" type="text/javascript"></script>
 <script rsf:id="scr=portal-matter" type="text/javascript"
 	language="JavaScript" src="/library/js/headscripts.js"></script>
 	<script type="text/javascript">includeLatestJQuery('polls');</script>
@@ -177,7 +178,7 @@
 <!--<input name="immediately" type="radio" value="" checked="checked" rsf:id="" /> Immediately--><br />
 
 <p class="act"><input type="submit" value="Post"
-	rsf:id="submit-new-poll" class="active" /> <input name="_cancel"
+	rsf:id="submit-new-poll" class="active" onclick="SPNR.disableControlsAndSpin( this, null );"/> <input name="_cancel"
 	type="submit" value="Cancel" rsf:id="cancel" /></p>
 </form>
 </div>

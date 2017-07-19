@@ -5,6 +5,7 @@
 <link  rsf:id="scr=portal-matter" href="../css/tool_base.css" type="text/css" rel="stylesheet" media="all"/>
 <link rsf:id="scr=portal-matter" href="../css/default/tool.css" type="text/css" rel="stylesheet" media="all"  />
 <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
+<script src="/library/js/spinner.js" type="text/javascript"></script>
 </head>
 
 <body rsf:id="scr=sakai-body">
@@ -26,8 +27,8 @@
     <textarea rsf:id="optText_mobile" name="Instructions" cols="50" rows="3"></textarea>
 	</div>
 <p class="act">
- <input type="submit" value="Save" rsf:id="submit-new-option" class="active" />
- <input type="submit" value="Save and add option" rsf:id="submit-option-add" />
+ <input type="submit" value="Save" rsf:id="submit-new-option" class="active" onclick="SPNR.disableControlsAndSpin( this, null );"/>
+ <input type="submit" value="Save and add option" rsf:id="submit-option-add" onclick="SPNR.disableControlsAndSpin( this, null );"/>
  <input name="_cancel" type="submit" value="Cancel" rsf:id="cancel" />
 </p>
 </form>
