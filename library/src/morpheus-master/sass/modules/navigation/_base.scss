@@ -1150,11 +1150,12 @@ body.is-logged-out{
 		margin-bottom: 40px;
 		width: 100%;
 		padding: 3px;
-		color :$background-color-secondary;
+		color :$unpublished-text;
 		display:block;
 		text-align:center;
-		background-color: $warn-background-color;
-		border-bottom: 1px solid $warn-color;
+		background-color: $unpublished-bg;
+		border-top: 1px solid $unpublished-border;
+        	border-bottom: 1px solid $unpublished-border;	
 		h4{
 			padding: 3px;
 			display: inline-block;
