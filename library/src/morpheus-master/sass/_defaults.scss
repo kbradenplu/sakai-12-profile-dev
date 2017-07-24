@@ -134,6 +134,12 @@ $warn-color:                darken($warn-background-color, 35%) !default;
 $error-background-color:    #f2dede !default;
 $error-color:               darken($error-background-color, 30%) !default;
 
+/* PLU Unpublished Site colors */
+$unpublished-text: 	       #c00;
+$unpublished-bg:	       #e3e3e3;
+$unpublished-border:	       #aaa;
+
+
 /* Swapped 'View As' view */
 $swapped-view-enabled:		 true !default;
 $swapped-view-primary: 		 #fbba37 !important;
