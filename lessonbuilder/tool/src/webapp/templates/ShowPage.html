@@ -177,7 +177,7 @@
      </div>
    </div>
    
-   <div id="breadcrumb-supplant" class="breadcrumb-supplant" ></div>
+   <div id="subpage-breadcrumb-div" class="subpage-breadcrumb-div" ></div>
 
    <div rsf:id="tool-bar:" class="navIntraTool" role="application" style="z-index:100000; display: inline-block; margin-top: -5px;" aria-labelledby="tool-bar::toolbar-label">
      <h3 id="toolbar-label" rsf:id="msg=simplepage.toolbar" class="offscreen"></h3>
@@ -251,12 +251,12 @@
         if (breadcrumbs.size() > 0) {
     		//jQuery(".Mrphs-siteHierarchy").append(jQuery(".breadcrumbs span").slice(1));
     //jQuery(".breadcrumbs span").prepend('<span>'+ jQuery(".Mrphs-hierarchy--toolName").text().trim() + '</span>');
-            	jQuery(".breadcrumb-supplant").append(jQuery(".breadcrumbs span").slice(1));
-    		jQuery(".breadcrumb-supplant").prepend('<a id="lessonReset">' + jQuery(".Mrphs-hierarchy--toolName").text().trim() + '</a>');
+            	jQuery(".subpage-breadcrumb-div").append(jQuery(".breadcrumbs span").slice(1));
+    		jQuery(".subpage-breadcrumb-div").prepend('<a id="lessonReset">' + jQuery(".Mrphs-hierarchy--toolName").text().trim() + '</a>');
     		jQuery("#lessonReset").attr("href", jQuery(".Mrphs-hierarchy--toolName")[0].href);
     		jQuery("#lessonReset").after(jQuery(".Mrphs-hierarchy--separator").first().clone());
 	} else {
-    		jQuery(".breadcrumb-supplant").css({"display": "none"});
+    		jQuery(".subpage-breadcrumb-div").css({"display": "none"});
     	}
     	
         jQuery(".Mrphs-siteHierarchy").children().wrapAll('<div class="hierarchyWrap" />');
@@ -273,7 +273,7 @@
     }
     //if (jQuery(".navIntraTool").size() > 0)
         //jQuery(".navIntraTool").append(jQuery(".action"));
-        //jQuery(".breadcrumb-supplant").append(jQuery(".action"));
+        //jQuery(".subpage-breadcrumb-div").append(jQuery(".action"));
     //else
         //jQuery(".neoPortletTitleWrap").before(jQuery(".action"));
   
@@ -287,7 +287,7 @@
     jQuery("#show-pages").after(jQuery(".Mrphs-toolTitleNav__link--directurl"));
     jQuery(".Mrphs-toolTitleNav__link--directurl").after(jQuery(".Mrphs-toolTitleNav__link--help-popup"));
 
-    jQuery(".navIntraTool").after(jQuery(".breadcrumb-supplant"));
+    jQuery(".navIntraTool").after(jQuery(".subpage-breadcrumb-div"));
     jQuery(".portletBody").prepend(jQuery(".navIntraTool"));
     jQuery(".Mrphs-hierarchy--separator").eq(1).detach();
   

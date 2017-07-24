@@ -942,7 +942,6 @@ a.peer-eval-stats {
   margin: 0;
   margin-bottom:-10px;
   margin-top: 13px;
-  margin-left: -14px;
   display: inline-block;
   padding-bottom: 15px;
 }
@@ -2078,7 +2077,7 @@ input#sectionTitle {
     padding-bottom: 0em;
 }
 
-.breadcrumb-supplant {
+.subpage-breadcrumb-div {
     margin: 0.5em 0;
 }
 @media only screen and (max-width: 800px) {
