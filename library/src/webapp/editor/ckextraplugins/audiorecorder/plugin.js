@@ -81,8 +81,8 @@ CKEDITOR.plugins.add( 'audiorecorder',
 	 requires : [ 'fakeobjects', 'flash', 'iframedialog' ],
    //http://alfonsoml.blogspot.com/2009/12/plugin-localization-in-ckeditor-vs.html
    lang: ['en'],
-   getPlaceholderCss1 : function (thisfullpath) {
-       return 'img.cke_audiorecorder1' +
+   getPlaceholderCss1 : function (thisfullpath) { // Do not dispaly the first item
+/*       return 'img.cke_audiorecorder1' +
 		    '{' +
 		    'background-image: url(' + CKEDITOR.getUrl( thisfullpath + 'images/placeholder1.png' ) + ');' +
 		    'background-position: center center;' +
@@ -90,18 +90,19 @@ CKEDITOR.plugins.add( 'audiorecorder',
 		    'border: 1px solid #a9a9a9;' +
 		    'width: 110px;' +
 		    'height: 90px;' +
-		    '}';
+		    '}'; */
+       return '';
    },
    getPlaceholderCss2 : function (thisfullpath) {
        return 'img.cke_audiorecorder2' +
 		    '{' +
-		    'background-image: url(' + CKEDITOR.getUrl( thisfullpath + 'images/placeholder2.png' ) + ');' +
+		    'background-image: url(' + CKEDITOR.getUrl( thisfullpath + 'images/placeholder.png' ) + ');' +
 		    'background-position: center center;' +
 		    'background-repeat: no-repeat;' +
 		    'border: 1px solid #a9a9a9;' +
 		    'width: 110px;' +
 		    'height: 90px;' +
-		    '}';
+		    '}'; 
    },
 
    onLoad: function() {
@@ -188,21 +189,15 @@ CKEDITOR.plugins.add( 'audiorecorder',
 					//Fix for IE8 because createFromHtml doesn't work, so have to create it by hand
 					var audioElement = e.createCKElement();
 					var objectElementHTML = e.getInnerHTML();
-					var objectElement = CKEDITOR.dom.element.createFromHtml(objectElementHTML);
+				
+				    // Some HTML element must be inserted, so let's use a <span>.
+				    // The objectElementHTML is currently suppressed by AntiSamy, and seems superfluous anyway.
+				    //var objectElement = CKEDITOR.dom.element.createFromHtml(objectElementHTML);
+				        var objectElement = CKEDITOR.dom.element.createFromHtml("<span></span>");
 					var fakeElement1,fakeElement2;
 
-					if(!isNew) {
-						//TODO: Is this still a problem with Safari?
-						if(!navigator.userAgent.contains('Safari')) {
-							//FCK.Selection.Delete();
-						}
-						fakeElement1= this._.editor.createFakeElement( objectElement, 'cke_audiorecorder1', 'audiorecorder', true );
-						fakeElement2= this._.editor.createFakeElement( audioElement, 'cke_audiorecorder2', 'audiorecorder', true );
-					}else{
-						fakeElement1= this._.editor.createFakeElement( objectElement, 'cke_audiorecorder1', 'audiorecorder', true );
-						fakeElement2= this._.editor.createFakeElement( audioElement, 'cke_audiorecorder2', 'audiorecorder', true );
-					}
-
+					fakeElement1= this._.editor.createFakeElement( objectElement, 'cke_audiorecorder1', 'audiorecorder', true );
+					fakeElement2= this._.editor.createFakeElement( audioElement, 'cke_audiorecorder2', 'audiorecorder', true );
 					editor.insertHtml(fakeElement1.getOuterHtml());
 					editor.insertHtml(fakeElement2.getOuterHtml());
 				}
