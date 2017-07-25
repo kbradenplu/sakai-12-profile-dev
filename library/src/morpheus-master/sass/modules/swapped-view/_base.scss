@@ -16,6 +16,14 @@
 				}
 			}
 			*/
+
+
+		.#{$namespace}headerLogo--institution{
+			background: url($logo-inverted) no-repeat center center;
+			background-size: $logo-width $logo-height;
+		}
+
+
 			.#{$namespace}mainHeader.is-maximized .siteNavWrap{
 				background: $swapped-view-sites-nav-background;
 			}

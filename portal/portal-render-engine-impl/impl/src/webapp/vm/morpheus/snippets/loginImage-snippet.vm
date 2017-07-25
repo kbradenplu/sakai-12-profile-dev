@@ -1,5 +1,5 @@
 <div id="loginLinksImage" class="Mrphs-loginUser" tabindex="999">
-
+    <span id="loginLabel">Login:</span>
     #if (${loginHasImage1})
 
         <p class="Mrphs-loginUser__menuitem">

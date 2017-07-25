@@ -206,7 +206,8 @@ body.is-logged-out{
 .#{$namespace}topHeader{
 	background: $top-header-background;
 	color: $background-color;
-	font-size: 1em;
+/*	font-size: 1em; */
+	font-size: 0.90em;
 	height: auto;
 	width: 100%;
 	box-shadow: $divider-shadow;
@@ -368,6 +369,10 @@ body.is-logged-out{
 				display: none;
 			}
 		}
+
+		#loginLabel {
+		  display: none;
+                }
 	}
 
 }
@@ -447,7 +452,8 @@ body.is-logged-out{
 		&.has-avatar:hover .#{$namespace}userNav__submenuitem--profilepicture,
 			&.has-avatar:active .#{$namespace}userNav__submenuitem--profilepicture
 		{
-			box-shadow: 0px 0px 5px 1px rgba(165, 165, 165, 0.95);
+		/*			box-shadow: 0px 0px 5px 1px rgba(165, 165, 165, 0.95); */
+					box-shadow: 0px 0px 5px 1px rgba(255, 255, 255, 0.95);
 		}
 
 		&.has-avatar:hover .#{$namespace}userNav__submenuitem--username,
@@ -564,19 +570,22 @@ body.is-logged-out{
 
 		a{
 			//customization to make this look all buttony. -MJ
-			background: #000;
+			background: #3f3f3f;
+			color: #fbc14b;
 			display: inline;
                 	padding-left: 0.7em;
 			padding-right: 0.7em;
                 	padding-top: 0.5em;
                 	padding-bottom: 0.5em;
-                	border: 1.5px solid #fbba37;
+			/*                	border: 1.5px solid #fbba37; */
 			text-decoration: none;
                 	-webkit-border-radius: 0.5em;
                 	&:hover{
-				background: #000;
+			/*				background: #000; */
+				background-color:	#fbc14b;
                         	text-decoration: none;
-				color: $topNav-text-color;
+				/* color: $topNav-text-color; */
+				color: #000;
 			}
 
 
@@ -707,12 +716,19 @@ body.is-logged-out{
 	.#{$namespace}userNav__submenuitem--userid{
 		font-style: italic;
 	}
+
+	#loginLabel {
+ 	    font-weight: bold;
+	    color: #eee;
+	    margin-right: 1.5em;
+	    text-transform: uppercase;
+        }
 }
 
 /* because #loginLinks appears on the Gateway page when two log-in links are available (e.g. for CAS), the following applies only when you are logged in: */
 .is-maximized #loginLinks
 {
-	border-left: 1px solid $tool-border-color;
+/*	border-left: 1px solid $tool-border-color;  */
 }
 
 .#{$namespace}sitesNav__menu{
@@ -788,7 +804,7 @@ body.is-logged-out{
 	@include display-flex(flex);
 	padding-left: 0.5em;
 	//background-color: $sites-nav-background;
-	background-color: #000;
+	background-color: #999;
 	min-height: 52px;
 	padding: 4px 8px;
 }
@@ -804,10 +820,10 @@ body.is-logged-out{
 			margin: 0 0.5em 0.5em 0;
 			padding: 0;
 			position: relative;
-			border-top: $sites-nav-menu-item-border-top;
-			border-right: $sites-nav-menu-item-border-right;
-			border-bottom: $sites-nav-menu-item-border-bottom;
-			border-left: $sites-nav-menu-item-border-left;
+			//border-top: $sites-nav-menu-item-border-top;
+			//border-right: $sites-nav-menu-item-border-right;
+			//border-bottom: $sites-nav-menu-item-border-bottom;
+			//border-left: $sites-nav-menu-item-border-left;
 			background: $sites-nav-menu-item-background;
 
 			> a.link-container{
@@ -836,10 +852,10 @@ body.is-logged-out{
 			}
 
 			&.dropdown-is-visible, &:hover {
-				border-top: $sites-nav-menu-item-hover-border-top;
-				border-right: $sites-nav-menu-item-hover-border-right;
-				border-bottom: $sites-nav-menu-item-hover-border-bottom;
-				border-left: $sites-nav-menu-item-hover-border-left;
+				//border-top: $sites-nav-menu-item-hover-border-top;
+				//border-right: $sites-nav-menu-item-hover-border-right;
+				//border-bottom: $sites-nav-menu-item-hover-border-bottom;
+				//border-left: $sites-nav-menu-item-hover-border-left;
 				background: $sites-nav-menu-item-hover-background;
 			}
 
@@ -859,6 +875,11 @@ body.is-logged-out{
 			{
 				line-height: 1;
 			}
+
+			span.fa-home {
+			     margin-right: 0.3em;
+			}
+
 			.#{$namespace}sitesNav__drop, .#{$namespace}sitesNav__dropdown{
 				text-align: center;
 				margin-left: 0.2em;
@@ -940,10 +961,10 @@ body.is-logged-out{
 			}
 			&.is-selected{
 				background: $sites-nav-menu-item-selected-background;
-				border-top: $sites-nav-menu-item-selected-border-top;
-				border-right: $sites-nav-menu-item-selected-border-right;
-				border-bottom: $sites-nav-menu-item-selected-border-bottom;
-				border-left: $sites-nav-menu-item-selected-border-left;
+				//border-top: $sites-nav-menu-item-selected-border-top;
+				//border-right: $sites-nav-menu-item-selected-border-right;
+				//border-bottom: $sites-nav-menu-item-selected-border-bottom;
+				//border-left: $sites-nav-menu-item-selected-border-left;
 
 				a.link-container{
 					color: $sites-nav-menu-item-selected-color;
@@ -964,10 +985,10 @@ body.is-logged-out{
 				}
 
 				&.dropdown-is-visible, &:hover {
-					border-top: $sites-nav-menu-item-selected-hover-border-top;
-					border-right: $sites-nav-menu-item-selected-hover-border-right;
-					border-bottom: $sites-nav-menu-item-selected-hover-border-bottom;
-					border-left: $sites-nav-menu-item-selected-hover-border-left;
+					//border-top: $sites-nav-menu-item-selected-hover-border-top;
+					//border-right: $sites-nav-menu-item-selected-hover-border-right;
+					//border-bottom: $sites-nav-menu-item-selected-hover-border-bottom;
+					//border-left: $sites-nav-menu-item-selected-hover-border-left;
 					background: $sites-nav-menu-item-selected-hover-background;
 				}
 

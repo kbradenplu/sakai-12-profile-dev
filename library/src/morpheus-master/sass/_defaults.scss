@@ -46,7 +46,7 @@ $primary-color:    			 #265b81 !default;
 $primary-color-highContrast: darken( $primary-color, 4% ) !default;	// for use of primary on non-white light backgrounds, such as greys
 $primary-color-shadow:			 adjust-hue( $primary-color, 5 ) !default;	// To give primary a darker shadow
 $secondary-color:  			 #F00 !default;
-$alt-colour: 				 #d36f00 !default;
+$alt-colour: 				 #333 !default;
 
 $text-color:				 #212121 !default;
 
@@ -79,7 +79,8 @@ $tool-tab-active-highlight-color:                         #15597e !default;
 $tool-nav-link-color: #666 !default;
 
 $main-content-background: $background-color !default;
-$top-header-background: $background-color-secondary !default;
+//$top-header-background: $background-color-secondary !default;
+$top-header-background: #111 !default;
 $sites-nav-background: $tool-menu-background-color !default;
 
 $breadcrumbs-color:			 $text-color !default;
@@ -389,8 +390,9 @@ $banner-height: 52px !default;
 /*$logo: 'images/logo.png' !default;
 $logo-height: 36px !default;
 $logo-width: 60px !default;*/
-$logo: 'images/PLU-sakai-shadow.png' !default;
-$logo-height: 35px !default;
+$logo: 'images/PLU-Sakai-logo.png' !default;
+$logo-inverted: 'images/PLU-Sakai-logo-inverted.png' !default;
+$logo-height: 45px !default;
 $logo-width: 130px !default;
 
 /* Tool icons */
