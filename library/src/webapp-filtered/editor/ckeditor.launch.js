@@ -155,8 +155,8 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //['BidiLtr', 'BidiRtl' ],
             ['Link','Unlink','Anchor'],
             (sakai.editor.enableResourceSearch
-                ? ['AudioRecorder','ResourceSearch', 'Image','Youtube','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor','FontAwesome']
-                : ['AudioRecorder','Image','Youtube','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor']),
+                ? ['AudioRecorder','ResourceSearch', 'Image','Youtube','Html5video','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor','FontAwesome']
+                : ['AudioRecorder','Image','Youtube','Html5video','Html5audio','Table','HorizontalRule','Smiley','SpecialChar','EqnEditor']),
             '/',
             ['Styles','Format','Font','FontSize'],
             ['Maximize', 'ShowBlocks','A11ychecker','-','About']
@@ -250,6 +250,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             CKEDITOR.plugins.addExternal('a11ychecker',basePath+'a11ychecker/', 'plugin.js');
 	    CKEDITOR.plugins.addExternal('youtube',basePath+'youtube/', 'plugin.js');
 	    CKEDITOR.plugins.addExternal('html5audio',basePath+'html5audio/', 'plugin.js');
+	    CKEDITOR.plugins.addExternal('html5video',basePath+'html5video/', 'plugin.js');
 
             /*
                To enable after the deadline uncomment these two lines and add atd-ckeditor to toolbar
@@ -267,7 +268,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //ckconfig.extraPlugins+="atd-ckeditor,";
             //ckconfig.contentsCss = [basePath+'atd-ckeditor/atd.css'];
 
-            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio";
+            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio,html5video";
 
             // Load FontAwesome CSS in case a user wants to manually add FA markup
             ckconfig.contentsCss = [webJars+'fontawesome/4.7.0/css/font-awesome.min.css'];
