@@ -13,7 +13,7 @@
 <div class="portletBody">
 	<ul class="navIntraTool actionToolbar">
 	<li class="firstToolBarItem"><span class="current">$tlang.getString("mb.cursit")</span></li>
-		<li><span><a href="#toolLink( "$action" "doGoto_enrolments" )" title="$tlang.getString( 'mb.enrolments' )">$tlang.getString( 'mb.enrolments' )</a></span></li>
+		<!-- <li><span><a href="#toolLink( "$action" "doGoto_enrolments" )" title="$tlang.getString( 'mb.enrolments' )">$tlang.getString( 'mb.enrolments' )</a></span></li> -->
 		<li><span><a href="#toolLink("$action" "doGoto_joinable")" title="$tlang.getString('mb.joisit')">$tlang.getString('mb.joisit')</a></span></li>
 	</ul>
 

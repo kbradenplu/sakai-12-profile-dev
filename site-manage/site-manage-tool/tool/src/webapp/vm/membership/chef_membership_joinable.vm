@@ -11,7 +11,7 @@
 <div class="portletBody">
 	<ul class="navIntraTool actionToolBar">
 		<li class="firstToolBarItem"><span><a href="#toolLink("$action" "doGoto_unjoinable")" title="$tlang.getString('mb.cursit')">$tlang.getString('mb.cursit')</a></span></li>
-		<li><span><a href="#toolLink( "$action" "doGoto_enrolments" )" title="$tlang.getString( 'mb.enrolments' )">$tlang.getString( 'mb.enrolments' )</a></span></li>
+		<!-- <li><span><a href="#toolLink( "$action" "doGoto_enrolments" )" title="$tlang.getString( 'mb.enrolments' )">$tlang.getString( 'mb.enrolments' )</a></span></li> -->
 		<li><span class="current">$tlang.getString("mb.joisit")</span></li>		
 	</ul>
 
