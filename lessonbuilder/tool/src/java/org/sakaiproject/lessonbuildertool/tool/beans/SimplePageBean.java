@@ -6342,9 +6342,10 @@ public class SimplePageBean {
 				if (name == null)
 				    name = messageLocator.getMessage("simplepage.web_content").replace("{}","");
 
+				//We don't want to concat hyperlink names -MJ
 				// don't let names get too long
-				if (name.length() > 80)
-				    name = name.substring(0,39) + "..." + name.substring(name.length()-39);
+				//if (name.length() > 80)
+				//    name = name.substring(0,39) + "..." + name.substring(name.length()-39);
 				// as far as I can see, this is used only to find the extension, so this is OK
 				sakaiId = "/url/" + name;
 
