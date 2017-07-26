@@ -15,9 +15,9 @@
 
                 <li><a role="menuitem" id="allSites" href="${tabsSites.mrphs_worksiteToolUrl}"><span>${rloader.sit_allsites}</span></a></li>
 
-                #if ($allowAddSite)
+		#if ($allowAddSite)
 
-                    <li><a role="menuitem" id="newSite" href="${tabsSites.mrphs_worksiteToolUrl}?panel=Shortcut&amp;sakai_action=doNew_site&amp"><span>${rloader.sit_newsite}</span></a></li>
+                   <!-- <li><a role="menuitem" id="newSite" href="${tabsSites.mrphs_worksiteToolUrl}?panel=Shortcut&amp;sakai_action=doNew_site&amp"><span>${rloader.sit_newsite}</span></a></li> -->
 
                 #end ## END of IF ($allowAddSite)
 
