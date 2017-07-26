@@ -46,6 +46,13 @@ var recalculate = function(){
 };
 $(document).ready(function(){
     $('.layoutReorderer-module').find('.marker').closest('.layoutReorderer-module').remove();
+    var items = $('.reorderSeq');
+    for (var i = 0; i < items.length; i++) {
+	if (items[i].innerText.startsWith('*')) {
+	    $('#reorderCol2').append(items[i].parentElement.parentElement);
+	}
+    }
+
     recalculate();
 
 /*
