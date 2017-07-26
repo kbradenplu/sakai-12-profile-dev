@@ -7070,7 +7070,10 @@ public class AssignmentAction extends PagedResourceActionII
 			if (submissionType == Assignment.TEXT_ONLY_ASSIGNMENT_SUBMISSION)
 			{
 				// for the inline only submission
-				if (textIsEmpty)
+				//if (textIsEmpty)
+			    //reverting this to 2.9 behavior, this may cause issues for turnitin blank turnitin submissions.
+			    //I think turnitin submissions are rejected in content review if they are less than 100 chars though. -MJ
+			    if (text.length() == 0)
 				{
 					addAlert(state, rb.getString("youmust7"));
 				}
@@ -7098,7 +7101,9 @@ public class AssignmentAction extends PagedResourceActionII
 				// for the inline and attachment submission / other submission types
 				// There must be at least one thing submitted: inline text or at least one attachment
 				List v = getNonInlineAttachments(state, a);
-				if (textIsEmpty && (v == null || v.size() == 0))
+				//Same as above, reverting to 2.9 behavior. -MJ
+				//if (textIsEmpty && (v == null || v.size() == 0))
+				if (text.length() == 0 && (v == null || v.size() == 0))
 				{
 					addAlert(state, rb.getString("youmust2"));
 				}
