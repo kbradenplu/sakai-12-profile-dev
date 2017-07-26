@@ -603,7 +603,7 @@ body.is-logged-out{
 		outline: 0;
 		left: 12px;
 		&.is-clicked{
-			@include transform( rotate(180deg) );
+		/*	@include transform( rotate(180deg) ); */
 			position: relative;
 			top: -0.2em;
 			left: 1.3em;
@@ -897,8 +897,8 @@ body.is-logged-out{
 				@extend .sitesNav__drop;
 
 				&.is-clicked{
-					@include transform( rotate(180deg) );
-					top: 40%;
+				 /* @include transform( rotate(180deg) ); */
+				/*	top: 40%; */
 				}
 
 				&:hover {
@@ -1267,4 +1267,10 @@ body.is-logged-out{
             }
         }
     }
+}
+
+
+// HACK to force consistent color for text when hovering over a site tab
+#linkNav ul li.Mrphs-sitesNav__menuitem:hover > a {
+	 color: #000 !important;
 }
