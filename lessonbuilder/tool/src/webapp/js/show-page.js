@@ -3160,6 +3160,7 @@ $(function() {
 		    names = names + ", " + lastInput[0].files[i].name;
 		}
 		lastInput.next().text(names.substring(2));
+
 		// arm the delete
 		lastInput.next().next().on('click', mmFileInputDelete);
 		// and hide the actual button
@@ -3189,6 +3190,8 @@ $(function() {
 			nameInput.prev().text($('#mm-name').prev().text());
 			nameInput.prev().attr('for','mm-file-input-itemname');
 /*		    } */
+
+		    nameInput.css("margin", "0.35em 1em")
 		    nameInput.show();
 		}
 	    }
