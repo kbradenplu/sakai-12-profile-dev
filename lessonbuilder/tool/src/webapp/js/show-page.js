@@ -3142,7 +3142,7 @@ $(function() {
 		// find the new button and put this trigger on it
 		lastInput.parent().next().find('input').on("change", mmFileInputChanged);
 		// change this one to have name of file and remove button
-		var newStuff = '<span class="mm-file-input-name"></span> <span title="' + msg('simplepage.remove_from_uploads') + '"><span class="mm-file-input-delete fa fa-times"></span></span>';
+		var newStuff = '<span class="mm-file-input-name"></span> <span title="' + msg('simplepage.remove_from_uploads') + '" style="margin-right: 2em"><span class="mm-file-input-delete fa fa-times"></span></span>';
 		// only do this if we're doing names
 		if (doingNames) {
 		    for (i = 0; i < lastInput[0].files.length; i++) {
@@ -3182,13 +3182,13 @@ $(function() {
 		    // only put the label on the first
 		    nameInput = nameInput.first();
 		    nameInput.val(itemName);
-		    if (firsttime) {
+		/*    if (firsttime) { */
 			// add a label for the name field. I think it's too much to do it for all of them
 			nameInput.attr('id', 'mm-file-input-itemname');
-			nameInput.before('<label></label>');
+			nameInput.before('<label"></label>');
 			nameInput.prev().text($('#mm-name').prev().text());
 			nameInput.prev().attr('for','mm-file-input-itemname');
-		    }
+/*		    } */
 		    nameInput.show();
 		}
 	    }
