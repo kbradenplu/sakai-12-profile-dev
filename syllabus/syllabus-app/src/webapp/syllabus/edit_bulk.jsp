@@ -13,6 +13,7 @@
 <script>includeLatestJQuery('edit_bulk.jsp');</script>
 <link rel="stylesheet" href="/library/webjars/jquery-ui/1.11.3/jquery-ui.min.css" type="text/css" />
 <script type="text/javascript" src="/library/js/lang-datepicker/lang-datepicker.js"></script>
+<script src="/library/js/spinner.js" type="text/javascript"></script>
 <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
 
 
@@ -247,13 +248,15 @@
 						styleClass="active"
 						value="#{msgs.bar_publish}" 
 						accesskey="s"
-						title="#{msgs.button_publish}" />
+						title="#{msgs.button_publish}" 
+						onclick="SPNR.disableControlsAndSpin( this, null );" />
 					<h:commandButton
 						action="#{SyllabusTool.processEditBulkDraft}"
 						styleClass="active"
 						value="#{msgs.bar_new}" 
 						accesskey="s"
-						title="#{msgs.button_save}" />
+						title="#{msgs.button_save}" 
+						onclick="SPNR.disableControlsAndSpin( this, null );" />
 					<h:commandButton
 						action="#{SyllabusTool.processEditBulkCancel}"
 						value="#{msgs.cancel}" 
