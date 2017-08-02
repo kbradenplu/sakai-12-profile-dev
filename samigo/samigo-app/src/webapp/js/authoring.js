@@ -214,7 +214,9 @@ function initCalcQuestion() {
      if (!dirty) {
          if (!confirm("You have not changed variables or formulas.  Are you sure that you want to Save?")) {
              return false;
-         }
+         } else {
+	     SPNR.disableControlsAndSpin( this, null );
+	 }
      }           
  });
 }

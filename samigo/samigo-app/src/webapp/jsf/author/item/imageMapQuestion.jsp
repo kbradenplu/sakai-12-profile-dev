@@ -38,6 +38,7 @@
 	  <script type="text/javascript" src="/library/webjars/jquery/1.11.3/jquery.min.js"></script>
 	  <script language='javascript' src='/samigo-app/js/jquery.dynamiclist.author.js'></script>
 	  <script language='javascript' src='/samigo-app/js/selection.author.js'></script>
+	  <script src="/library/js/spinner.js" type="text/javascript"></script>
 	  
 	  <link href="/samigo-app/css/imageQuestion.author.css" type="text/css" rel="stylesheet" media="all" />
 <%--
@@ -99,6 +100,7 @@
 			return false;
 		}
 		dynamicList.serializeElements();
+		SPNR.disableControlsAndSpin( this, null );
 		return true;
 	}
 </script>
