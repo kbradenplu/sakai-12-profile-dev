@@ -3416,6 +3416,7 @@ function prepareQuestionDialog() {
 	updateShortanswers();
 	
 	// RSF bugs out if we don't undisable these before submitting
+    	SPNR.disableControlsAndSpin( this, null );
 	$("#multipleChoiceSelect").prop("disabled", false);
 	$("#shortanswerSelect").prop("disabled", false);
 	return true;

@@ -13,6 +13,7 @@
 </head>
 <body rsf:id="scr=sakai-body">
 <script type="text/javascript" src="$context/js/jquery-1.9.1.min.js"></script>
+<script src="/library/js/spinner.js" type="text/javascript"></script>
 
 	<div class="portletBody">
 	
@@ -70,7 +71,7 @@ jQuery(document).ready(function($) {
 
 			<p class="act">
 				<input type="hidden" rsf:id="addBefore" />
-				<input accesskey ="s" rsf:id="save" value="Save" type="submit" class="active" />
+				<input accesskey ="s" rsf:id="save" value="Save" type="submit" class="active" onclick="SPNR.disableControlsAndSpin( this, null );"/>
 				<input accesskey ="x" rsf:id="cancel" value="Cancel" type="submit"/>
                 <input type="submit" rsf:id="delete" class="deleteButton" />
 			</p>						
