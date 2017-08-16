@@ -100,6 +100,13 @@
           <scope>provided</scope>
 	</dependency>
 
+	<dependency>
+          <groupId>org.sakaiproject.pasystem</groupId>
+          <artifactId>pasystem-api</artifactId>
+          <scope>provided</scope>
+	</dependency>
+
+
         <dependency>
             <groupId>org.sakaiproject.calendar</groupId>
             <artifactId>sakai-calendar-api</artifactId>

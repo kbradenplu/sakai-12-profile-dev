@@ -15,6 +15,7 @@
  */
 package org.sakaiproject.webservices;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,6 +67,8 @@ import org.sakaiproject.event.api.UsageSessionService;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.lti.api.LTIService;
+import org.sakaiproject.pasystem.api.PASystem;
+import org.sakaiproject.pasystem.api.Banner;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SitePage;
@@ -5726,12 +5729,15 @@ public class SakaiScript extends AbstractWebService {
     @Path("/removePageFromSite")
     @Produces("text/plain")
     @GET
-    public String removeSecondPageFromSiteWithTitle(
+    public String removeSecondPageFromSiteWithTitle (
 				     @WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,
 				     @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,
-				     @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+				     @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) throws Exception {
         Session session = establishSession(sessionid);
-
+	if(! securityService.isSuperUser(session.getUserId())) {
+            String msg = "WS removeSecondPageFromSiteWithTitle: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
         try {
 	    boolean firstFound = false;
 	    Site siteEdit = null;
@@ -5780,7 +5786,7 @@ public class SakaiScript extends AbstractWebService {
         return "success";
     }
 
-    public String removeFirstPageFromSiteWithTitle(@WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,						      @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,							         @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) {
+    public String removeFirstPageFromSiteWithTitle(@WebParam(name = "sessionid", partName = "sessionid") @QueryParam("sessionid") String sessionid,						      @WebParam(name = "siteid", partName = "siteid") @QueryParam("siteid") String siteid,							         @WebParam(name = "pagetitle", partName = "pagetitle") @QueryParam("pagetitle") String pagetitle) throws Exception {
         Session session = establishSession(sessionid);
 
         try {
@@ -5804,5 +5810,29 @@ public class SakaiScript extends AbstractWebService {
         }
         return "success";
     }
+    
+    public String postPABanner(String sessionid) throws Exception{
+	Session session = establishSession(sessionid);
+	
+	if(! securityService.isSuperUser(session.getUserId())) {
+            String msg = "WS postPABanner: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+        }
 
+	try {
+	    //Banner b = new Banner(String message, String hosts, boolean active, long startTime, long endTime, String type);
+	    long now = Instant.now().toEpochMilli();
+	    Banner b = new Banner("The system will shut down shortly for maintentance",
+				  null, true,
+				  now, now + 3600000, "high");
+
+	    PASystem paSystem = ComponentManager.get(PASystem.class);
+	    paSystem.getBanners().createBanner(b);
+	} catch (Exception e) {
+	    LOG.error("WS postPABanner: " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+	}
+	return "success";
+	
+    }
 }
