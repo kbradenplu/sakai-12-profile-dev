@@ -5813,7 +5813,7 @@ public class SakaiScript extends AbstractWebService {
     
     public String postPABanner(String sessionid) throws Exception{
 	Session session = establishSession(sessionid);
-	
+	String returnVal = "";
 	if(! securityService.isSuperUser(session.getUserId())) {
             String msg = "WS postPABanner: Permission denied. Restricted to super users.";
             throw new Exception(msg);
@@ -5827,12 +5827,31 @@ public class SakaiScript extends AbstractWebService {
 				  now, now + 3600000, "high");
 
 	    PASystem paSystem = ComponentManager.get(PASystem.class);
-	    paSystem.getBanners().createBanner(b);
+	    returnVal = paSystem.getBanners().createBanner(b);
 	} catch (Exception e) {
 	    LOG.error("WS postPABanner: " + e.getClass().getName() + " : " + e.getMessage());
             return e.getClass().getName() + " : " + e.getMessage();
 	}
-	return "success";
+	return returnVal;
 	
+    }
+
+    public String deletePABanner(String sessionid, String uuid) throws Exception{
+	Session session = establishSession(sessionid);
+
+        if(! securityService.isSuperUser(session.getUserId())) {
+            String msg = "WS postPABanner: Permission denied. Restricted to super users.";
+            throw new Exception(msg);
+	}
+
+	try {
+	    PASystem paSystem = ComponentManager.get(PASystem.class);
+	    paSystem.getBanners().deleteBanner(uuid);
+	} catch (Exception e) {
+            LOG.error("WS postPABanner: " + e.getClass().getName() + " : " + e.getMessage());
+            return e.getClass().getName() + " : " + e.getMessage();
+        }
+        return "success";
+
     }
 }
