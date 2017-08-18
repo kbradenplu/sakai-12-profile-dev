@@ -84,12 +84,16 @@ import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.user.cover.UserDirectoryService;
 import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Setter @Slf4j
 public class SimplePageToolDaoImpl extends HibernateDaoSupport implements SimplePageToolDao {
 
 	private ToolManager toolManager;
@@ -179,30 +183,6 @@ public class SimplePageToolDaoImpl extends HibernateDaoSupport implements Simple
 			}
 		}
 		return canEdit;
-	}
-
-	public void setSecurityService(SecurityService service) {
-		securityService = service;
-	}
-
-	public void setServerConfigurationService(ServerConfigurationService service) {
-		serverConfigurationService = service;
-	}
-
-	public void setSiteService(SiteService service) {
-		siteService = service;
-	}
-
-	public void setSqlService(SqlService service) {
-		sqlService = service;
-	}
-
-	public void setToolManager(ToolManager service) {
-		toolManager = service;
-	}
-
-	public void setAuthzGroupService(AuthzGroupService authzGroupService) {
-		this.authzGroupService = authzGroupService;
 	}
 
 	public List<SimplePageItem> findItemsOnPage(long pageId) {
@@ -641,7 +621,7 @@ public class SimplePageToolDaoImpl extends HibernateDaoSupport implements Simple
 		elist.add(t.getLocalizedMessage());
 	}
 
-	public boolean saveItem(Object o, List<String>elist, String nowriteerr, boolean requiresEditPermission) {
+	public boolean saveItem(final Object o, List<String>elist, String nowriteerr, boolean requiresEditPermission) {
 		
 		/*
 		 * This checks a lot of conditions:
@@ -663,20 +643,29 @@ public class SimplePageToolDaoImpl extends HibernateDaoSupport implements Simple
 		try {
 			getHibernateTemplate().save(o);
 
-			if (o instanceof SimplePageItem) {
-				SimplePageItem item = (SimplePageItem)o;
-				EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.ITEM_CREATE, "/lessonbuilder/item/" + item.getId(), true));
-			} else if (o instanceof SimplePage) {
-				SimplePage page = (SimplePage)o;
-				EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.PAGE_CREATE, "/lessonbuilder/page/" + page.getPageId(), true));
-			} else if (o instanceof SimplePageComment) {
-				SimplePageComment comment = (SimplePageComment)o;
-				EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.COMMENT_CREATE, "/lessonbuilder/comment/" + comment.getId(), true));
-			}
-
-			if(o instanceof SimplePageItem || o instanceof SimplePage) {
+			if (o instanceof SimplePageItem || o instanceof SimplePage) {
 				updateStudentPage(o);
 			}
+
+			TransactionSynchronizationManager.registerSynchronization(
+				new TransactionSynchronizationAdapter() {
+
+					@Override
+					public void afterCommit() {
+
+						if (o instanceof SimplePageItem) {
+							SimplePageItem item = (SimplePageItem)o;
+							EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.ITEM_CREATE, "/lessonbuilder/item/" + item.getId(), true));
+						} else if (o instanceof SimplePage) {
+							SimplePage page = (SimplePage)o;
+							EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.PAGE_CREATE, "/lessonbuilder/page/" + page.getPageId(), true));
+						} else if (o instanceof SimplePageComment) {
+							SimplePageComment comment = (SimplePageComment)o;
+							EventTrackingService.post(EventTrackingService.newEvent(LessonBuilderEvents.COMMENT_CREATE, "/lessonbuilder/comment/" + comment.getId(), true));
+						}
+					}
+				}
+			);
 
 			return true;
 		} catch (org.springframework.dao.DataIntegrityViolationException e) {
@@ -1293,10 +1282,12 @@ public class SimplePageToolDaoImpl extends HibernateDaoSupport implements Simple
 	}
 
 	public void incrementQRCount(long questionId, long responseId) {
-	    Object [] fields = new Object[2];
-	    fields[0] = questionId;
-	    fields[1] = responseId;
-	    sqlService.dbWrite("update lesson_builder_qr_totals set respcount = respcount + 1 where questionId = ? and responseId = ?", fields);
+		getHibernateTemplate().execute(session -> {
+			Query query = session.createQuery("update SimplePageQuestionResponseTotalsImpl s set s.count = s.count + 1 where s.questionId= :questionId and s.responseId = :responseId");
+			query.setLong("questionId", questionId);
+			query.setLong("responseId", responseId);
+			return query.executeUpdate();
+		});
 	}
 
 	public void syncQRTotals(SimplePageItem item) {

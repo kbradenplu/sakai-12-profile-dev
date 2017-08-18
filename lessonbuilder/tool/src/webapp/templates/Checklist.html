@@ -6,6 +6,7 @@
     <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE"/>
     <style rsf:id="iconstyle" type="text/css">
     </style>
+    <script src="/library/js/spinner.js" type="text/javascript"></script>
     <script rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
     <script language="JavaScript" src="/lessonbuilder-tool/js/SakaiRSFWidgets.js" type="text/javascript" rsf:id="fckScript"></script>
     <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
@@ -109,9 +110,9 @@
             </div>
         </div>
 
-        <span style="display:none;" id="confirmDeleteLangSupp" rsf:id="msg=simplepage.delete_page_confirm"></span>
+        <span style="display:none;" id="deleteButtonLangSupp" rsf:id="msg=simplepage.delete_page_confirm"></span>
         <p class="act">
-            <input id="submitButton" accesskey ="s" rsf:id="save" value="Save" type="submit" class="active" />
+            <input id="submitButton" accesskey ="s" rsf:id="save" value="Save" type="submit" class="active" onclick="if ($('#name').val() !== ''){SPNR.disableControlsAndSpin( this, null );}" />
             <input accesskey ="x" rsf:id="cancel" value="Cancel" type="submit"/>
             <input type="submit" rsf:id="delete" class="deleteButton" />
         </p>

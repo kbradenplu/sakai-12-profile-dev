@@ -50,6 +50,7 @@ confirmation dialog
 		initCalcQuestion();
 	});
 	</script>
+	<script src="/library/js/spinner.js" type="text/javascript"></script>
 </head>
 <%-- unfortunately have to use a scriptlet here --%>
 <body onload="<%= request.getAttribute("html.body.onload") %>">

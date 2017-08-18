@@ -116,13 +116,13 @@
                                         </div>
                                     </div>
                                 </li>
-
-                                <!-- <li class="Mrphs-userNav__submenuitem Mrphs-userNav__submenuitem-indented">
+<!--
+				<li class="Mrphs-userNav__submenuitem Mrphs-userNav__submenuitem-indented">
                                     <a role="menuitem" href="javascript:;" id="Mrphs-userNav__submenuitem--connections">
                                         <span>${rloader.sit_connections}</span>
                                     </a>
-                                </li -->
-
+                                </li>
+-->
                                     #if (${tabsSites.prefsToolUrl})
 
                                         <li class="Mrphs-userNav__submenuitem Mrphs-userNav__submenuitem-indented">
