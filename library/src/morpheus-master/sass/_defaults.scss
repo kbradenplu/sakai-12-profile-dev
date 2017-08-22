@@ -32,10 +32,14 @@ $header-font-family: $font-family;
 $header-font-weight: 700 !default;*/										// 400 or 700 as you wish
 
 $font-family: "Helvetica Neue", Arial, sans-serif !default;
-$default-font-size: 14px !default;
+$default-font-size: 14px !default; 
+$em-default-font-size: 1.4em !default;
 $default-font-weight: normal !default;
 $header-font-family: $font-family;
 $header-font-weight: normal !default;
+
+$text-max-width: 55em;
+
 
 /* Color palette */
 $background-color: 			 #FFFFFF !default;

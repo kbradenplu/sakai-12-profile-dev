@@ -1181,6 +1181,9 @@ body.is-logged-out{
 			padding: 3px;
 			display: inline-block;
 			vertical-align: top;
+			font-size: #{$default-font-size + 2};
+			font-weight: bold;
+			color :$unpublished-text;
 		}
 		button{
 			@extend .button;
