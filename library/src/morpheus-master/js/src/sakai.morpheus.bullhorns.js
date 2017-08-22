@@ -233,7 +233,11 @@
     };
 
     var updateCounts = function () {
+	// SAK-32545: DevTools disrupted by jQuery calls when bullhorns disabled
+	// The following chunk is commented out as a hack to stop the incessant downloading of bullhornCounts.json
+	// which swamps the performance of Chrome DevTools
 
+	/*
             $.ajax({
                 url: '/direct/portal/bullhornCounts.json',
                 cache: false,
@@ -261,6 +265,7 @@
                         clearInterval(portal.bullhornCountIntervalId);
                     }
                 });
+*/
         };
 
     if (portal.loggedIn) {
