@@ -941,7 +941,6 @@ a.peer-eval-stats {
 /* negative bottom margin because we set a top margin for the section below for the case where there's no toolbar */
 #toolbar {
   margin: 0;
-
   margin-bottom: -10px;
   margin-top: -10px;
   display: inline-block;

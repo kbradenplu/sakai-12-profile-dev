@@ -2108,7 +2108,7 @@ public class SiteAction extends PagedResourceActionII {
 					if (!isMyWorkspace) {
 						// if the add participant helper is available, not
 						// stealthed and not hidden, show the link
-						if (notStealthOrHiddenTool("sakai-site-manage-participant-helper")) {
+						if (notStealthOrHiddenTool(getAddUserHelper(site))) {
 							b.add(new MenuEntry(rb.getString("java.addp"),
 									"doParticipantHelper"));
 						}
@@ -3277,7 +3277,7 @@ public class SiteAction extends PagedResourceActionII {
 				context.put("duplicatedName", state
 						.getAttribute(SITE_DUPLICATED_NAME));
 			}
-			
+			context.put( CONTEXT_IS_ADMIN, SecurityService.isSuperUser() );
 			// Add option to also copy ScoringComponent associations
 			ScoringService scoringService = (ScoringService)  ComponentManager.get("org.sakaiproject.scoringservice.api.ScoringService"); 
 			ScoringAgent scoringAgent = scoringService.getDefaultScoringAgent();
@@ -3301,6 +3301,7 @@ public class SiteAction extends PagedResourceActionII {
 			}
 			
 			context.put("titleMaxLength", state.getAttribute(STATE_SITE_TITLE_MAX));
+			context.put("siteIdMaxLength", 99);
 			return (String) getContext(data).get("template") + TEMPLATE[29];
 		case 36:
 			/*
@@ -3807,7 +3808,28 @@ public class SiteAction extends PagedResourceActionII {
 		// should never be reached
 		return (String) getContext(data).get("template") + TEMPLATE[0];
 	}
-	
+
+	/**
+	 * Finds the tool ID to use for the adding participants to the site.
+	 * Also checks that the configured tool is a valid helper.
+	 * @param site The site to add users to.
+	 * @return The tool ID.
+	 */
+	private String getAddUserHelper(Site site) {
+		String helperId = site.getProperties().getProperty("sitemanage.add.user.tool");
+		if (helperId == null) {
+			helperId = ServerConfigurationService.getString(
+					"sitemanage.add.user.tool", "sakai-site-manage-participant-helper"
+			);
+		}
+		// Validate it's a helpers before attempting to use it.
+		Tool tool = ToolManager.getTool(helperId);
+		if (tool == null || !tool.getCategories().contains("sakai.helper")) {
+			helperId = "sakai-site-manage-participant-helper";
+		}
+		return helperId;
+	}
+
 	private void addAccess(Context context, Map<String, AdditionalRole> access) {
 		boolean disableAdditional = access.size() == 0;
 		context.put("disableAdditional", disableAdditional);
@@ -4341,7 +4363,7 @@ public class SiteAction extends PagedResourceActionII {
 				HELPER_ID + ".siteId", ((Site) getStateSite(state)).getId());
 
 		// launch the helper
-		startHelper(data.getRequest(), "sakai-site-manage-participant-helper");
+		startHelper(data.getRequest(), getAddUserHelper(getStateSite(state)));
 	}
 	
 	/**
@@ -9667,13 +9689,21 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 			 */
 			if (forward) {
 				if (state.getAttribute(SITE_DUPLICATED) == null) {
-					if (StringUtils.trimToNull(params.getString("title")) == null) {
-						addAlert(state, rb.getString("java.dupli") + " ");
+					if ((SecurityService.isSuperUser())&& ((StringUtils.trimToNull(params.getString("newSiteId")) != null)&&(SiteService.siteExists(params.getString("newSiteId"))))){
+					    addAlert(state, rb.getString("sitdup.idused") + " ");
+					} else if (StringUtils.trimToNull(params.getString("title")) == null) {
+					    addAlert(state, rb.getString("java.dupli") + " ");
 					} else {
 						String title = params.getString("title");
 						state.setAttribute(SITE_DUPLICATED_NAME, title);
 
-						String newSiteId = IdManager.createUuid();
+						String newSiteId = null;
+						if (StringUtils.trimToNull(params.getString("newSiteId")) == null) {
+						    newSiteId = IdManager.createUuid();
+						} else{
+						    newSiteId = params.getString("newSiteId");
+						}
+
 						try {
 							String oldSiteId = (String) state
 									.getAttribute(STATE_SITE_INSTANCE_ID);
@@ -9692,7 +9722,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 
 							// SAK-20797
 							long oldSiteQuota = this.getSiteSpecificQuota(oldSiteId);
-							
+
 							Site site = SiteService.addSite(newSiteId,
 									getStateSite(state));
 							
