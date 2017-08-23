@@ -1812,10 +1812,14 @@ span.nextprev {
   font-size:200%
 }
 .bottomButtons {
-  width:100%
+  width:100%;
+  text-align: center;
 }
 .bottomRight {
   float:right
+}
+.bottomLeft {
+    float:left
 }
 .contentButton span {
   padding: 0px !important;
