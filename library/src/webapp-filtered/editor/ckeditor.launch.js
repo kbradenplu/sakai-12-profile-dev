@@ -228,10 +228,28 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
     //To add extra plugins outside the plugins directory, add them here! (And in the variable)
     (function() {
         // SAK-30370 present a nice and simple editor without plugins to the user on a tiny screen.
-        if (getWidth() < 800) {
-            ckconfig.toolbar = 'Basic';
+        // 
+        //Check for the portal variable (Should be defined)
+        //These are defined in user/user-tool-prefs/tool/src/webapp/prefs/editor.jsp
+
+        var detectWidth = true;
+        if (typeof portal != 'undefined' && typeof portal.editor != 'undefined' && typeof portal.editor.type == 'string') {
+            if (portal.editor.type == "basic") {
+                ckconfig.toolbar = "Basic";
+                detectWidth = false;
+            }
+            else if (portal.editor.type == "full") {
+                ckconfig.toolbar = "Full";
+                detectWidth = false;
+            }
         }
-        else {
+
+        if (detectWidth == true && getWidth() < 800) {
+            ckconfig.toolbar = 'Basic';  
+	}
+
+
+        //These could be applicable to the basic toolbar
             CKEDITOR.plugins.addExternal('lineutils',basePath+'lineutils/', 'plugin.js');
             CKEDITOR.plugins.addExternal('widget',basePath+'widget/', 'plugin.js');
             CKEDITOR.plugins.addExternal('iframedialog',basePath+'iframedialog/', 'plugin.js');
@@ -278,7 +296,6 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             } 
             CKEDITOR.dtd.$removeEmpty.span = false;
             CKEDITOR.dtd.$removeEmpty['i'] = false;
-        }
     })();
 
 	  CKEDITOR.replace(targetId, ckconfig);

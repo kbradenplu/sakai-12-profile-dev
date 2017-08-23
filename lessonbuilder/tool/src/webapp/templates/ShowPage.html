@@ -1085,16 +1085,18 @@
 				
                 <form action="#" rsf:id="subpage-form" class="controlsPanel">
                   <input type="hidden" rsf:id="csrf7" />
+		  <h5>Create a new page</h5>
                     <p class="shorttext required">
                         <span class="reqStar">*</span>
                         <label class="pageTitle" rsf:id="subpage-label" for="subpage-title"></label>
                         <input type="text" name="subpage-title" id="subpage-title" rsf:id="subpage-title" maxlength="255" length="30" /><br />
                     </p>
                 
+		    <h5>Choose an existing page</h5>
                     <p class="shorttext required" style="margin-top: 1em; margin-bottom:1em">
                       <a role="button" href="#" id="subpage-choose" rsf:id="subpage-choose" ><span rsf:id="msg=simplepage.choose_existing_page"></span></a>
                     </p>
-
+		    <h5>Optional Settings</h5>
                     <p class="checkbox"><input type="checkbox" name="subpage-next" id="subpage-next" rsf:id="subpage-next" />
                     <label for="subpage-next"><span rsf:id="msg=simplepage.subpage-next"></span></label></p>
                     <p class="checkbox"><input type="checkbox" name="subpage-button" id="subpage-button" rsf:id="subpage-button" />

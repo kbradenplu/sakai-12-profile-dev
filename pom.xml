@@ -52,6 +52,7 @@
                 <module>citations</module>
                 <module>cmprovider</module>
                 <module>common</module>
+                <module>commons</module>
                 <module>config</module>
                 <module>cloud-content</module>
                 <module>content</module>
@@ -62,7 +63,7 @@
                 <module>deploy</module>
                 <module>edu-services</module>
                 <module>emailtemplateservice</module>
-		<module>endorsed</module>
+                <module>endorsed</module>
                 <module>entitybroker</module>
                 <module>external-calendaring-service</module>
                 <module>feedback</module>
@@ -80,6 +81,7 @@
                 <module>mailsender</module>
                 <module>message</module>
                 <module>msgcntr</module>
+                <module>mycalendar</module>
                 <module>oauth</module>
                 <module>pasystem</module>
                 <module>podcasts</module>
@@ -132,6 +134,7 @@
                 <module>citations</module>
                 <module>clog</module>
                 <module>common</module>
+                <module>commons</module>
                 <module>config</module>
                 <module>cloud-content</module>
                 <module>content</module>
@@ -161,6 +164,7 @@
                 <module>message</module>
                 <module>metaobj</module>
                 <module>msgcntr</module>
+                <module>mycalendar</module>
                 <module>osp</module>
                 <module>podcasts</module>
                 <module>polls</module>
