@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxButton;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -28,21 +30,24 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.lang.Bytes;
 import org.sakaiproject.profile2.logic.ProfileImageLogic;
 import org.sakaiproject.profile2.logic.ProfileWallLogic;
 import org.sakaiproject.profile2.logic.SakaiProxy;
+import org.sakaiproject.profile2.model.ProfilePreferences;
 import org.sakaiproject.profile2.tool.components.CloseButton;
 import org.sakaiproject.profile2.tool.components.JavascriptEventConfirmation;
 import org.sakaiproject.profile2.tool.pages.MyProfile;
 import org.sakaiproject.profile2.util.ProfileConstants;
 import org.sakaiproject.profile2.util.ProfileUtils;
+import org.sakaiproject.profile2.logic.ProfilePreferencesLogic;
 
 public class ChangeProfilePictureUpload extends Panel{
-    
 	private static final long serialVersionUID = 1L;
 	private FileUploadField uploadField;
 	
@@ -54,7 +59,10 @@ public class ChangeProfilePictureUpload extends Panel{
 	
 	@SpringBean(name="org.sakaiproject.profile2.logic.ProfileWallLogic")
 	private ProfileWallLogic wallLogic;
-	
+    
+    @SpringBean(name = "org.sakaiproject.profile2.logic.ProfilePreferencesLogic")
+    protected ProfilePreferencesLogic preferencesLogic;
+
     private static final Logger log = LoggerFactory.getLogger(ChangeProfilePictureUpload.class);
     
     private FeedbackPanel feedback;
@@ -180,9 +188,9 @@ public class ChangeProfilePictureUpload extends Panel{
 		
         
         //close button component
-        CloseButton closeButton = new CloseButton("closeButton", this);
+        /*CloseButton closeButton = new CloseButton("closeButton", this);
         closeButton.setOutputMarkupId(true);
-		form.add(closeButton);
+	form.add(closeButton);*/
       
         //text
 		Label textSelectImage = new Label("textSelectImage", new StringResourceModel("text.upload.image.file", null, new Object[]{ maxSize } ));
@@ -199,6 +207,44 @@ public class ChangeProfilePictureUpload extends Panel{
 		feedback.setOutputMarkupId(true);
 		form.add(feedback);
 		
+
+	//official image stuff
+		ProfilePreferences profilePreferences = preferencesLogic.getPreferencesRecordForUser(userUuid, false);
+		CompoundPropertyModel<ProfilePreferences> preferencesModel = new CompoundPropertyModel<ProfilePreferences>(profilePreferences);
+		WebMarkupContainer is = new WebMarkupContainer("imageSettingsContainer");
+                is.setOutputMarkupId(true);
+
+                // headings 
+                //is.add(new Label("imageSettingsHeading", new ResourceModel("heading.section.image")));
+                //is.add(new Label("imageSettingsText", new ResourceModel("preferences.image.message")));
+
+                boolean officialImageEnabled = sakaiProxy.isUsingOfficialImageButAlternateSelectionEnabled();
+
+		//official image
+                //checkbox
+                WebMarkupContainer officialImageContainer = new WebMarkupContainer("officialImageContainer");
+                //officialImageContainer.add(new Label("officialImageLabel", new ResourceModel("preferences.image.official")));
+                CheckBox officialImage = new CheckBox("officialImage", new PropertyModel<Boolean>(preferencesModel, "useOfficialImage"));
+                officialImage.setMarkupId("officialimageinput");
+                officialImage.setOutputMarkupId(true);
+                officialImageContainer.add(officialImage);
+
+		//updater
+                officialImage.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+			
+			/*private static final long serialVersionUID = 1L;*/
+                        protected void onUpdate(AjaxRequestTarget target) {
+			    if(preferencesLogic.savePreferencesRecord(profilePreferences)) {
+				//post update event                                                                                         
+				sakaiProxy.postEvent(ProfileConstants.EVENT_PREFERENCES_UPDATE, "/profile/"+userUuid, true);
+
+			    }
+			}
+		});
+                is.add(officialImageContainer);
+		form.add(is);
+
+
 		//submit button
 		IndicatingAjaxButton submitButton = new IndicatingAjaxButton(
 				"submit", new ResourceModel("button.upload")) {

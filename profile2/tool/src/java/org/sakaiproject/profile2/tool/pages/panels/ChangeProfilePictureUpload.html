@@ -26,10 +26,7 @@
 <body>
 
 <wicket:panel>
-	<form wicket:id="form" class="profileForm">
-	
-		<div wicket:id="closeButton">X</div>
-			
+	<form wicket:id="form" class="profileForm">			
 		<p wicket:id="textSelectImage" class="small">Select an image</p>
 	
 		<div class="wicket-feedbackpanel-nolist" wicket:id="feedback">[feedback]</div>
@@ -51,7 +48,16 @@
 		</span>
 		</p>		
 		
-		
+		<div wicket:id="imageSettingsContainer">
+                  <div wicket:id="officialImageContainer">
+                    <div class="checkbox">
+                      <label for="officalimageinput">
+                        <input wicket:id="officialImage" type="checkbox" />
+                        <wicket:message key="accessibility.prefs.officialimage" />
+                      </label>
+                    </div>
+                  </div>
+		</div>
 	</form>
 </wicket:panel>
 

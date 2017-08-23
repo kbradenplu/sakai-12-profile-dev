@@ -261,7 +261,7 @@ public class MyProfile extends BasePage {
 			changePicture = new EmptyPanel("changePicture");
 		}
 		changePicture.setOutputMarkupPlaceholderTag(true);
-		changePicture.setVisible(false);
+		changePicture.setVisible(true);
 		add(changePicture);
 		
 		//add the current picture
