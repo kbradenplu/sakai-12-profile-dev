@@ -1465,7 +1465,7 @@ div.navIntraTool {
 
 /* temporary, to avoid changing old stuff for the moment */
 .edit-col {
-  padding-top: 0px !important;
+/*   padding-top: 0px !important; */
 }
 .image-col {
  display: inline-block;
@@ -1484,6 +1484,8 @@ z-index: 15;
 border-radius: 3px;*/
 border: solid #bbb 1px;
 padding:1px;
+/* The following compensates for an extraordinarily wide .edit-col control panel */
+font-size: 3px;
 }
 .edit-col span {
 color: #666;
@@ -1825,7 +1827,7 @@ span.nextprev {
   padding: 0px !important;
 }
 .fa-button-text{
-  font-size:125%;
+  font-size:125%; 
 }
 .navIntraTool li.contentButton a .fa-button-text, .fa-fw {
   font-family:FontAwesome;
