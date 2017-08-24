@@ -681,3 +681,21 @@ div.msgcntr-profile-qtip {
 	cursor: pointer;
 	font-size: 20px !important;
 }
+
+
+/* SAKAITWTR-116: The following block fixes absurdly wide date picker fields. */
+.openDate, .closeDate {
+    width: 220px !important;
+}
+.openDateSpan {
+    margin-top: 10px !important;
+}
+.openDateSpan label {
+    font-weight: normal !important;
+}
+.openDate {
+    margin-left: 15px !important;
+}
+.closeDate {
+    margin-left: 13px !important;
+}
