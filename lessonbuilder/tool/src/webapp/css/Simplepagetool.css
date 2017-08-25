@@ -201,10 +201,10 @@ div.action span .nextbutton, .Mrphs-siteHierarchy span .nextbutton{
     margin:1em 0;
 }
 .controlsPanel .act .deleteButton, .act .deleteButton {
-    background: none !important;
-    border: none !important;
+    background: #c00 !important;
+    border: 1px solid #c00 !important;
     box-shadow: none !important;
-    color: #c00 !important;    
+    color: #fff !important;    
     text-shadow:none !important;
 
 }
@@ -217,7 +217,7 @@ div.action span .nextbutton, .Mrphs-siteHierarchy span .nextbutton{
     float: none
 }
 .controlsPanel .act .deleteButton:hover, .act .deleteButton:hover {
-    background: none !important;
+    background: #f00 !important;
     cursor: pointer;
 }
 .inset-text {
@@ -2102,4 +2102,9 @@ input#sectionTitle {
 
 #subpage-dialog a {
     color: #265b81 !important;
+}
+
+/* In the Add Text view, place some margin between the CKEditor and the checkbox beneath it. */
+.longtext {
+    margin-bottom: 1.5em;
 }
