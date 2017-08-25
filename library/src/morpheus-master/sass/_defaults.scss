@@ -46,7 +46,9 @@ $background-color: 			 #FFFFFF !default;
 //$background-color-secondary: #3949AB !default;
 $background-color-secondary: #333 !default;
 
-$primary-color:    			 #265b81 !default;
+$primary-link-color:   			 #265b81 !default;
+/*$primary-color:    			 #265b81 !default; */
+$primary-color:    			 #555 !default; 
 $primary-color-highContrast: darken( $primary-color, 4% ) !default;	// for use of primary on non-white light backgrounds, such as greys
 $primary-color-shadow:			 adjust-hue( $primary-color, 5 ) !default;	// To give primary a darker shadow
 $secondary-color:  			 #F00 !default;
@@ -75,10 +77,14 @@ $tool-tab-border-color:                                   #E5E5E5 !default;
 $tool-tab-hover-text-color:                               #191919 !default;
 $tool-tab-hover-background-color:                         #ECECEC !default;
 $tool-tab-hover-highlight-color:                          #7F7F7F !default;
-$tool-tab-active-text-color:                              #15597e !default;
+
+/* $tool-tab-active-text-color:                              #15597e !default; */
+$tool-tab-active-text-color:                              #3f3f3f !default;
+
 $tool-tab-active-text-size:                               12.5px !default;
 $tool-tab-active-background-color:                        #FFFFFF !default;
-$tool-tab-active-highlight-color:                         #15597e !default;
+/* $tool-tab-active-highlight-color:                         #15597e !default; */
+$tool-tab-active-highlight-color:                         #777 !default;
 
 $tool-nav-link-color: #666 !default;
 
@@ -94,9 +100,13 @@ $breadcrumbs-tool-color:               	 #000 !default;
 $breadcrumbs-hover-color:                #fbba37 !default;
 
 /* Link colors */
-$link-color: $primary-color !default;
+/* $link-color: $primary-color !default;
 $link-active-color: $primary-color !default;
-$link-hover-color: $primary-color !default;
+$link-hover-color: $primary-color !default; */
+$link-color: $primary-link-color !default;
+$link-active-color: $primary-link-color !default;
+$link-hover-color: $primary-link-color !default;
+
 $link-background-color: transparent !default;
 $link-active-background-color: transparent !default;
 $link-hover-background-color: transparent !default;
@@ -107,19 +117,30 @@ $button-border-color: #C0C0C0 !default;
 $button-background-color: #F0F0F0 !default;
 $button-background-secondary-color: #FFF !default;
 /* General button colors */
-$button-color-text-color: #FFF !default;
-$button-color-border-color: #326B97 !default;
-$button-color-background-color: #176691 !default;
-$button-color-background-secondary-color: #FAFAFA !default;
+$button-color-text-color: #fff !default;
+/* $button-color-border-color: #326B97 !default; */
+$button-color-border-color: #333 !default;
+
+$plu-gold: #fbba38 !default;
+
+/* $button-color-background-color: #176691 !default; */
+/* $button-color-background-color: #3f3f3f !default; */
+$button-color-background-color: #555 !default; 
+$button-color-background-secondary-color: #fafafa !default; 
+
+/* $button-hover-background-color: #777 !default; */
+$button-hover-background-color: #111 !default;
 
 $button-radius:                                           3px !default;
 $button-text-transform:                                   none !default;
 $button-primary-text-color:                               $button-color-text-color !default;
-$button-primary-background-color:                         #15597e !default;
+/* $button-primary-background-color:                         #15597e !default; */
+$button-primary-background-color:                         $button-color-background-color !default;
 $button-primary-border-color:                             $button-color-border-color !default;
-$button-primary-hover-text-color:                         #FFFFFF !default;
-$button-primary-hover-background-color:                   $button-color-background-color !default;
-$button-primary-hover-border-color:                       #124466 !default;
+$button-primary-hover-text-color:                         $button-color-text-color !default;
+$button-primary-hover-background-color:                   $button-hover-background-color !default;
+$button-primary-hover-border-color:                       $button-hover-background-color !default;
+
 $button-secondary-text-color:                             #333333 !default;
 $button-secondary-icon-color:                             #595959 !default;
 $button-secondary-background-color:                       $button-color-background-secondary-color !default;
@@ -162,6 +183,7 @@ $header-size: 50px !default;
 $topNav-text-color:                         #fff !default; /* used for links and text in the topNav */
 $topNav-text-alt-color:                     #ccc !default;
 
+
 /* Favorites */ 
 /* Favorites - item */
 /*$sites-nav-menu-item-background:            #FFFFFF !default;
@@ -170,8 +192,8 @@ $sites-nav-menu-item-icon-color:            #666666 !default;
 $sites-nav-menu-item-border-color:          #E5E5E5 !default;*/
 
 $sites-nav-menu-item-background:            #3f3f3f !default;
-$sites-nav-menu-item-color:                 #fbba38 !default;
-$sites-nav-menu-item-icon-color:            #fbba38 !default;
+$sites-nav-menu-item-color:                 $plu-gold !default;
+$sites-nav-menu-item-icon-color:            $plu-gold !default;
 $sites-nav-menu-item-border-color:          #666 !default;
 $sites-nav-menu-item-border-top:            1px solid $sites-nav-menu-item-border-color !default;
 $sites-nav-menu-item-border-right:          $sites-nav-menu-item-border-top !default;
@@ -412,7 +434,8 @@ $icon-size: 20px !default;
 /* Footer */
 $footer-background-color: $tool-menu-background-color !default;
 $footer-border-color: $tool-border-color !default;
-$footer-color: $text-color !default;
+/* $footer-color: $text-color !default; */
+$footer-color: #fff !default;
 
 // Overview page column widths. Total to add up to 96% as the columns have a margin.
 $col1of2-width: 48% !default;
