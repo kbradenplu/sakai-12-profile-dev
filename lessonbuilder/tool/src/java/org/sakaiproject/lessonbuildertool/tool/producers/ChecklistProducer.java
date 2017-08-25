@@ -110,6 +110,10 @@ public class ChecklistProducer implements ViewComponentProducer, NavigationCaseR
         if (simplePageBean.canEditPage()) {
             simplePageBean.setItemId(itemId);
 
+	    String title = messageLocator.getMessage("simplepage.edit-checklist");
+	    // Prune " {}" from the end
+	    title = title.substring(0, title.length() - 3);
+	    UIOutput.make(tofill, "title-checklist-view", title);
             UIOutput.make(tofill, "title-label", messageLocator.getMessage("simplepage.adding-checklist"));
             UIOutput.make(tofill, "page-title", simplePageBean.getCurrentPage().getTitle());
 
