@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>master</artifactId>
+		<groupId>org.sakaiproject</groupId>
+		<version>12-SNAPSHOT</version>
+		<relativePath>../master/pom.xml</relativePath>
+	</parent>
+    <packaging>jar</packaging>
+    <groupId>org.webjars</groupId>
+    <artifactId>ckeditor</artifactId>
+    <version>4.5.7-PLU-SNAPSHOT</version>
+    <name>CKEditor</name>
+    <description>WebJar for CKEditor</description>
+    <url>http://webjars.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <upstream.version>4.5.7</upstream.version>
+        <upstream.url>http://download.cksource.com/CKEditor/CKEditor/CKEditor%20${upstream.version}</upstream.url>
+        <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/4.5.7</destDir>
+        <requirejs>
+            {
+                "paths": {
+                    "ckeditor-full": "full/ckeditor",
+                    "ckeditor-standard": "standard/ckeditor",
+                    "ckeditor-basic": "basic/ckeditor"
+                }
+            }
+        </requirejs>
+    </properties>
+
+    <developers>
+        <developer>
+            <id>jamesward</id>
+            <name>James Ward</name>
+            <email>james@jamesward.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>GPL</name>
+            <url>http://www.gnu.org/licenses/gpl.html</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>LGPL</name>
+            <url>http://www.gnu.org/licenses/lgpl.html</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>MPL</name>
+            <url>http://www.mozilla.org/MPL/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>http://github.com/webjars/ckeditor</url>
+        <connection>scm:git:https://github.com/webjars/ckeditor.git</connection>
+        <developerConnection>scm:git:https://github.com/webjars/ckeditor.git</developerConnection>
+        <tag>ckeditor-4.5.7</tag>
+    </scm>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${destDir}" />
+                                <get src="${upstream.url}/ckeditor_${upstream.version}_basic.zip" dest="${project.build.directory}/${project.artifactId}-basic.zip" />
+                                <get src="${upstream.url}/ckeditor_${upstream.version}_standard.zip" dest="${project.build.directory}/${project.artifactId}-standard.zip" />
+                                <!-- If we ever need to update the basic and standard, then replicate the steps for full. -->
+                                <zip basedir="src/main/resources/webjars/ckeditor/4.5.7/full/" destfile="${project.build.directory}/${project.artifactId}-full.zip" />
+                                <echo message="unzip archives" />
+                                <unzip src="${project.build.directory}/${project.artifactId}-basic.zip" dest="${project.build.directory}/basic" />
+                                <unzip src="${project.build.directory}/${project.artifactId}-standard.zip" dest="${project.build.directory}/standard" />
+                                <unzip src="${project.build.directory}/${project.artifactId}-full.zip" dest="${project.build.directory}/full" />
+
+                                <echo message="moving resources" />
+                                <move todir="${destDir}/basic">
+                                    <fileset dir="${project.build.directory}/basic/ckeditor" excludes="samples/" />
+                                </move>
+                                <move todir="${destDir}/standard">
+                                    <fileset dir="${project.build.directory}/standard/ckeditor" excludes="samples/" />
+                                </move>
+                                <move todir="${destDir}/full">
+                                    <fileset dir="${project.build.directory}/full/ckeditor" excludes="samples/" />
+                                </move>
+
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.5</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>sonatype-nexus-staging</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
