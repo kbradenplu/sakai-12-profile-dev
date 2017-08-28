@@ -6373,9 +6373,10 @@ public class AssignmentAction extends PagedResourceActionII {
             Assignment.SubmissionType submissionType = a.getTypeOfSubmission();
             if (submissionType == Assignment.SubmissionType.TEXT_ONLY_ASSIGNMENT_SUBMISSION) {
                 // for the inline only submission
-                if (textIsEmpty) {
+                //if (textIsEmpty) {
+		if (text.length() == 0) {
                     addAlert(state, rb.getString("youmust7"));
-                }
+		}
             } else if (submissionType == Assignment.SubmissionType.ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION) {
                 // for the attachment only submission
                 List v = getNonInlineAttachments(state, a);
@@ -6392,7 +6393,8 @@ public class AssignmentAction extends PagedResourceActionII {
                 // for the inline and attachment submission / other submission types
                 // There must be at least one thing submitted: inline text or at least one attachment
                 List v = getNonInlineAttachments(state, a);
-                if (textIsEmpty && (v == null || v.size() == 0)) {
+                //if (textIsEmpty && (v == null || v.size() == 0)) {
+		if (text.length() == 0 && (v == null || v.size() == 0)) {
                     addAlert(state, rb.getString("youmust2"));
                 }
             }
