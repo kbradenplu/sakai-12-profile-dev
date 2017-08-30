@@ -146,9 +146,9 @@
     <!-- Either use a tag or a SHA so the version is predictable.
          If you update this you must also currently update the value inlibrary/src/webapp/editor/ckeditor.launch.js
          Source at https://github.com/w8tcha/CKEditor-AutoSave-Plugin -->
-    <ckeditor.autosave.version>8541f541d9985cfd0859c7d8eb6be404afe95a2d</ckeditor.autosave.version>
+    <ckeditor.autosave.version>b88e3878f0c7442a52e542f67e76d97e2ce32f80</ckeditor.autosave.version>
     <!-- Source at https://github.com/w8tcha/CKEditor-WordCount-Plugin -->
-    <ckeditor.wordcount.version>4897cb23a9f2ca7fb6b792add4350fb9e2a1722c</ckeditor.wordcount.version>
+    <ckeditor.wordcount.version>b29a29d4dc8a42732ce46720e1efc30c826e4c93</ckeditor.wordcount.version>
     <ckeditor.a11ychecker.version>1.1.0</ckeditor.a11ychecker.version>
     <ckeditor.balloonpanel.version>4.6.2</ckeditor.balloonpanel.version>
   </properties>
@@ -1740,19 +1740,19 @@
       <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>5.1.42</version>
+          <version>5.1.43</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>org.mariadb.jdbc</groupId>
           <artifactId>mariadb-java-client</artifactId>
-          <version>2.0.2</version>
+          <version>2.0.3</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.zaxxer</groupId>
         <artifactId>HikariCP</artifactId>
-        <version>2.6.1</version>
+        <version>2.6.3</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -2069,7 +2069,7 @@
         <plugin>
             <groupId>com.mycila</groupId>
             <artifactId>license-maven-plugin</artifactId>
-            <version>2.11</version>
+            <version>3.0</version>
             <configuration>
                 <header>https://raw.githubusercontent.com/sakaiproject/sakai/master/ECLv2-header-template.txt</header>
                 <includes>
@@ -2078,13 +2078,24 @@
                 <excludes>
                     <exclude>target/**</exclude>
                     <exclude>**/org/sakaiproject/rsf/**</exclude>
+                    <!-- Columbia header -->
+                    <exclude>**/delegatedaccess/**</exclude>
+                    <exclude>**/jsf/**</exclude>
                 </excludes>
                 <properties>
-                    <year>${project.inceptionYear}</year>
                     <holder>The Apereo Foundation</holder>
                 </properties>
                 <encoding>UTF-8</encoding>
+                <skipExistingHeaders>true</skipExistingHeaders>
             </configuration>
+            <dependencies>
+                <dependency>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin-git</artifactId>
+                    <!-- make sure you use the same version as license-maven-plugin -->
+                    <version>3.0</version>
+                </dependency>
+            </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
