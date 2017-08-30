@@ -209,12 +209,14 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         //SAK-23418
         pasteFromWordRemoveFontStyles : false,
         pasteFromWordRemoveStyles : false,
-       saveDetectionSelectors : "form input[type='button'],form input[type='submit']",
-        //Delay for autosave
-	//delay: 120,
-	
-        //autosave_messageType can be "no" or "notification"
-        //messageType : "statusbar", 
+        autosave : {
+            saveDetectionSelectors : "form input[type='button'],form input[type='submit']",
+            //Delay for autosave
+            delay: 120,
+            //autosave_messageType can be "no" or "notification"
+            messageType : "statusbar"
+        },
+
         //wordcount Plugin see https://github.com/w8tcha/CKEditor-WordCount-Plugin for more config options
         //This value should match the one in antisamy (kernel/kernel-impl/src/main/resources/antisamy/low-security-policy.xml)
         wordcount : {
