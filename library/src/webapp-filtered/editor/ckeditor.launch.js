@@ -110,7 +110,20 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         },
         skin: 'moono',
         defaultLanguage: 'en',
-        allowedContent: true, // http://docs.ckeditor.com/#!/guide/dev_advanced_content_filter-section-3
+        
+        // SAK-31829, SAK-33279 Disable functionality in table plugin
+        //https://docs.ckeditor.com/#!/guide/dev_disallowed_content-section-how-to-allow-everything-except...
+        allowedContent: {
+            $1: {
+                // Use the ability to specify elements as an object.
+                elements: CKEDITOR.dtd,
+                attributes: true,
+                styles: true,
+                classes: true
+            }
+        },
+        disallowedContent: 'table[cellspacing,cellpadding,border]',
+
         language: language + (country ? '-' + country.toLowerCase() : ''),
         // This is used for uploading by the autorecorder and fmath_formula plugins.
         // TODO Get this to work with elfinder.
@@ -196,12 +209,13 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         //SAK-23418
         pasteFromWordRemoveFontStyles : false,
         pasteFromWordRemoveStyles : false,
-        autosave_saveDetectionSelectors : "form input[type='button'],form input[type='submit']",
-        //Delay for autosave
-        ///autosave_delay: 120,
-	
-        //autosave_messageType can be "no" or "notification"
-        //autosave_messageType : "statusbar", 
+        autosave : {
+            saveDetectionSelectors : "form input[type='button'],form input[type='submit']",
+            //Delay for autosave
+            delay: 120,
+            //autosave_messageType can be "no" or "notification"
+            messageType : "statusbar"
+        },
 
         //wordcount Plugin see https://github.com/w8tcha/CKEditor-WordCount-Plugin for more config options
         //This value should match the one in antisamy (kernel/kernel-impl/src/main/resources/antisamy/low-security-policy.xml)
