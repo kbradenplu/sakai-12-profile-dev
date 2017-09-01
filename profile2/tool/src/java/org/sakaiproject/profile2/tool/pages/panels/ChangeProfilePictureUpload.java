@@ -237,7 +237,7 @@ public class ChangeProfilePictureUpload extends Panel{
 			    if(preferencesLogic.savePreferencesRecord(profilePreferences)) {
 				//post update event                                                                                         
 				sakaiProxy.postEvent(ProfileConstants.EVENT_PREFERENCES_UPDATE, "/profile/"+userUuid, true);
-
+				setResponsePage(new MyProfile());
 			    }
 			}
 		});
