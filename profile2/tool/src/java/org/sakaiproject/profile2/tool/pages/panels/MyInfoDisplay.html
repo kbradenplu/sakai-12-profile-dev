@@ -33,9 +33,9 @@
 		
 		<a href="#" wicket:id="editButton" class="edit-button">
 			<span wicket:id="editButtonLabel">edit</span> 
-			<span class="offscreen">
+			<!--<span class="offscreen">
 				<wicket:message key="accessibility.edit.basic" />
-			</span>
+			</span>-->
 		</a>
 		
 		<div class="mainSectionContent">
@@ -97,17 +97,17 @@
 		$(document).ready(function(){ 
 
 			//force hide on init
-			$(".edit-button").addClass("offscreen");
+			//$(".edit-button").addClass("offscreen");
 
 			//show the edit button when hovering over an editable section
-			$(".editable").hover(
+			/*$(".editable").hover(
 				function () {
 					$(this).children(".edit-button").removeClass("offscreen");
 				}, 
 				function () {
 					$(this).children(".edit-button").addClass("offscreen");
 				}
-			);
+			);*/
 		});
 	</script>
 	

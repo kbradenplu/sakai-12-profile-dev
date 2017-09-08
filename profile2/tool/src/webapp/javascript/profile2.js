@@ -65,7 +65,7 @@ function resizeFrame(updown){
 $(document).ready(function () {
 
     // Show the various in place editing buttons when they receive keyboard focus
-    $(".edit-image-button").focus(function () { 
+    /*$(".edit-image-button").focus(function () { 
         $(this).removeClass("offscreen"); 
     });
 
@@ -79,7 +79,7 @@ $(document).ready(function () {
 
     $(".edit-button").blur(function () { 
         $(this).addClass("offscreen"); 
-    }); 
+    });*/ 
 });
 
 function doUpdateCK(){
