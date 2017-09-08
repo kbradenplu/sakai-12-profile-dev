@@ -1358,7 +1358,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						itemicon.decorate(new UIStyleDecorator("fa-globe"));
 						break;
 					    case SimplePageItem.PAGE:
-						itemicon.decorate(new UIStyleDecorator("fa-folder-open-o"));
+						itemicon.decorate(new UIStyleDecorator("fa-book"));
 						break;
 					    case SimplePageItem.RESOURCE:
 						String mimeType = simplePageBean.getContentType(i);
