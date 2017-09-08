@@ -192,3 +192,10 @@ h2 {
     margin-top: 0.5em !important;
 }
 
+/* Fix accordion icon for Appearance under Optional Settings */
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+    position: relative;
+    left: 0;
+    top: 3px;
+    margin-right: 5px;
+}
