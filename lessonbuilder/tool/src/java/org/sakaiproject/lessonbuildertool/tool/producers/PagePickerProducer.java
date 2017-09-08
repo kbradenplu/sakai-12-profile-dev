@@ -646,7 +646,7 @@ public class PagePickerProducer implements ViewComponentProducer, NavigationCase
             case SimplePageItem.BLTI:
                 return new UIStyleDecorator("fa-globe");
             case SimplePageItem.PAGE:
-                return new UIStyleDecorator("fa-folder-open-o");
+                return new UIStyleDecorator("fa-book");
             case SimplePageItem.RESOURCE:
                 return getImageSourceDecoratorFromMimeType(pageItem);
             case SimplePageItem.MULTIMEDIA:
