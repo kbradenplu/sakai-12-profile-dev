@@ -13,14 +13,18 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 4px 8px;
-		background: $alt-colour;
-		color: $background-color;
+		/*		background: $alt-colour; */
+		/* background: $plu-gold; */
+		background: #222;
+		color: $background-color; 
+		/* color: #111; */
 	}
 	
 	.qtip-content
 	{
 		padding: 1em;
-		border: 4px solid $alt-colour;
+		/* border: 4px solid $alt-colour; */
+		border: 4px solid #222;
 		border-top:0 none;
 		color: $text-color;
 		
