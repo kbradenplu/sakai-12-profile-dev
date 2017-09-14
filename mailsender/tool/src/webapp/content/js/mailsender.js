@@ -415,9 +415,25 @@ var RcptSelect = function()
 		 */
 		toggleSelectAll: function(checkboxId)
 		{
+		    var sendMeBox = jQuery('#sendMeCopy')[0];
+		    var appendRecipientsBox = jQuery('#appendRecipientList')[0];
+		    var emailArchiveBox = jQuery('#addToArchive')[0];
+
+		    if (sendMeBox) {
+			var sendMeCopyTemp = jQuery('#sendMeCopy')[0].checked;
+			}
+		    if (appendRecipientsBox) {
+			var appendRecipientsTemp = jQuery('#appendRecipientList')[0].checked;
+		    }
+		    if (emailArchiveBox) {
+			var emailArchiveTemp = jQuery('#addToArchive')[0].checked;
+		    }
 			if (!checkboxId)
 			{
-				var checked = jQuery('#mailsender-rcpt-all').attr('checked');
+			        var checked = jQuery('#mailsender-rcpt-all').attr('checked');
+			        if (checked === undefined) {
+				    checked = false;
+				}
 				jQuery('input[type=checkbox]:enabled', context).attr('checked', checked);
 			}
 			else
@@ -430,6 +446,15 @@ var RcptSelect = function()
 					jQuery('#mailsender-rcpt-all').attr('checked',false);
 				}
 			}
+		    if (sendMeBox) {
+			jQuery('#sendMeCopy').attr('checked', sendMeCopyTemp);
+		    }
+		    if (appendRecipientsBox) {
+			jQuery('#appendRecipientList').attr('checked', appendRecipientsTemp);
+		    }
+		    if (emailArchiveBox) {
+			jQuery('#addToArchive').attr('checked', emailArchiveTemp);
+		    }
 		},
 
 		/**
