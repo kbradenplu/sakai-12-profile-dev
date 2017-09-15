@@ -164,10 +164,10 @@ body.is-logged-out{
 }
 
 #toolMenuWrap .img_site_toolmenu{
-  width: 100%;
+  width: 90%;
   max-width: $tool-menu-width;
   height: auto;
-  margin: 0 auto;
+  margin: 10px auto;
   @media #{$phone}{
     display: none;
   }
