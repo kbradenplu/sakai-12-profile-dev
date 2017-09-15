@@ -518,3 +518,6 @@ var RcptSelect = function()
 		}
 	}; // end return
 }(); // end namespace
+jQuery( document ).ready(function() {
+    jQuery('#mailsender-rcpt-all').attr('checked', 'checked');
+});
