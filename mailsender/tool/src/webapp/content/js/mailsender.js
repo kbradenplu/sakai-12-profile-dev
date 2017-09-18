@@ -331,6 +331,11 @@ var RcptSelect = function()
 						}
 						// We do this in the callback (once the HTML has been added to the DOM).
 						resetFrame();
+					    	var checked = jQuery('#mailsender-rcpt-all').attr('checked');
+					    	if (checked === 'checked') {
+						    jQuery('input[type=checkbox]:enabled', resultArea).attr('checked', checked);
+						}
+
 					});
 
 				// update the page
@@ -358,6 +363,16 @@ var RcptSelect = function()
 
 			// take down the wait sign
 			jQuery('body').css('cursor', 'default');
+
+                    /*000var a = jQuery('[id^=mailsender]');
+                        var checked = jQuery('#mailsender-rcpt-all').attr('checked');
+                        if (checked !== undefined) {
+                            jQuery('input[type=checkbox]:enabled', a).attr('checked', checked);
+		    	}*/
+		    	var checked = jQuery('#mailsender-rcpt-all').attr('checked');
+		    	if (checked === 'checked') {
+                            jQuery('input[type=checkbox]:enabled', resultArea).attr('checked', checked);
+                        }
 		},
 
 		/**
@@ -518,3 +533,6 @@ var RcptSelect = function()
 		}
 	}; // end return
 }(); // end namespace
+jQuery( document ).ready(function() {
+    jQuery('#mailsender-rcpt-all').attr('checked', 'checked');
+});
