@@ -1323,7 +1323,7 @@ public class AssignmentAction extends PagedResourceActionII {
     /**
      * local function for getting assignment submission object
      *
-     * @param assignmentId
+     * @param assignmentReference
      * @param callingFunctionName
      * @param state
      * @return
@@ -1772,7 +1772,6 @@ public class AssignmentAction extends PagedResourceActionII {
         Assignment currentAssignment = getAssignment(currentAssignmentReference, "build_student_view_submission_confirmation_context", state);
         if (currentAssignment != null) {
             context.put("assignment", currentAssignment);
-            context.put("assignment_title", currentAssignment.getTitle());
 
             // differenciate submission type
             Assignment.SubmissionType submissionType = currentAssignment.getTypeOfSubmission();
@@ -1787,20 +1786,14 @@ public class AssignmentAction extends PagedResourceActionII {
                 context.put("textSubmissionOnly", Boolean.FALSE);
             }
 
-            context.put("submissionType", submissionType.ordinal());
-
             AssignmentSubmission s = getSubmission(currentAssignmentReference, submitter, "build_student_view_submission_confirmation_context", state);
             if (s != null) {
                 context.put("submission", s);
-                context.put("submitted", Boolean.valueOf(s.getSubmitted()));
-                context.put("submission_id", s.getId());
-                if (s.getDateSubmitted() != null) {
-                    context.put("submit_time", s.getDateSubmitted().toInstant().toString());
-                }
-                Set<String> attachments = s.getAttachments();
-                if (attachments != null && !attachments.isEmpty()) {
-                    context.put("submit_attachments", attachments);
-                }
+
+                Map<String, Reference> attachmentReferences = new HashMap<>();
+                s.getAttachments().forEach(r -> attachmentReferences.put(r, entityManager.newReference(r)));
+                context.put("attachmentReferences", attachmentReferences);
+
                 context.put("submit_text", StringUtils.trimToNull(s.getSubmittedText()));
                 context.put("email_confirmation", serverConfigurationService.getBoolean("assignment.submission.confirmation.email", true));
             }
@@ -4139,7 +4132,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
             if (assignment.getTypeOfGrade().equals(SCORE_GRADE_TYPE)) {
                 Integer scaleFactor = assignment.getScaleFactor() != null ? assignment.getScaleFactor() : assignmentService.getScaleFactor();
-                context.put("maxGradePointString", getMaxGradePointDisplay(scaleFactor, assignment.getMaxGradePoint()));
+                context.put("maxGradePointString", assignmentService.getMaxPointGradeDisplay(scaleFactor, assignment.getMaxGradePoint()));
             }
 
             Map<String, String> properties = assignment.getProperties();
@@ -8593,6 +8586,7 @@ public class AssignmentAction extends PagedResourceActionII {
         }
 
         if (gradeType == SCORE_GRADE_TYPE) {
+            a.setScaleFactor(assignmentService.getScaleFactor());
             try {
                 a.setMaxGradePoint(Integer.parseInt(gradePoints));
             } catch (NumberFormatException e) {
@@ -9439,7 +9433,7 @@ public class AssignmentAction extends PagedResourceActionII {
      * private function to remove assignment related announcement
      *
      * @param state
-     * @param pEdit
+     * @param properties
      */
     private void removeAnnouncement(SessionState state, Map<String, String> properties) {
         AnnouncementChannel channel = (AnnouncementChannel) state.getAttribute(ANNOUNCEMENT_CHANNEL);
@@ -14100,7 +14094,6 @@ public class AssignmentAction extends PagedResourceActionII {
      * save the option edits
      *
      * @param data
-     * @param context
      */
     public void doUpdate_options(RunData data) {
         if (!"POST".equals(data.getRequest().getMethod())) {
@@ -14449,20 +14442,6 @@ public class AssignmentAction extends PagedResourceActionII {
             default:
                 return rb.getString(AssignmentConstants.ASSN_GRADE_TYPE_UNKNOWN_PROP);
         }
-    }
-
-    /**
-     * Get the maximum grade for grade type = SCORE_GRADE_TYPE(3) Formated to show "factor" decimal places
-     *
-     * @return The maximum grade score.
-     */
-    public String getMaxGradePointDisplay(int factor, int maxGradePoint) {
-        // formated to show factor decimal places, for example, 1000 to 100.0
-        // get localized number format
-        NumberFormat nbFormat = FormattedText.getNumberFormat((int)Math.log10(factor),(int)Math.log10(factor),false);
-        // show grade in localized number format
-        Double dblGrade = new Double(maxGradePoint/(double)factor);
-        return nbFormat.format(dblGrade);
     }
 
     /**
