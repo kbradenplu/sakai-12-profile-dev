@@ -14,7 +14,7 @@
 
   .quicklinks-label{
     @extend .all-sites-label;
-    padding-top: 3px;
+    /* padding-top: 3px; */
     @media #{$phone}{
       display: none;
     }
@@ -23,8 +23,10 @@
 
 #selectQuickLink {
   /* Re-use the Sites pop styles. */
-  @extend #selectSite;
-  @extend ul.favoriteSiteList;
+/*  @extend #selectSite;
+  @extend ul.favoriteSiteList; */
+  background: transparent;
+  border: none;
 }
 
 #quickLinks{
@@ -67,15 +69,15 @@
       width: $quicklinks-menu-width;
       border: none;
       border-bottom: 1px solid $tool-border-color;
-      padding: 0 0.3em 0 0;
+      padding: 0.3em 0;
       background-color: $tool-menu-background-color;
 
       .#{$namespace}quickLinks-header--info {
         vertical-align: middle;
-        padding-right: 1em;
+        padding-right: 6.5em;
       }
       #quickLinks-close {
-        font-size: 2em;
+        font-size: 1.5em;
         font-family: $header-font-family;
         color: black;
         padding: 0 0 0 0;
@@ -89,15 +91,15 @@
     .#{$namespace}quickLinksNav__submenuitem {
       display: block;
       width: $quicklinks-menu-width;
-      border: 1px solid $tool-border-color;
-      @include border-radius( 4px );
+   /*   border: 1px solid $tool-border-color;
+      @include border-radius( 4px ); */
       white-space: nowrap;
       overflow: hidden;
-      margin: 0.3em;
-      padding: 0.3em 0.5em 0.3em 0.5em;
+   /*   margin: 0.3em; */
+   /*   padding: 0.3em 0.5em 0.3em 0.5em; */
       list-style: none;
-      background: darken( $background-color, 5% );
-      @include border-radius( 4px );
+   /*   background: darken( $background-color, 5% );
+      @include border-radius( 4px ); */
       a{
         display: inline-block;
         color: $text-color;
@@ -111,17 +113,18 @@
         }
       }
       &.is-selected{
-        border: 1px solid darken( $tool-border-color, 30% );
+/*        border: 1px solid darken( $tool-border-color, 30% ); */
       }
 
       #quicklink-icon{
-        width: 20px;
+/*        width: 20px;
         height: 20px;
         top: 1px;
         position: relative;
         display: inline-block;
         background-repeat: initial;
-        background-position: center;
+        background-position: center; */
+	display: none;
       }
 
       .#{$namespace}quickLinks__submenuitem--title {
