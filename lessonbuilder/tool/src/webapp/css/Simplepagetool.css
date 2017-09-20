@@ -58,6 +58,7 @@
 /* without this, these divs expand beyond the width of the column if there's an unbreakable word */
 .right-col, .contentCol, .checklistDiv, .checklistDescription, .playerwidth, .playerwidth iframe, .playerwidth object, .playerwidth embed {
   max-width:100%;
+  width: 97%;
 }
 .gradingPane {
   padding-top: 20px;
@@ -475,7 +476,8 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 */
 /* default */
 .column .commentDiv, .column .studentContentTable, .column .questionDiv .contentCol, .column .checklistDiv, .column .forumSummaryHeaderDiv, .column .announcementsHeaderDiv, .column .fc-toolbar .timeline-Header{
-  background-color: #b3ecff;
+/*  background-color: #b3ecff; */
+  background-color: #ccf2ff
 }
 .column a[href]{
   color: #004860;
@@ -1195,9 +1197,9 @@ input[type="submit"].question-submit,.linkCell .addStudentContent, input[type="s
  padding: 15px;
  padding-right: 30px;
  background-color: #e4edff;
- -webkit-border-radius: 10px;
+/* -webkit-border-radius: 10px;
  -moz-border-radius: 10px;
- border-radius: 10px;
+ border-radius: 10px; */
 }
 .checklistDiv {
  padding-right: 15px;
@@ -2107,4 +2109,8 @@ input#sectionTitle {
 /* In the Add Text view, place some margin between the CKEditor and the checkbox beneath it. */
 .longtext {
     margin-bottom: 1.5em;
+}
+
+.shortanswerDiv textarea {
+    overflow: hidden !important;
 }
