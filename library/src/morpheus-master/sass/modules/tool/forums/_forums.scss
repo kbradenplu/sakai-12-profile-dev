@@ -65,7 +65,9 @@
 
 	#msgForum{
 		.itemNav{
-			position: absolute;
+			/* position: absolute; */
+			position: inherit;
+			margin-top: 5px;
 			right: 5px;
 			@media #{$phone}{
 				position: inherit;
@@ -78,7 +80,7 @@
 		.specialLink{
 			h1{
 				font-size: 18px;
-				margin: 1.4em 0 0.3em 0;
+				/* margin: 1.4em 0 0.3em 0; */
 				@media #{$phone}{
 					margin: 0.5em 0 0.3em 0;
 				}
@@ -91,6 +93,8 @@
 	}
 
 	table.specialLink{
+		/* SAKAITWTR-135: Make breadcrumbs wrap. */
+		/* width: auto; */
 		.show{
 			img{
 				margin: 0 0.2em 0 0;
