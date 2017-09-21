@@ -537,3 +537,11 @@ table h5 {
 i.icon-sakai--pdf {
    margin-left: 5px;
 }
+
+/* SAKAITWTR-136: Hide broken search feature in Site Info  */
+.site-searchbox {
+  display: none;
+}
+input#search {
+  display: none;
+}
