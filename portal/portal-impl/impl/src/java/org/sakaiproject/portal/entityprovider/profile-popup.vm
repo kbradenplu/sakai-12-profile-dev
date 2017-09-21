@@ -15,7 +15,7 @@
             </td>
         </tr>
         <tr>
-            <td class="profile-popup-icon-cell">
+            <!-- <td class="profile-popup-icon-cell">
                 #if ($facebookUrl != "")
                 <a href="${facebookUrl}" target="_blank" title="${i18n.facebook_tooltip}">
                     <span class="fa fa-facebook profile-popup-icon" aria-hidden="true"></span>
@@ -36,7 +36,7 @@
                 <span class="fa fa-twitter profile-popup-icon" title="${i18n.no_twitter_tooltip}"></span>
                 <span class="profile-popup-label" title="${i18n.no_twitter_tooltip}">Twitter</span>
                 #end
-            </td>
+            </td> -->
         </tr>
     </table>
 
