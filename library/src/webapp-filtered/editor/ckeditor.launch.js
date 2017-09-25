@@ -161,7 +161,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             ['Cut','Copy','Paste','PasteText','SelectAll','RemoveFormat'],
             ['Undo','Redo','-','Find','Replace'],
             ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-            ['NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv'],
+            ['NumberedList','BulletedList','Outdent','Indent','Blockquote'],
             '/',
 	    //['atd-ckeditor'],
             ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','TextColor','BGColor'],
