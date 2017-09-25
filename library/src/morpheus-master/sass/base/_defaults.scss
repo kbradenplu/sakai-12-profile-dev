@@ -144,7 +144,7 @@ input[type="reset"],input[type="button"]{
 
 input[type="checkbox"], input[type="radio"]{
 	background-color: #FFF;
-	border: 1px solid #A0A0A0;
+	border: 1px solid #313131;
 	display: inline-block;
 	height: 16px;
 	width: 16px;
@@ -155,7 +155,8 @@ input[type="checkbox"], input[type="radio"]{
 	}
 	//SAK-30977
 	&[disabled],&[disabled="disabled"],&[disabled="true"]{
-		opacity: 0.8;
+		opacity: 0.3;
+		background-color: #c5c5c5;
 		& + label{
 			color: lighten($text-color, 10%);
 		}
