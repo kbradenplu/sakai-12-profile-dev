@@ -151,9 +151,9 @@
 
 
   <!-- 5 ANSWER and ANSWERFEEDBACK -->
-  <h2>
+  <h4>
     <h:outputText value="#{authorMessages.answer_provide_a_mo}" />  
-  </h2>
+  </h4>
 
   <div class="form-group row">
     <h:outputLabel value="#{authorMessages.model_short_answer}" styleClass="col-md-2 form-control-label"/>

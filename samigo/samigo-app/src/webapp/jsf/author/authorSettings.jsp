@@ -357,8 +357,9 @@
 
     <!-- *** TIMED *** -->
       <h:panelGroup rendered="#{assessmentSettings.valueMap.timedAssessment_isInstructorEditable==true}" >
-        <h:outputText value="#{assessmentSettingsMessages.has_time_limit} " />
+        <div>
         <h:selectBooleanCheckbox id="selTimeAssess" onclick="checkUncheckTimeBox();setBlockDivs();" value="#{assessmentSettings.valueMap.hasTimeAssessment}" />
+        <h:outputText value="#{assessmentSettingsMessages.has_time_limit} " />
         <h:outputText value="&#160;" escape="false" />
         <h:selectOneMenu id="timedHours" value="#{assessmentSettings.timedHours}" >
           <f:selectItems value="#{assessmentSettings.hours}" />
@@ -371,6 +372,7 @@
         <h:outputText value="&#160;" escape="false" />
         <h:outputText value="#{assessmentSettingsMessages.timed_minutes} " />
         </h:panelGroup>
+	</div>
           </div>
       </div>
 
