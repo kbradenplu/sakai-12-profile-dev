@@ -1323,3 +1323,8 @@ input[type='reset'].linearButton {
 	margin: 0;
 	padding: 6px 12px;
 }
+
+/* Fix margins for paragraphs in the markup text instructions */
+.inopPanel p {
+    margin: 1em 0;
+}
