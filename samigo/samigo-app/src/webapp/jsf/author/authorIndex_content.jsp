@@ -176,6 +176,8 @@ $(document).ready(function() {
 		      <f:selectItem itemValue="" itemLabel="#{generalMessages.select_menu}"/>
 		      <f:selectItems value="#{author.assessmentTemplateList}" />
 		    </h:selectOneMenu>
+<p style="color:black;font-size:0.95em;margin-top:1.0em;margin-bottom:0em"><span style="color:#c00"><strong>WARNING:</s\
+trong></span> To avoid surprising settings, do not select an Assessment Type unless you know what it does.</p>
       	</div>
     
             <div class="form-group">
