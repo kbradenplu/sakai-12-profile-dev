@@ -1336,3 +1336,8 @@ input[type='reset'].linearButton {
 .samigo-checkbox label {
     margin-left: 0px !important;
 }
+
+#timeLimitNote {
+    margin-top: 0.5em;
+    color: #555;
+}
