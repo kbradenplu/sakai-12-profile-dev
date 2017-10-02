@@ -1328,3 +1328,16 @@ input[type='reset'].linearButton {
 .inopPanel p {
     margin: 1em 0;
 }
+
+/* Fix the spacing between checkboxes and labels in settings */
+#assessmentSettingsAction input[type="checkbox"] {
+  margin-right: 5px;
+}
+.samigo-checkbox label {
+    margin-left: 0px !important;
+}
+
+#timeLimitNote {
+    margin-top: 0.5em;
+    color: #555;
+}

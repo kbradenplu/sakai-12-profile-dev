@@ -366,6 +366,11 @@ public class AssessmentAccessControl
 
   public Integer getDisplayScoreDuringAssessments()
   {
+      /*SAKAITWTR-152: I couldn't find the value in the database that should be setting the default for this.
+	Thus, let's set the default here if this value has not been set.
+       */
+      if (displayScoreDuringAssessments == null)
+	  displayScoreDuringAssessments = DISPLAY_ITEM_SCORE_DURING_ASSESSMENT;
     return displayScoreDuringAssessments;
   }
   

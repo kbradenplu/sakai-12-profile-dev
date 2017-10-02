@@ -200,7 +200,7 @@
     <h:panelGroup styleClass="form-group row" layout="block" rendered="#{assessmentSettings.valueMap.templateInfo_isInstructorEditable==true and !assessmentSettings.noTemplate and template.showAssessmentTypes}" >
         <h:outputLabel styleClass="col-md-2" value="#{assessmentSettingsMessages.heading_template_information}"/>
         <div class="col-md-10">
-          <h:outputText escape="false" rendered="#{assessmentSettings.templateDescription!=null}" value="#{assessmentSettings.templateDescription}" />
+          <h:outputText escape="false" rendered="#{assessmentSettings.templateTitle!=null}" value="#{assessmentSettings.templateTitle}" />
         </div>
     </h:panelGroup>
     <div class="form-group row">
