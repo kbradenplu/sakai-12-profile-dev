@@ -512,6 +512,7 @@ a.hideDivision {
 
 #jqueryui-accordion .ui-accordion-content {
     background-color: #efefef;
+    max-width: 770px;
 }
 #jqueryui-accordion .ui-accordion-header {
     border-top-left-radius: 4px;
@@ -1321,4 +1322,22 @@ input[type='reset'].linearButton {
 .mathjax-warning.alert, .mathjax-warning .alert {
 	margin: 0;
 	padding: 6px 12px;
+}
+
+/* Fix margins for paragraphs in the markup text instructions */
+.inopPanel p {
+    margin: 1em 0;
+}
+
+/* Fix the spacing between checkboxes and labels in settings */
+#assessmentSettingsAction input[type="checkbox"] {
+  margin-right: 5px;
+}
+.samigo-checkbox label {
+    margin-left: 0px !important;
+}
+
+#timeLimitNote {
+    margin-top: 0.5em;
+    color: #555;
 }

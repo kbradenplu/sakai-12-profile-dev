@@ -176,6 +176,7 @@
 
 	#assessmentSettingsAction input#assessmentSettingsAction\:selTimeAssess {
 		float: none;
+		margin-right: 5px;
 	}
 	
 	#assessmentSettingsAction input[type="checkbox"]{
@@ -244,4 +245,19 @@
 		margin: 0px !important;
 	}
 
+}
+
+/* Fix the width of the textarea in the Settings view when screen greater than 800px */
+table textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Fix the position of the Expand All - Collapse All toggle link in Settings */
+#assessmentSettingsAction .pull-right {
+  float: none !important;
+  max-width: 770px;
+}
+#assessmentSettingsAction .pull-right a {
+  float: right;
 }
