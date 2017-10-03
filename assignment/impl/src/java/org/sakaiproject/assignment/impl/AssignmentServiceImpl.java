@@ -482,9 +482,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public List allowGradeAssignmentUsers(String assignmentReference) {
         List<User> users = securityService.unlockUsers(SECURE_GRADE_ASSIGNMENT_SUBMISSION, assignmentReference);
+        String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmentReference).reckon().getId();
 
         try {
-            Assignment a = getAssignment(assignmentReference);
+            Assignment a = getAssignment(assignmentId);
             if (a.getAccess() == Assignment.Access.GROUPED) {
                 // for grouped assignment, need to include those users that with "all.groups" and "grade assignment" permissions on the site level
                 try {
@@ -506,18 +507,18 @@ public class AssignmentServiceImpl implements AssignmentService {
                                             users.add(u);
                                         }
                                     } catch (Exception ee) {
-                                        log.warn("problem with getting user = {}", userId);
+                                        log.warn("problem with getting user = {}, {}", userId, ee.getMessage());
                                     }
                                 }
                             }
                         }
                     }
                 } catch (GroupNotDefinedException gnde) {
-                    log.warn("Cannot get authz group for site = {}", a.getContext());
+                    log.warn("Cannot get authz group for site = {}, {}", a.getContext(), gnde.getMessage());
                 }
             }
         } catch (Exception e) {
-            log.warn("Could not fetch assignment with assignmentReference = {}", assignmentReference);
+            log.warn("Could not fetch assignment with assignmentId = {}", assignmentId, e);
         }
 
         return users;
@@ -615,15 +616,21 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Assignment addDuplicateAssignment(String context, String assignmentId) throws IdInvalidException, PermissionException, IdUsedException, IdUnusedException {
         Assignment assignment = null;
 
-        if (StringUtils.isNotBlank(assignmentId)) {
+        if (StringUtils.isNoneBlank(context, assignmentId)) {
             if (!assignmentRepository.existsAssignment(assignmentId)) {
                 throw new IdUnusedException(assignmentId);
             } else {
+                if (!allowAddAssignment(context)) {
+                    throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT, null);
+                }
+
                 log.debug("duplicating assignment with ref = {}", assignmentId);
 
                 Assignment existingAssignment = getAssignment(assignmentId);
 
+                assignment = new Assignment();
                 assignment.setContext(context);
+                assignment.setAuthor(sessionManager.getCurrentSessionUserId());
                 assignment.setTitle(existingAssignment.getTitle() + " - " + resourceLoader.getString("assignment.copy"));
                 assignment.setSection(existingAssignment.getSection());
                 assignment.setOpenDate(existingAssignment.getOpenDate());
@@ -631,11 +638,20 @@ public class AssignmentServiceImpl implements AssignmentService {
                 assignment.setDropDeadDate(existingAssignment.getDropDeadDate());
                 assignment.setCloseDate(existingAssignment.getCloseDate());
                 assignment.setDraft(true);
+                assignment.setPosition(existingAssignment.getPosition());
                 assignment.setIsGroup(existingAssignment.getIsGroup());
-                Map<String, String> properties = existingAssignment.getProperties();
-                assignment.setAuthor(sessionManager.getCurrentSessionUserId());
-                assignment.setProperties(properties);
+
+                Map<String, String> properties = assignment.getProperties();
+                existingAssignment.getProperties().entrySet().stream()
+                        .filter(e -> !PROPERTIES_EXCLUDED_FROM_DUPLICATE_ASSIGNMENTS.contains(e.getKey()))
+                        .forEach(e -> properties.put(e.getKey(), e.getValue()));
+
                 assignmentRepository.newAssignment(assignment);
+                log.debug("Created duplicate assignment {} from {}", assignment.getId(), assignmentId);
+
+                String reference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
+                // event for tracking
+                eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, reference, true));
             }
         }
         return assignment;
@@ -1890,16 +1906,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public boolean assignmentUsesAnonymousGrading(Assignment a) {
-        ResourceProperties properties = new BaseResourceProperties(a.getProperties());
-        try {
-            return properties.getBooleanProperty(AssignmentServiceConstants.NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
-        } catch (EntityPropertyNotDefinedException e) {
-            log.debug("Entity Property {} not defined {}", AssignmentServiceConstants.NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING, e.getMessage());
-        } catch (EntityPropertyTypeException e) {
-            log.debug("Entity Property {} type not defined {}", AssignmentServiceConstants.NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING, e.getMessage());
-        }
-        return false;
+    public boolean assignmentUsesAnonymousGrading(Assignment assignment) {
+        return Boolean.valueOf(assignment.getProperties().get(AssignmentServiceConstants.NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING));
     }
 
     @Override
@@ -2111,7 +2119,7 @@ public class AssignmentServiceImpl implements AssignmentService {
      *
      * This should probably be moved to a static utility class - ern
      *
-     * @param returnGrade
+     * @param grade
      * @param typeOfGrade
      * @param scaleFactor
      * @return
