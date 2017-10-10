@@ -183,7 +183,7 @@
 #gradeTableWrapper .btn-group > a {
   line-height: 10px;
   padding: 0 10px;
-  opacity: 0.2;
+  opacity: 0.6;
   border-color: #EEE;
 }
 #gradeTableWrapper th:hover .btn-group > a,
