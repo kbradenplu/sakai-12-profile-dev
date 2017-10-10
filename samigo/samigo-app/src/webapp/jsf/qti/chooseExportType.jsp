@@ -82,7 +82,7 @@ function getSelectedType(qtiUrl, cpUrl, emtUrl, e2mt){
         <h:outputText value="#{authorImportExport.markup_text_note}" escape="true" />
 		<br />
       </p>
-      <p class="text-warning">
+      <p class="text-warning" id="export_imagemap_message">
         <h:outputText value="#{authorImportExport.export_imagemap_message}" escape="false" />
       </p>
     </div>
