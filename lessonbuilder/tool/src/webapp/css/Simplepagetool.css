@@ -174,13 +174,18 @@ div.action span .nextbutton, .Mrphs-siteHierarchy span .nextbutton{
 	border-style: solid;
 	border-width: 2px;
 }
-.instructionPanel,.controlsPanel {
+.controlsPanel {
     border:1px solid #bbb;
     font-size:12px;
     background: #ddd;
     padding:5px;
     margin:5px 0
 }
+.instructionPanel {
+    font-size:12px;
+    border: none !important;
+}
+
 .indent {
     margin-left: 10px;
 }
@@ -288,7 +293,15 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 	display:inline;
 }
 .mm-file-input-name {
-        margin-right: 0.5em;
+    display: inline-block;
+    margin-left: 1em;
+    margin-right: 0.5em;
+    width: 20em !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    top: 5px;
 }
 .mm-file-input-delete {
         color: red;
@@ -300,7 +313,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .add-another-file-div {
 	padding: 10px;
 	padding-top: 0px;
-        margin-left: 30px;
+        margin-left: 1em;
 	background-color: #ddd;
 	border: 1px solid #bbb;
 	margin-top: 1em;
@@ -2100,15 +2113,29 @@ input#sectionTitle {
 
 .lessonsDialog h5 {
     margin-top: 1.5em;
+    font-wieght: bold;
 }
 
-#subpage-dialog a {
+#mm-name-section {
+    margin-bottom: 1.8em;
+}
+
+.lessonsDialog h5.first_heading {
+    margin-top: 0.5em;
+}
+
+#subpage-dialog a, #add-multimedia-form a{
     color: #265b81 !important;
 }
 
 /* In the Add Text view, place some margin between the CKEditor and the checkbox beneath it. */
 .longtext {
     margin-bottom: 1.5em;
+}
+
+/* In Page Settings dialog, add some margin to release date picker to visually associate it with the checkbox above */
+#releaseDiv {
+    margin-left: 2.5em;
 }
 
 .shortanswerDiv textarea {
