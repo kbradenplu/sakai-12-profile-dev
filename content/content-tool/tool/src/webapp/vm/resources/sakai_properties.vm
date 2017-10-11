@@ -195,7 +195,7 @@
 			<label for="copyright${DOT}$i">
 				$tlang.getString("cright.status") (<a href="#" onclick="openMoreInfoCopyrightWindow('copyright${DOT}$i');" title="[$tlang.getString('cright.newwin')]"><span class="skip"> [$tlang.getString('cright.newwin')]</span>$tlang.getString('cright.fairuse')</a>)
 			</label>
-			<select name="copyright${DOT}$i" id ="copyright${DOT}$i" class="form-control">
+			<select name="copyright${DOT}$i" id ="copyright${DOT}$i" style="display: inherit;">
 				#set ($noOneSelected=true)
 				#foreach ($copyright in $copyrightTypes)
 					<option value="$copyright.getType()"#if($model.copyrightStatus == $copyright.getType() || $model.copyrightStatus == $copyright.getText()) selected="selected"#end #if ($!copyright.getLicenseUrl()) title="${copyright.getLicenseUrl()}"#end>$copyright.getText()</option>
