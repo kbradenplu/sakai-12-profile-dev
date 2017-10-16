@@ -97,16 +97,16 @@ public class ExportPanel extends BasePanel {
 
 			@Override
 			protected void onUpdate(final AjaxRequestTarget ajaxRequestTarget) {
-			    ExportPanel.this.includeStudentNumber = !ExportPanel.this.includeStudentNumber;
-			    setDefaultModelObject(ExportPanel.this.includeStudentNumber);
+				ExportPanel.this.includeStudentNumber = !ExportPanel.this.includeStudentNumber;
+				setDefaultModelObject(ExportPanel.this.includeStudentNumber);
 			}
 
 			@Override
 			public boolean isVisible()
 			{
-			    return stuNumVisible;
+				return stuNumVisible;
 			}
-		    });
+		});
 
 		add(new AjaxCheckBox("includeGradeItemScores", Model.of(this.includeGradeItemScores)) {
 			private static final long serialVersionUID = 1L;
