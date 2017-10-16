@@ -279,7 +279,8 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             CKEDITOR.plugins.addExternal('notification',basePath+'notification/', 'plugin.js');
             // Accessibility checker has a dependency on balloonpanel
             //CKEDITOR.plugins.addExternal('balloonpanel',basePath+'balloonpanel/', 'plugin.js');
-	    CKEDITOR.plugins.addExternal('balloonpanel',webJars+'balloonpanel/4.6.2/', 'plugin.js');
+	    //CKEDITOR.plugins.addExternal('balloonpanel',webJars+'balloonpanel/4.6.2/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('balloonpanel',basePath+'balloonpanel_4.6.2/', 'plugin.js');
             //CKEDITOR.plugins.addExternal('a11ychecker',basePath+'a11ychecker/', 'plugin.js');
 	    //CKEDITOR.plugins.addExternal('a11ychecker',webJars+'a11ychecker/1.1.0/', 'plugin.js');
 	    CKEDITOR.plugins.addExternal('a11ychecker',basePath+'a11ychecker_1.1.0/', 'plugin.js');
@@ -303,7 +304,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //ckconfig.extraPlugins+="atd-ckeditor,";
             //ckconfig.contentsCss = [basePath+'atd-ckeditor/atd.css'];
 
-            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,fmath_formula,notification${ckeditor-a11y-extra-plugins},balloonpanel,a11ychecker,youtube,widget,html5audio,html5video,eqneditor";
+            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,notification${ckeditor-a11y-extra-plugins},a11ychecker,youtube,widget,html5audio,html5video,eqneditor";
 
             // Load FontAwesome CSS in case a user wants to manually add FA markup
             ckconfig.contentsCss = [webJars+'fontawesome/4.7.0/css/font-awesome.min.css'];
