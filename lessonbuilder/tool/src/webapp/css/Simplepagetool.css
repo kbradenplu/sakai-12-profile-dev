@@ -2102,7 +2102,7 @@ input#sectionTitle {
     margin-top: 1.5em;
 }
 
-#subpage-dialog a {
+#subpage-dialog a, #new-page-dialog a {
     color: #265b81 !important;
 }
 

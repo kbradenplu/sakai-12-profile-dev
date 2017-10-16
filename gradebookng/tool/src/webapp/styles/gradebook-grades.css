@@ -378,7 +378,7 @@ div.wicket-modal div.w_right > div {
   padding-top: 20px;
 }
 .gb-summary-grade-score-outof {
-  color: #999;
+  color: #777;
 }
 .gb-summary-grade-panel {
   position: relative;
@@ -519,4 +519,9 @@ div.wicket-modal div.w_right > div {
 #gradebookGrades .gb-student-number-cell .gb-title
 {
   text-align: left;
+}
+
+/* SAKAITWTR-157: Hide Gradebook summary Print button in student view */
+button.gb-summary-print {
+  display: none;
 }
