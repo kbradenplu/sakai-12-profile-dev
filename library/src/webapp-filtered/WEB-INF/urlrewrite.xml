@@ -15,7 +15,7 @@
         versions are the same the redirect is needless. This is because some early versions of Sakai 11.x have content
         with the 4.5.7 version in it. This could have been done with a wildcard from but then we could never have
         switched the filter back to use the FORWARD dispatcher.</note>
-        <from>/webjars/ckeditor/4.5.7/full/plugins/smiley/images/(.*)</from>
+        <from>/webjars/ckeditor/4.5.11/full/plugins/smiley/images/(.*)</from>
         <to last="true">/webjars/ckeditor/${ckeditor.version}/full/plugins/smiley/images/$1</to>
     </rule>
 

@@ -11,16 +11,16 @@
     <packaging>jar</packaging>
     <groupId>org.webjars</groupId>
     <artifactId>ckeditor</artifactId>
-    <version>4.5.7-PLU-SNAPSHOT</version>
+    <version>4.5.11-PLU-SNAPSHOT</version>
     <name>CKEditor</name>
     <description>WebJar for CKEditor</description>
     <url>http://webjars.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <upstream.version>4.5.7</upstream.version>
+        <upstream.version>4.5.11</upstream.version>
         <upstream.url>http://download.cksource.com/CKEditor/CKEditor/CKEditor%20${upstream.version}</upstream.url>
-        <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/4.5.7</destDir>
+        <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/4.5.11</destDir>
         <requirejs>
             {
                 "paths": {
@@ -62,7 +62,7 @@
         <url>http://github.com/webjars/ckeditor</url>
         <connection>scm:git:https://github.com/webjars/ckeditor.git</connection>
         <developerConnection>scm:git:https://github.com/webjars/ckeditor.git</developerConnection>
-        <tag>ckeditor-4.5.7</tag>
+        <tag>ckeditor-4.5.11</tag>
     </scm>
     
     <build>
@@ -81,7 +81,7 @@
                                 <get src="${upstream.url}/ckeditor_${upstream.version}_basic.zip" dest="${project.build.directory}/${project.artifactId}-basic.zip" />
                                 <get src="${upstream.url}/ckeditor_${upstream.version}_standard.zip" dest="${project.build.directory}/${project.artifactId}-standard.zip" />
                                 <!-- If we ever need to update the basic and standard, then replicate the steps for full. -->
-                                <zip basedir="src/main/resources/webjars/ckeditor/4.5.7/full/" destfile="${project.build.directory}/${project.artifactId}-full.zip" />
+                                <zip basedir="src/main/resources/webjars/ckeditor/4.5.11/full/" destfile="${project.build.directory}/${project.artifactId}-full.zip" />
                                 <echo message="unzip archives" />
                                 <unzip src="${project.build.directory}/${project.artifactId}-basic.zip" dest="${project.build.directory}/basic" />
                                 <unzip src="${project.build.directory}/${project.artifactId}-standard.zip" dest="${project.build.directory}/standard" />
