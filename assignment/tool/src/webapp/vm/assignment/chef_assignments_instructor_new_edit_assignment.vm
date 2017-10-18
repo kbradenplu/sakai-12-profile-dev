@@ -590,10 +590,12 @@
 			$tlang.getString("gen.stusub")
 		</h4>
 		<div class="form-group row form-required">
-			<label for="subType" class="col-sm-2 form-control-label">
+			<div id="submissionType">
+
+			<label for="subType" form-control-label">
 				$tlang.getString("gen.submissionType")
 			</label>
-			<div class="col-sm-6">
+
 				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type">
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
 					#if ($i == $value_SubmissionType)
@@ -615,12 +617,14 @@
 		#end
 
 		<div class="form-group row">
-			<label class="col-sm-2 control-label" for="allowResToggle">
-				$tlang.getString("allowResubmit")
-			</label>
-			<div class="col-sm-10">
+			<div class="col-sm-12">
 				<div id="tempAllowRes" #if ($value_SubmissionType == 4) style = "display:none"#end>
 					<input type="checkbox" id="allowResToggle" name ="allowResToggle" #if($!value_allowResubmitNumber) checked="checked"#end onclick="if(checked){document.getElementById('allowResubmitNumber').style.display = 'block';document.getElementById('allowResubmitTime').style.display = 'block';document.getElementById('resubmitNotification').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('allowResubmitNumber').style.display = 'none';document.getElementById('allowResubmitTime').style.display = 'none';document.getElementById('resubmitNotification').style.display = 'none';}" />
+
+			<label class="control-label" for="allowResToggle">
+				$tlang.getString("allowResubmit")
+			</label>
+
 				</div>
 			</div>
 		</div>

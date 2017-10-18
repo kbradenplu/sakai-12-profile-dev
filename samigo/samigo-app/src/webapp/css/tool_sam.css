@@ -1341,3 +1341,8 @@ input[type='reset'].linearButton {
     margin-top: 0.5em;
     color: #555;
 }
+
+/* Hide the message about Hot Spot questions in the Export view until we support those question types. */
+#export_imagemap_message {
+    display: none;
+}

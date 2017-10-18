@@ -293,14 +293,14 @@
 
 				<%-- moved--%>
 				<h:panelGroup rendered="#{message.moved}">
-					<h:outputText styleClass="textPanelFooter" escape="false" value="| #{message.message.title} - " />
+					<h:outputText styleClass="textPanelFooter" escape="false" value=">> #{message.message.title} " />
 					<h:commandLink action="#{ForumTool.processActionDisplayTopic}" id="topic_title" styleClass="title">
 						<h:outputText value="#{msgs.moved}" />
                                                   <f:param value="#{message.message.topic.id}" name="topicId"/>
                                                   <f:param value="#{ForumTool.selectedForum.forum.id}" name="forumId"/>
                                           </h:commandLink>
 
-					<h:outputText escape="false" styleClass="textPanelFooter"  value="#{message.message.topic.title}" />
+					<h:outputText escape="false" styleClass="textPanelFooter"  value=" #{message.message.topic.title}" />
 				</h:panelGroup>
 				<%-- moved--%>
 

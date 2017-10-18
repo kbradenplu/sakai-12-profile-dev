@@ -183,7 +183,7 @@
 #gradeTableWrapper .btn-group > a {
   line-height: 10px;
   padding: 0 10px;
-  opacity: 0.2;
+  opacity: 0.6;
   border-color: #EEE;
 }
 #gradeTableWrapper th:hover .btn-group > a,
@@ -251,7 +251,7 @@
   margin-top: -10px;
 }
 [class*="gb-flag"] {
-  color: #999;
+  color: #555;
   font-family: 'gradebook-icons';
   display: inline-block;
   min-width: 16px;
@@ -343,7 +343,7 @@
 #gradeTableWrapper .gb-read-only .gb-notification:before {
   font-family: "gradebook-icons";
   content: '\f023';
-  color: #DDD;
+  color: #999;
 }
 #gradeTableWrapper .gb-read-only .gb-notification.gb-flag-extra-credit:after {
   font-family: "gradebook-icons";
@@ -436,6 +436,15 @@
 .gb-student-filter #studentFilterInput {
   height: 28px;
   font-size: 12px;
+}
+.gb-student-filter #studentFilterInput::-webkit-input-placeholder {
+  color: #555;
+}
+.gb-student-filter #studentFilterInput::-moz-placeholder {
+  color: #555;
+}
+.gb-student-filter #studentFilterInput::-ms-input-placeholder {
+  color: #555;
 }
 .gb-student-filter .gb-student-filter-clear-button {
   position: absolute;
