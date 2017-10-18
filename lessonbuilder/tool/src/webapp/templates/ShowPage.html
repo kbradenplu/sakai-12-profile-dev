@@ -1310,7 +1310,7 @@
 						<strong rsf:id="msg=simplepage.error_colon"></strong> <span id="mm-error"></span></p>
 					</div>
                 </div>
-                <form action="#" rsf:id="add-multimedia-form" method="post" enctype="multipart/form-data">
+                <form action="#" id="add-multimedia-form" rsf:id="add-multimedia-form" method="post" enctype="multipart/form-data">
 		  <input type="hidden" rsf:id="csrf9" />
                     <div class="border instructionPanel">
                         <p class="instruction" rsf:id="msg=simplepage.add_file_instructions"></p>
@@ -1326,30 +1326,42 @@
                     <div class="border2 controlsPanel">                 
 		        <div id="mm-name-section">
                           <p class="shorttext required">
-                            <label rsf:id="msg=simplepage.name_label" for="mm-name"></label>
+                            <label id="mm_name_label" rsf:id="msg=simplepage.name_label" for="mm-name"></label>
                             <input type="text" name="mm-name" rsf:id="mm-name" id="mm-name" size="30" maxlength="255" class="edit-form-input" />
                           </p>
 			</div>
-                        <p class="required">
+                        <div class="mm-upload-file-section">
+			<h5 class="first_heading" rsf:id="msg=simplepage.upload_label"></h5>
+			<p class="required">
                             <textarea id="mm-names" rsf:id="mm-names"style="display:none"></textarea>
-                            <label rsf:id="msg=simplepage.upload_label" for="mm-file">File</label>
+			    <div class="add-file-div" style="display: none;">
+                              <p class="add-another-file" style="margin-top:10px; display:none"  rsf:id="msg=simplepage.another-file">xxx</p>
+                              <input type="file" name="mm-file" id="mm-file" style="width:95%;" class="edit-multimedia-input mm-file-input" />
+                            </div>
 			    <div class="add-file-div">
 			      <p class="add-another-file" style="margin-top:10px; display:none"  rsf:id="msg=simplepage.another-file">xxx</p>
-                              <input type="file" name="mm-file" id="mm-file" style="width:95%" class="edit-multimedia-input mm-file-input" multiple="" />
+			      <input type="file" name="mm-file" id="mm-file" style="width:95%;" class="edit-multimedia-input mm-file-input" />
 			    </div>
 			    <span id="mm-file-replace-group">
 			      <input type="checkbox" id="mm-file-replace" rsf:id="mm-file-replace" />
 			      <label for="mm-file-replace"><span rsf:id="msg=simplepage.file-replace"></span></label>
 			    </span>
                         </p>
+			</div>
+                        <div class="mm-choose-existing-file-section">
+                        <h5>Choose Existing File</h5>
                         <p class="required" style="">
                             <a role="button" href="#" id="mm-choose" rsf:id="mm-choose">...or choose exiting file</a>
                         </p>
+			</div>
 
-                        <p class="required mm-url-section">
+                        <div class="required mm-url-section">
+			  <h5>Create Web Link</h5>
                             <label id="addLink_label" rsf:id="msg=simplepage.addLink_label_add_or" for="mm-url">URL</label>
                             <input type="text" name="mm-url" rsf:id="mm-url" id="mm-url" style="width:99%" class="edit-multimedia-input" />
-                        </p>
+                        </div>
+
+			<h5>Optional Settings</h5>
                         <p rsf:id="mm-prerequisite-section" class="checkbox mm-prerequisite-section">
                             <input type="checkbox" name="mm-prerequisite" id="mm-prerequisite" rsf:id="mm-prerequisite" />
                             <label for="mm-prerequisite"><span rsf:id="msg=simplepage.prerequisites_label"></span></label>

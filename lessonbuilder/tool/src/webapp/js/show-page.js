@@ -628,7 +628,7 @@ $(document).ready(function() {
 
 		$('#mm-add-item').click(function() {
 			// mm-display-type is 1 -- embed code, 2 -- av type, 3 -- oembed, 4 -- iframe
-			
+			$(".add-file-div").first().remove();
 			var url = $('#mm-url').val();
 			if (url !== '' && $('#mm-is-mm').val() === 'true') {
 			    if (mm_testing === 0) {
@@ -1959,6 +1959,7 @@ $(document).ready(function() {
 			$("#add-multimedia-dialog").prev().children(".ui-dialog-title").text($(this).text());
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-url-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
@@ -1998,6 +1999,7 @@ $(document).ready(function() {
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2037,6 +2039,7 @@ $(document).ready(function() {
 			$(".mm-additional").hide();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2073,6 +2076,7 @@ $(document).ready(function() {
 			$(".mm-additional").hide();
 			$(".mm-additional-website").show();
 			$(".mm-url-section").hide();
+ 		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2201,6 +2205,7 @@ $(document).ready(function() {
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -3110,10 +3115,21 @@ $(function() {
 	    // embed dialog doesn't have an item name, so only do this if there is one
 	    var doingNames = ($('#mm-name-section').is(':visible') ||
 			      $('.mm-file-input-names').size() > 0);
-	    $(this).parent().remove();
+	    var rowSpace = $(this).parent().parent();
+	    var rowSpaceName = $('.mm-file-input-name', rowSpace)[0].innerHTML;
+	    var inputFiles = $('.mm-file-input');
+
+	    rowSpace.remove();
+
+	    for (var i = 0; i < inputFiles.length; i++) {
+		if (inputFiles[i].files[0] !== undefined && inputFiles[i].files[0].name === rowSpaceName) {
+		    inputFiles[i].remove();
+		}
+	    } 
+
 	    if (doingNames) {
 		// if no files left, need to put back the original name section
-		if ($('.mm-file-group').size() === 0) {
+/*		if ($('.mm-file-group').size() === 0) {
 		    $('.add-another-file').hide();
 		    $('.add-file-div').removeClass('add-another-file-div');
 		    $('#mm-name-section').show();
@@ -3125,49 +3141,104 @@ $(function() {
 		    nameInput.before('<label></label>');
 		    nameInput.prev().text($('#mm-name').prev().text());
 		    nameInput.prev().attr('for','mm-file-input-itemname');
-		}
+		}*/
+
+		// TODO: Since there can be more than one div of class .mm-file-group, check them all
+                var nrows = $('.mm-file-input-row').length;
+                console.log("numrows remaining: " + nrows);
+
+                // if no files left, need to put back the original name section
+                if (nrows === 0) {
+                    console.log("Flag 1");
+                    $('.add-another-file').hide();
+                    $('.add-file-div').removeClass('add-another-file-div');
+                    $('#mm-name-section').show();
+                }
+
 	    }
 	}
 	function mmFileInputChanged() {
-	    // user has probably selected a file. 
+	    // user has probably selected a file.
+	    var defaultInput = $(".mm-file-input").first();
 	    var lastInput = $(".mm-file-input").last();
 	    if (lastInput[0].files.length !== 0) {
 		// embed dialog doesn't have names
 		var doingNames = ($('#mm-name-section').is(':visible') ||
 				  $('.mm-file-input-names').size() > 0);
 		// user has chosen a file. 
-		// Add another button for user to pick more files
-		lastInput.parent().after(lastInput.parent().clone());
+		// Add another button for user to pick more file
+		lastInput.parent().after(defaultInput.parent().clone().show());
 		// find the new button and put this trigger on it
 		lastInput.parent().next().find('input').on("change", mmFileInputChanged);
 		// change this one to have name of file and remove button
-		var newStuff = '<span class="mm-file-input-name"></span> <span title="' + msg('simplepage.remove_from_uploads') + '" style="margin-right: 2em"><span class="mm-file-input-delete fa fa-times"></span></span>';
+
+
+		
+		/*var newStuff = '<span class="mm-file-input-name"></span> <span title="' 
+		    + msg('simplepage.remove_from_uploads') 
+		    + '" style="margin-right: 2em"><span class="mm-file-input-delete fa fa-times"></span></span>';
 		// only do this if we're doing names
 		if (doingNames) {
 		    for (i = 0; i < lastInput[0].files.length; i++) {
-			newStuff = newStuff + '<input class="mm-file-input-names" type="text" size="30" maxlength="255"/>';
+			newStuff = newStuff 
+			    + '<input class="mm-file-input-names" type="text" size="30" maxlength="255"/>';
 		    }
+		}*/
+		
+
+		var newStuff = '';
+		for (var i = 0; i < lastInput[0].files.length; i++) {
+		    newStuff = newStuff 
+			+ '<div class="mm-file-input-row"><span class="mm-file-input-name">' 
+			+ lastInput[0].files[i].name 
+			+ '</span> <span title="' 
+			+ msg('simplepage.remove_from_uploads') 
+			+ '" style="margin-right: 2em"><span class="mm-file-input-delete fa fa-times"></span></span>';
+		    //only do this if we're doing names
+
+		    if (doingNames) {
+			var itemName = $('#mm_name_label').text();
+                        newStuff = newStuff 
+			    + '<label for="mm-file-input-itemname">' 
+			    + itemName 
+			    + '</label><input class="mm-file-input-names mm-file-input-itemname" title="' 
+			    + msg('simplepage.title_for_upload') 
+			    + '" type="text" size="30" maxlength="255" style="margin: 0.35em 1em;" />';
+                    }
+                    newStuff = newStuff + "</div>";
 		}
+	    
 		// now need annotation on the next input, so remove the old
 		$('.add-another-file').hide();
 		$('.add-file-div').removeClass('add-another-file-div');
 		$('.add-another-file').last().show().parent().addClass('add-another-file-div');
 		lastInput.after(newStuff);
 		lastInput.parent().addClass('mm-file-group');
-		var names = "";
+		/*var names = "";
 		for (i = 0; i < lastInput[0].files.length; i++) {
 		    names = names + ", " + lastInput[0].files[i].name;
 		}
 		lastInput.next().text(names.substring(2));
+		*/
+		if ($("#mm-name")[0].value.length > 0) {
+                    $(".mm-file-input-itemname")[0].value = $("#mm-name")[0].value;
+                    $("#mm-name")[0].value = "";
+		}
 
+		
 		// arm the delete
-		lastInput.next().next().on('click', mmFileInputDelete);
+		/*lastInput.next().next().on('click', mmFileInputDelete);*/
+		var deleteButtons = lastInput.parent().find('.mm-file-input-delete');
+                deleteButtons.on('click', mmFileInputDelete);
+
 		// and hide the actual button
 		lastInput.hide();
+
 		if (doingNames) {
 		    // put the item name after it
 		    // for first file, initialize to whatever is in the top field
-		    var itemName = '';
+		    
+		    /*var itemName = '';
 		    var firsttime = false;
 		    if ($('#mm-name-section').is(':visible')) {
 			// first time
@@ -3181,18 +3252,24 @@ $(function() {
 		    // rest is just for the first. nameInput can be more than one if user selected multiple files
 		    // only put the label on the first
 		    nameInput = nameInput.first();
-		    nameInput.val(itemName);
+		    nameInput.val(itemName);*/
 		/*    if (firsttime) { */
 			// add a label for the name field. I think it's too much to do it for all of them
-			nameInput.attr('id', 'mm-file-input-itemname');
+			/*nameInput.attr('id', 'mm-file-input-itemname');
 			nameInput.before('<label"></label>');
 			nameInput.prev().text($('#mm-name').prev().text());
-			nameInput.prev().attr('for','mm-file-input-itemname');
+			nameInput.prev().attr('for','mm-file-input-itemname');*/
 /*		    } */
-
+		    /*
 		    nameInput.css("margin", "0.35em 1em")
-		    nameInput.show();
+		    nameInput.show();*/
+
+		    $('#mm-name-section').hide();
 		}
+
+		// If files are being uploaded, the other controls no longer need to be displayed
+                $('.mm-choose-existing-file-section').hide();
+                $('.mm-url-section').hide();
 	    }
 	};
 
