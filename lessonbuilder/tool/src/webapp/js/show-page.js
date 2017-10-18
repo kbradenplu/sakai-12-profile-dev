@@ -628,7 +628,7 @@ $(document).ready(function() {
 
 		$('#mm-add-item').click(function() {
 			// mm-display-type is 1 -- embed code, 2 -- av type, 3 -- oembed, 4 -- iframe
-			
+			$(".add-file-div").first().remove();
 			var url = $('#mm-url').val();
 			if (url !== '' && $('#mm-is-mm').val() === 'true') {
 			    if (mm_testing === 0) {
@@ -1959,6 +1959,7 @@ $(document).ready(function() {
 			$("#add-multimedia-dialog").prev().children(".ui-dialog-title").text($(this).text());
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-url-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
@@ -1998,6 +1999,7 @@ $(document).ready(function() {
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2037,6 +2039,7 @@ $(document).ready(function() {
 			$(".mm-additional").hide();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2073,6 +2076,7 @@ $(document).ready(function() {
 			$(".mm-additional").hide();
 			$(".mm-additional-website").show();
 			$(".mm-url-section").hide();
+ 		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -2201,6 +2205,7 @@ $(document).ready(function() {
 			$(".mm-additional").show();
 			$(".mm-additional-website").hide();
 			$(".mm-url-section").show();
+		        $(".mm-choose-existing-file-section").show();
 			$(".mm-prerequisite-section").show();
 			$("#checkingwithhost").hide();
 			$("#mm-loading").hide();
@@ -3117,7 +3122,7 @@ $(function() {
 	    rowSpace.remove();
 
 	    for (var i = 0; i < inputFiles.length; i++) {
-		if (inputFiles[i].files[0].name === rowSpaceName) {
+		if (inputFiles[i].files[0] !== undefined && inputFiles[i].files[0].name === rowSpaceName) {
 		    inputFiles[i].remove();
 		}
 	    } 
@@ -3153,15 +3158,16 @@ $(function() {
 	    }
 	}
 	function mmFileInputChanged() {
-	    // user has probably selected a file. 
+	    // user has probably selected a file.
+	    var defaultInput = $(".mm-file-input").first();
 	    var lastInput = $(".mm-file-input").last();
 	    if (lastInput[0].files.length !== 0) {
 		// embed dialog doesn't have names
 		var doingNames = ($('#mm-name-section').is(':visible') ||
 				  $('.mm-file-input-names').size() > 0);
 		// user has chosen a file. 
-		// Add another button for user to pick more files
-		lastInput.parent().after(lastInput.parent().clone());
+		// Add another button for user to pick more file
+		lastInput.parent().after(defaultInput.parent().clone().show());
 		// find the new button and put this trigger on it
 		lastInput.parent().next().find('input').on("change", mmFileInputChanged);
 		// change this one to have name of file and remove button
@@ -3214,6 +3220,10 @@ $(function() {
 		}
 		lastInput.next().text(names.substring(2));
 		*/
+		if ($("#mm-name")[0].value.length > 0) {
+                    $(".mm-file-input-itemname")[0].value = $("#mm-name")[0].value;
+                    $("#mm-name")[0].value = "";
+		}
 
 		
 		// arm the delete
