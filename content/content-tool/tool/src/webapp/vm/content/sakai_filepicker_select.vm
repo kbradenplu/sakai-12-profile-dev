@@ -62,8 +62,7 @@ table.listHier .attach {
 </script>
 <script  type="text/javascript">
 $(document).ready(function() {
-	jQuery('.portletBody').click(function(e) { 
-
+	jQuery('.portletBody').click(function(e) {
 		if ( e.target.className !='menuOpen' &&e.target.className !='dropdn'  ){
 			$('.makeMenuChild').hide();
 		} else {
@@ -81,9 +80,13 @@ $(document).ready(function() {
 			    }
 			    menuopen.dialog('open');
 			} else {
-			    var targetId=e.target.id;
+			    var targetId=e.target.parentElement.id;
+			    var targetMenu = $('#menu-' + targetId);
+			    var showMenu = (targetMenu.css('display') !== 'block');
 			    $('.makeMenuChild').hide();
-			    $('#menu-' + targetId).show();
+			    if (showMenu) {
+			        targetMenu.show();
+			    }
 			}
 		}
 	});
@@ -337,9 +340,9 @@ $(document).ready(function() {
 							#if($item.isCollection())
 								#if($item.addActions && !$item.addActions.isEmpty())
 									<ul style="z-index:$actionCount;margin:0;display:block" class="makeMenu">
-										<li class="menuOpen" id="$actionCount">
+										<li id="$actionCount" class="menuOpenLi"><button type="button" class="menuOpen">
 		    							&nbsp;$tlang.getString('gen.add')
-											<span class="fa fa-caret-square-o-down" aria-hidden="true"></span>
+											<span class="caret" aria-hidden="true"></span>
 											<span class="sr-only">$tlang.getString('gen.add')</span>
 											<ul  id="menu-$actionCount" class="makeMenuChild">
 							        	#foreach($action in $item.addActions)
@@ -353,7 +356,7 @@ $(document).ready(function() {
 													<a href="#"  class="skip" onfocus="document.getElementById('menu-$actionCount').style.display='none';document.getElementById('last-$actionCount').focus()" >$tlang.getString("att.menu.end")</a>
 												</li>
 											</ul>
-										</li>
+										</button></li>
 									</ul>
 									<a href="#" id="last-$actionCount"></a>							
 								#end
@@ -519,9 +522,9 @@ $(document).ready(function() {
 									#if($item.isCollection())
 										#if($item.addActions && !$item.addActions.isEmpty())
 											<ul style="z-index:$actionCount;margin:0;display:block" class="makeMenu">
-												<li class="menuOpen" id="$actionCount">
+												<li id="$actionCount" class="menuOpenLi"><button type="button" class="menuOpen">
 												&nbsp;$tlang.getString('gen.add')
-													<span class="fa fa-caret-square-o-down" aria-hidden="true"></span>
+													<span class="caret" aria-hidden="true"></span>
 													<span class="sr-only">$tlang.getString('button.add')</span>
 													<ul  id="menu-$actionCount" class="makeMenuChild">
 													#foreach($action in $item.addActions)
@@ -535,7 +538,7 @@ $(document).ready(function() {
 														<a href="#"  class="skip" onfocus="document.getElementById('menu-$actionCount').style.display='none';document.getElementById('last-$actionCount').focus()" >$tlang.getString("button.endadd")</a>
 													</li>
 												</ul>
-											</li>
+											</button></li>
 										</ul>
 										<a href="#" id="last-$actionCount"></a>							
 

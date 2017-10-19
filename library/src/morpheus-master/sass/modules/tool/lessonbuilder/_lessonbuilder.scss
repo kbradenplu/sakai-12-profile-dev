@@ -21,6 +21,24 @@
 	.portletBody > * {
 		position: inherit;
 		top: 0;
+		.menuOpen {
+   		    list-style-type: none;
+		}
+		.menuOpenLi {
+		    list-style-type: none;
+		}
+		.makeMenu {
+		    padding-left: 0;
+		}
+		.makeMenuChild {
+		    position: absolute;
+		    background-color: #fff;
+		    border: 1px solid black;
+		    padding-top: .5em;
+		    padding-bottom: .5em;
+		    padding-right: 1.5em;
+		    list-style-type: none;
+		}
 	}
 	.mainList {
 		list-style: none;
