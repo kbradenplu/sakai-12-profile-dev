@@ -1596,6 +1596,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files, select existing files from Resources, or supply the address of a page on the web.";
 			// originally I thought it was confusing to start with the focus on some
 			// specific item in the dialog. The problem is that JAWS won't announce
 			// the dialog unless some item has focus
@@ -1969,6 +1970,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files, select existing files from Resources, or supply the address of a page on the web.";
 			//$('.edit-multimedia-input').blur();
 			//$('.edit-multimedia-input').blur();
 			return false;
@@ -2008,6 +2010,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files, select existing files from Resources, or supply the address of a page on the web.";
 			//$('.edit-multimedia-input').blur();
 			//$('.mm-additional-instructions').blur();
 			return false;
@@ -2048,6 +2051,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files, select existing files from Resources, or supply the address of a page on the web.";
 			//$('.edit-multimedia-input').blur();
 			return false;
 		});
@@ -2085,6 +2089,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files or select existing files from Resources.";
 			//$('.edit-multimedia-input').blur();
 			//$('.mm-additional-website-instructions').blur();
 			return false;
@@ -2214,6 +2219,7 @@ $(document).ready(function() {
 			insist = false;
 			$("#add-multimedia-dialog").dialog('open');
 			setupdialog($("#add-multimedia-dialog"));
+		        $("p:contains('You may upload new files')")[0].textContent = "You may upload new files, select existing files from Resources, or supply the address of a page on the web.";
 			//$('.edit-multimedia-input').blur();
 			//$('.mm-additional-instructions').blur();
 			return false;
