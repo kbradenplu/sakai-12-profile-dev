@@ -740,7 +740,19 @@ public class AuthoringHelper
       
       // Assessment Attachment
       exHelper.makeAssessmentAttachmentSet(assessment);
-      String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
+
+      /* Alteration here to allow for imports via importSite web service. - SH */
+      Placement p = ToolManager.getCurrentPlacement();
+      String context = null;
+      if (p != null)
+	  context = p.getContext();
+      else
+	  context = "!admin"; // This is what is set when Site Archive is invoked
+
+      log.info("Context: '" + context + "'");
+      Site s = SiteService.getSite(context);
+      String siteTitle = s.getTitle();
+      //String siteTitle = SiteService.getSite(ToolManager.getCurrentPlacement().getContext()).getTitle();
 
       /* Alteration here to allow import of assessments from 2.9 archives. -MJ */
       String siteTitleFromId = null;
