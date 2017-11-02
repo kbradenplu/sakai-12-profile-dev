@@ -58,8 +58,11 @@
 /* without this, these divs expand beyond the width of the column if there's an unbreakable word */
 .right-col, .contentCol, .checklistDiv, .checklistDescription, .playerwidth, .playerwidth iframe, .playerwidth object, .playerwidth embed {
   max-width:100%;
+}
+.right-col, .contentCol, .checklistDiv, .checklistDescription {
   width: 97%;
 }
+
 .gradingPane {
   padding-top: 20px;
   padding-left: 10px;

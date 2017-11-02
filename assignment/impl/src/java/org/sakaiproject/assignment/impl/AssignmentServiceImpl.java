@@ -85,7 +85,6 @@ import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.taggable.api.TaggingManager;
 import org.sakaiproject.taggable.api.TaggingProvider;
-import org.sakaiproject.time.api.TimeService;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.Tool;
 import org.sakaiproject.tool.api.ToolManager;
@@ -140,7 +139,6 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Setter private ServerConfigurationService serverConfigurationService;
     @Setter private SiteService siteService;
     @Setter private TaggingManager taggingManager;
-    @Setter private TimeService timeService;
     @Setter private ToolManager toolManager;
     @Setter private UserDirectoryService userDirectoryService;
 
@@ -351,7 +349,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                         if (reference.getId() != null) {
                             Assignment a = getAssignment(reference);
                             if (a != null) {
-                                grouped = Assignment.Access.GROUPED == a.getAccess();
+                                grouped = Assignment.Access.GROUPED == a.getTypeOfAccess();
                                 groups = a.getGroups();
                             }
                         }
@@ -507,7 +505,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmentReference).reckon().getId();
         try {
             Assignment a = getAssignment(assignmentId);
-            if (a.getAccess() == Assignment.Access.GROUPED) {
+            if (a.getTypeOfAccess() == Assignment.Access.GROUPED) {
                 // for grouped assignment, need to include those users that with "all.groups" and "grade assignment" permissions on the site level
                 try {
                     AuthzGroup group = authzGroupService.getAuthzGroup(siteService.siteReference(a.getContext()));
@@ -1075,7 +1073,7 @@ String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmen
             Collection<Assignment> assignments = getAssignmentsForContext(context);
             for (Assignment assignment : assignments) {
                 Set<String> userIds = new HashSet<>();
-                if (assignment.getAccess() == Assignment.Access.GROUPED) {
+                if (assignment.getTypeOfAccess() == Assignment.Access.GROUPED) {
                     for (String groupRef : assignment.getGroups()) {
                         if (groupIdUserIds.containsKey(groupRef)) {
                             userIds.addAll(groupIdUserIds.get(groupRef));
@@ -1683,7 +1681,7 @@ String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmen
             if (a != null) {
                 Site st = siteService.getSite(contextString);
                 if (StringUtils.equals(allOrOneGroup, AssignmentConstants.ALL) || StringUtils.isEmpty(allOrOneGroup)) {
-                    if (a.getAccess().equals(Assignment.Access.SITE)) {
+                    if (a.getTypeOfAccess().equals(Assignment.Access.SITE)) {
                         for (Group group : st.getGroups()) {
                             //if (_gg.getProperties().get(GROUP_SECTION_PROPERTY) == null) {		// NO SECTIONS (this might not be valid test for manually created sections)
                             rv.add(group);
@@ -1847,7 +1845,7 @@ String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmen
                         // add those users who haven't made any submissions and with submission rights
                         //only initiate the group list once
                         if (groupRefs.isEmpty()) {
-                            if (a.getAccess() == Assignment.Access.SITE) {
+                            if (a.getTypeOfAccess() == Assignment.Access.SITE) {
                                 // for site range assignment, add the site reference first
                                 groupRefs.add(siteService.siteReference(contextString));
                             }
@@ -2381,7 +2379,7 @@ String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmen
 
     private Assignment checkAssignmentAccessibleForUser(Assignment assignment, String currentUserId) throws PermissionException {
 
-        if (assignment.getAccess() == Assignment.Access.GROUPED) {
+        if (assignment.getTypeOfAccess() == Assignment.Access.GROUPED) {
             String context = assignment.getContext();
             Collection<String> asgGroups = assignment.getGroups();
             Collection<Group> allowedGroups = getGroupsAllowFunction(SECURE_ACCESS_ASSIGNMENT, context, currentUserId);
