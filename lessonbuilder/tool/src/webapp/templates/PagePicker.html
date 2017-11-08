@@ -28,7 +28,7 @@
 			</div>
 		</div>
 
-        <h2 rsf:id="title"></h2>
+        <h2 id="title" rsf:id="title"></h2>
 
         <a href="#" id="show-items"><span rsf:id="msg=simplepage.page.showitems"></span></a>
         <a href="#" id="hide-items"><span rsf:id="msg=simplepage.page.hideitems"></span></a>
@@ -84,5 +84,13 @@
 		</form>
 	</div>
     <script type="text/javascript" src="/lessonbuilder-tool/js/page-picker.js"></script>
+    <script type="text/javascript">
+      window.onload = function() {
+        if ($("#title")[0].innerHTML !== "Pages in Current Site") {
+          $("#show-items").css("display", "none");
+          $("#hide-items").css("display", "none");
+        }
+      };
+    </script>
 </body>
 </html>

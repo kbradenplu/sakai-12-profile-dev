@@ -745,10 +745,21 @@
 				#end
 
 				#if ($!value_UseReviewService.equals("true") && $!value_SubmissionType != 4)
-					<div id="reviewServiceOptions" class="indnt3">
+					<div id="reviewServiceOptions" class="col-sm-offset-1">
 				#else
-					<div id="reviewServiceOptions" style="display:none" class="indnt3">
+					<div id="reviewServiceOptions" style="display:none" class="col-sm-offset-1">
 				#end
+
+					## This is the location where AllowStudentView checkbox originated,
+					## to allow for different checkers, though we (PLU) moved it to improve layout.
+
+					<!-- Start TII custom options -->
+					#if($reviewServiceName.equals("Turnitin"))
+
+					#if ($content_review_note)
+						$content_review_note
+					#end
+
 					<div class="checkbox">
 						<label for="$name_AllowStudentView">
 						#if ($!value_AllowStudentView.equals("true"))
@@ -760,16 +771,10 @@
 						</label>
 					</div>
 
-					<!-- Start TII custom options -->
-					#if($reviewServiceName.equals("Turnitin"))
 
-					#if ($content_review_note)
-						$content_review_note
-					#end
-
-					<h4>
+					<h5>
 						$tlang.getString("review.submit.papers.repository")
-					</h4>
+					</h5>
 
 					<div class="radio">
 						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_SUBMIT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_SUBMIT_NONE))
@@ -783,9 +788,9 @@
 						#end
 					</div>
 
-					<h4>
+					<h5>
 						$tlang.getString("review.originality.reports")
-					</h4>
+					</h5>
 
 					<div class="radio">
 						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY))
@@ -796,11 +801,10 @@
 						#end
 					</div>
 
-					<br/>
 					#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_SMALL_MATCHES)
-						<h4>
+						<h5>
 							$tlang.getString("review.exclude.matches.header")
-						</h4>
+						</h5>
 					#end
 
 					<!-- Exclude Bibliographic materials -->
@@ -867,9 +871,9 @@
 						</div>
 					#end
 
-					<h4>
+					<h5>
 						$tlang.getString("review.originality.check")
-					</h4>
+					</h5>
 					<div class="indnt1">
 						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_CHECK_TURNITIN)
 						<div class="checkbox">
