@@ -521,7 +521,3 @@ div.wicket-modal div.w_right > div {
   text-align: left;
 }
 
-/* SAKAITWTR-157: Hide Gradebook summary Print button in student view */
-button.gb-summary-print {
-  display: none;
-}
