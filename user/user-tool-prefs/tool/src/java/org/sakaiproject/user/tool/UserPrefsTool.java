@@ -527,7 +527,7 @@ public class UserPrefsTool
 		if (hasValue(editorType))
 			m_editorType = editorType;
 		else
-			m_editorType = "auto";
+			m_editorType = "basic";
 
 		return m_editorType;
 	}

@@ -149,7 +149,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
 
         toolbar_Basic:
         [
-	    ['Source', 'PasteText','RemoveFormat'], ['Bold', 'Italic', 'Link', 'NumberedList', 'BulletedList'], ['AudioRecorder','Image','Youtube', 'Format','A11ychecker','-','About']
+	    ['Source', 'PasteText','RemoveFormat'], ['Bold', 'Italic', 'Link', 'NumberedList', 'BulletedList'], ['AudioRecorder','Image','Youtube', 'Format', 'ShowBlocks', 'A11ychecker', 'About']
         ],
         toolbar_Full:
         [
