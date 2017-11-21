@@ -220,16 +220,19 @@
 						<h:outputText value="#{msgs.cdfm_noRevise}" styleClass="messageInstruction" rendered="#{!ForumTool.postAnonymousRevisable && ForumTool.existingTopic}"/>
 					</h:outputLabel>
 				</t:htmlTag>
-				<t:htmlTag value="p" id="revealIDsToRolesContainer" style="display: #{ForumTool.selectedTopic.topicPostAnonymous ? '' : 'none'}" styleClass="checkbox indnt1" rendered="#{ForumTool.anonymousEnabled}">
+				<t:htmlTag value="p" id="revealIDsToRolesContainer" style="margin-top: 2em; margin-left: 2em; display: #{ForumTool.selectedTopic.topicPostAnonymous ? '' : 'none'}" styleClass="checkbox indnt1" rendered="#{ForumTool.anonymousEnabled}">
+
 					<h:selectBooleanCheckbox
 						title="revealIDsToRoles" value="#{ForumTool.selectedTopic.topicRevealIDsToRoles}"
 						id="topic_revealIDsToRoles"
 						disabled="#{!ForumTool.newTopicOrRevealIDsToRolesRevisable}">
 					</h:selectBooleanCheckbox> 
-					<h:outputLabel for="topic_revealIDsToRoles">
+					<h:outputLabel for="topic_revealIDsToRoles" style="display: inline">
 						<h:outputText value="#{msgs.cdfm_revealIDsToRoles}"/>
-						<h:outputText value="#{msgs.cdfm_noReviseAfter}" styleClass="messageInstruction" rendered="#{!ForumTool.revealIDsToRolesRevisable && !ForumTool.existingTopic}"/>
-						<h:outputText value="#{msgs.cdfm_noRevise}" styleClass="messageInstruction" rendered="#{!ForumTool.revealIDsToRolesRevisable && ForumTool.existingTopic}"/>
+
+						<h:outputText value="#{msgs.cdfm_noReviseAfter}" styleClass="messageInstruction messageInstructionXtra" rendered="#{!ForumTool.revealIDsToRolesRevisable && !ForumTool.existingTopic}"/>
+						<h:outputText value="#{msgs.cdfm_noRevise}" styleClass="messageInstruction messageInstructionXtra" rendered="#{!ForumTool.revealIDsToRolesRevisable && ForumTool.existingTopic}"/>
+
 					</h:outputLabel>
 				</t:htmlTag>
 			</div>	

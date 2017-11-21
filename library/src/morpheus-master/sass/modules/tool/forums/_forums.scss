@@ -220,7 +220,12 @@
 			    padding: 3px 0 3px 6px;
 			}
 		}
-		
+		.messageInstructionXtra {
+		  display: inline-block !important;
+		  margin-left: 3em;
+		  margin-top: 0.5em;
+                }		
+
 		&\:alert-delete{
 			margin: 2em 0 0 0;
 		}
