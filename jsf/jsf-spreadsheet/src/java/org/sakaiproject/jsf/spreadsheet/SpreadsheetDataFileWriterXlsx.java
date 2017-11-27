@@ -29,7 +29,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -38,20 +37,20 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated use {@link org.sakaiproject.jsf.spreadsheet.SpreadsheetDateFileWriterXlsx} , this will be removed after 12 - Oct 2017
+ *
  */
-@Deprecated
-public class SpreadsheetDataFileWriterXls implements SpreadsheetDataFileWriter {
+public class SpreadsheetDataFileWriterXlsx implements SpreadsheetDataFileWriter {
 	private static final Logger log = LoggerFactory.getLogger(SpreadsheetDataFileWriter.class);
 
 	public void writeDataToResponse(List<List<Object>> spreadsheetData, String fileName, HttpServletResponse response) {
-		response.setContentType("application/vnd.ms-excel");
-		SpreadsheetUtil.setEscapedAttachmentHeader(response, fileName + ".xls");
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		SpreadsheetUtil.setEscapedAttachmentHeader(response, fileName + ".xlsx");
 
 		OutputStream out = null;
 		try {
@@ -70,7 +69,7 @@ public class SpreadsheetDataFileWriterXls implements SpreadsheetDataFileWriter {
 	}
 	
 	private Workbook getAsWorkbook(List<List<Object>> spreadsheetData) {
-		Workbook wb = new HSSFWorkbook();
+		Workbook wb = new SXSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		CellStyle headerCs = wb.createCellStyle();
 		Iterator<List<Object>> dataIter = spreadsheetData.iterator();
@@ -78,6 +77,8 @@ public class SpreadsheetDataFileWriterXls implements SpreadsheetDataFileWriter {
 		// Set the header style
 		headerCs.setBorderBottom(BorderStyle.THICK);
 		headerCs.setFillBackgroundColor(IndexedColors.BLUE_GREY.getIndex());
+
+
 		// Set the font
 		CellStyle cellStyle = null;
 		String fontName = ServerConfigurationService.getString("spreadsheet.font");
@@ -96,7 +97,8 @@ public class SpreadsheetDataFileWriterXls implements SpreadsheetDataFileWriter {
 			Cell headerCell = createCell(headerRow, i);
 			headerCell.setCellValue((String)headerList.get(i));
 			headerCell.setCellStyle(headerCs);
-			sheet.autoSizeColumn(i);
+			//TODO
+			//sheet.autoSizeColumn(i);
 		}
 		
 		short rowPos = 1;

@@ -1077,7 +1077,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         //group related settings
         context.put("siteAccess", Assignment.Access.SITE);
-        context.put("groupAccess", Assignment.Access.GROUPED);
+        context.put("groupAccess", Assignment.Access.GROUP);
 
         // allow all.groups?
         boolean allowAllGroups = assignmentService.allowAllGroups(contextString);
@@ -7633,7 +7633,7 @@ public class AssignmentAction extends PagedResourceActionII {
             try {
                 Site site = siteService.getSite(siteId);
                 Collection groupChoice = (Collection) state.getAttribute(NEW_ASSIGNMENT_GROUPS);
-                if (Assignment.Access.GROUPED.toString().equals(range) && (groupChoice == null || groupChoice.size() == 0)) {
+                if (Assignment.Access.GROUP.toString().equals(range) && (groupChoice == null || groupChoice.size() == 0)) {
                     // show alert if no group is selected for the group access assignment
                     addAlert(state, rb.getString("java.alert.youchoosegroup"));
                 } else if (groupChoice != null) {
@@ -7878,9 +7878,9 @@ public class AssignmentAction extends PagedResourceActionII {
             AssignmentModelAnswerItem mAnswer = assignmentSupplementItemService.getModelAnswer(aId);
             if (mAnswer == null) {
                 mAnswer = assignmentSupplementItemService.newModelAnswer();
+                mAnswer.setAssignmentId(aId);
                 assignmentSupplementItemService.saveModelAnswer(mAnswer);
             }
-            mAnswer.setAssignmentId(a.getId());
             mAnswer.setText((String) state.getAttribute(MODELANSWER_TEXT));
             mAnswer.setShowTo(state.getAttribute(MODELANSWER_SHOWTO) != null ? Integer.parseInt((String) state.getAttribute(MODELANSWER_SHOWTO)) : 0);
             mAnswer.setAttachmentSet(getAssignmentSupplementItemAttachment(state, mAnswer, MODELANSWER_ATTACHMENTS));
@@ -8203,7 +8203,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         if ((message.getAnnouncementHeader().getAccess().equals(MessageHeader.MessageAccess.CHANNEL) && !a.getTypeOfAccess().equals(Assignment.Access.SITE))
                                 || (!message.getAnnouncementHeader().getAccess().equals(MessageHeader.MessageAccess.CHANNEL) && a.getTypeOfAccess().equals(Assignment.Access.SITE))) {
                             updateAccess = true;
-                        } else if (a.getTypeOfAccess() == Assignment.Access.GROUPED) {
+                        } else if (a.getTypeOfAccess() == Assignment.Access.GROUP) {
                             Collection<String> assnGroups = a.getGroups();
                             Collection<String> anncGroups = message.getAnnouncementHeader().getGroups();
                             if (!assnGroups.equals(anncGroups)) {
@@ -8254,7 +8254,7 @@ public class AssignmentAction extends PagedResourceActionII {
                             }
 
                             // group information
-                            if (a.getTypeOfAccess().equals(Assignment.Access.GROUPED)) {
+                            if (a.getTypeOfAccess().equals(Assignment.Access.GROUP)) {
                                 try {
                                     // get the group ids selected
                                     Collection groupRefs = a.getGroups();
@@ -8403,7 +8403,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 CalendarEvent.EventAccess eAccess = CalendarEvent.EventAccess.SITE;
                 List<Group> eGroups = new ArrayList<>();
 
-                if (a.getTypeOfAccess().equals(Assignment.Access.GROUPED)) {
+                if (a.getTypeOfAccess().equals(Assignment.Access.GROUP)) {
                     eAccess = CalendarEvent.EventAccess.GROUPED;
                     Collection<String> groupRefs = a.getGroups();
 
@@ -8649,12 +8649,10 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setPeerAssessmentInstructions(peerAssessmentInstructions);
 
         try {
-            // SAK-26349 - clear group selection before changing, otherwise it can result in a PermissionException
-            // TODO - a.clearGroupAccess();
-
             if ("site".equals(range)) {
                 a.setTypeOfAccess(Assignment.Access.SITE);
             } else if ("groups".equals(range)) {
+                a.setTypeOfAccess(Assignment.Access.GROUP);
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
 
@@ -12667,8 +12665,10 @@ public class AssignmentAction extends PagedResourceActionII {
 
         try {
             Site s = null;
-            Collection<String> assignmentGroups = new ArrayList<>();
-            Collections.addAll(assignmentGroups, ingroups);
+            Collection<String> assignmentGroups = new HashSet<>();
+            if (ingroups != null) {
+                Collections.addAll(assignmentGroups, ingroups);
+            }
             if (assignmentorstate instanceof SessionState) {
                 s = siteService.getSite((String) ((SessionState) assignmentorstate).getAttribute(STATE_CONTEXT_STRING));
             } else {

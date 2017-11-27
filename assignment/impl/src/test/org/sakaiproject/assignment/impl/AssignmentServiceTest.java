@@ -28,9 +28,15 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.Resource;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +44,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.sakaiproject.assignment.api.AssignmentConstants;
 import org.sakaiproject.assignment.api.AssignmentReferenceReckoner;
 import org.sakaiproject.assignment.api.AssignmentService;
@@ -59,8 +64,8 @@ import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.time.api.UserTimeService;
 import org.sakaiproject.tool.api.SessionManager;
-import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
 import org.sakaiproject.user.api.UserNotDefinedException;
 import org.sakaiproject.util.ResourceLoader;
@@ -86,6 +91,8 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
     @Autowired private UserDirectoryService userDirectoryService;
     @Autowired private SiteService siteService;
     @Autowired private FormattedText formattedText;
+    @Resource(name = "org.sakaiproject.time.api.UserTimeService")
+    private UserTimeService userTimeService;
 
     private ResourceLoader resourceLoader;
 
@@ -103,6 +110,7 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
         when(resourceLoader.getString("gen.checked")).thenReturn("Checked");
         when(resourceLoader.getString("assignment.copy")).thenReturn("Copy");
         ((AssignmentServiceImpl) assignmentService).setResourceLoader(resourceLoader);
+        when(userTimeService.getLocalTimeZone()).thenReturn(TimeZone.getDefault());
     }
 
     @Test
@@ -325,7 +333,6 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
             Assert.assertEquals(1, submitters.size());
             AssignmentSubmissionSubmitter submitter = submitters.stream().findAny().get();
             Assert.assertNotNull(submitter);
-            Assert.assertNotNull(submitter.getId());
             Assert.assertEquals(submitterId, submitter.getSubmitter());
         } catch (Exception e) {
             Assert.fail("Could not create submission, " + e.getMessage());
@@ -444,7 +451,7 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
             submission.setDateSubmitted(Instant.now());
             assignmentService.updateSubmission(submission);
             status = assignmentService.getSubmissionStatus(submission.getId());
-            Assert.assertEquals("Submitted " + submission.getDateSubmitted().toString(), status);
+            Assert.assertEquals("Submitted " + assignmentService.getUsersLocalDateTimeString(submission.getDateSubmitted()), status);
         } catch (Exception e) {
             Assert.fail("Could not create/update submission, " + e.getMessage());
         }
@@ -486,12 +493,12 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
 
     private AssignmentSubmission createNewSubmission(String context, String submitterId) throws UserNotDefinedException, IdUnusedException {
         Assignment assignment = createNewAssignment(context);
+        String assignmentReference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
         Site site = mock(Site.class);
         when(site.getGroup(submitterId)).thenReturn(mock(Group.class));
         when(site.getMember(submitterId)).thenReturn(mock(Member.class));
         when(siteService.getSite(context)).thenReturn(site);
-        when(siteService.siteReference(assignment.getContext())).thenReturn("/site/" + assignment.getContext());
-        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION, "/site/" + assignment.getContext())).thenReturn(true);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference)).thenReturn(true);
         AssignmentSubmission submission = null;
         try {
             submission = assignmentService.addSubmission(assignment.getId(), submitterId);
@@ -502,7 +509,9 @@ public class AssignmentServiceTest extends AbstractTransactionalJUnit4SpringCont
     }
 
     private Assignment createNewAssignment(String context) {
-        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT, AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference())).thenReturn(true);
+        String contextReference = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT, contextReference)).thenReturn(true);
+        when(securityService.unlock(AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, contextReference)).thenReturn(true);
         when(sessionManager.getCurrentSessionUserId()).thenReturn(UUID.randomUUID().toString());
         Assignment assignment = null;
         try {

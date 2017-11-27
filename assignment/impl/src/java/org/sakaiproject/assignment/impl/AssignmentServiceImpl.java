@@ -27,7 +27,6 @@ import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -393,8 +392,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         // for AssignmentService assignments:
         // if access set to SITE, use the assignment and site authzGroups.
-        // if access set to GROUPED, use the assignment, and the groups, but not the site authzGroups.
-        // if the user has SECURE_ALL_GROUPS in the context, ignore GROUPED access and treat as if SITE
+        // if access set to GROUP, use the assignment, and the groups, but not the site authzGroups.
+        // if the user has SECURE_ALL_GROUPS in the context, ignore GROUP access and treat as if SITE
 
         try {
             switch (reference.getSubType()) {
@@ -413,7 +412,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         if (reference.getId() != null) {
                             Assignment a = getAssignment(reference);
                             if (a != null) {
-                                grouped = Assignment.Access.GROUPED == a.getTypeOfAccess();
+                                grouped = Assignment.Access.GROUP == a.getTypeOfAccess();
                                 groups = a.getGroups();
                             }
                         }
@@ -583,7 +582,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         String assignmentId = AssignmentReferenceReckoner.reckoner().reference(assignmentReference).reckon().getId();
         try {
             Assignment a = getAssignment(assignmentId);
-            if (a.getTypeOfAccess() == Assignment.Access.GROUPED) {
+            if (a.getTypeOfAccess() == Assignment.Access.GROUP) {
                 // for grouped assignment, need to include those users that with "all.groups" and "grade assignment" permissions on the site level
                 try {
                     AuthzGroup group = authzGroupService.getAuthzGroup(siteService.siteReference(a.getContext()));
@@ -931,8 +930,14 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             Assignment assignment = getAssignment(assignmentId);
 
             String assignmentReference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
-            if (!permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference, assignment)) {
-                throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference);
+            if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
+                if (!permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference, assignment)) {
+                    throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference);
+                }
+            } else {
+                if (!permissionCheck(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference, null)) {
+                    throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference);
+                }
             }
 
             AssignmentSubmission submission = new AssignmentSubmission();
@@ -1193,13 +1198,21 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         List<Assignment> assignments = new ArrayList<>();
         if (StringUtils.isBlank(context)) return assignments;
 
+        // access is checked for each assignment:
+        //   - drafts accessible by owner or if user has share drafts permission
+        //   - if assignment is restricted to groups only those in the group
+        //   - minimally user needs read permission
         for (Assignment assignment : assignmentRepository.findAssignmentsBySite(context)) {
             if (assignment.getDraft()) {
                 if (isDraftAssignmentVisible(assignment)) {
                     // only those who can see a draft assignment
                     assignments.add(assignment);
                 }
-            } else {
+            } else if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
+                if (permissionCheckWithGroups(AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, context, assignment)) {
+                    assignments.add(assignment);
+                }
+            } else if (allowGetAssignment(context)) {
                 assignments.add(assignment);
             }
         }
@@ -1235,7 +1248,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             Collection<Assignment> assignments = getAssignmentsForContext(context);
             for (Assignment assignment : assignments) {
                 Set<String> userIds = new HashSet<>();
-                if (assignment.getTypeOfAccess() == Assignment.Access.GROUPED) {
+                if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
                     for (String groupRef : assignment.getGroups()) {
                         if (groupIdUserIds.containsKey(groupRef)) {
                             userIds.addAll(groupIdUserIds.get(groupRef));
@@ -1267,28 +1280,23 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public AssignmentSubmission getSubmission(String assignmentId, String submitterId) throws PermissionException {
 
         if (!StringUtils.isAnyBlank(assignmentId, submitterId)) {
-            try {
-                AssignmentSubmission submission;
-                Assignment assignment = getAssignment(assignmentId);
+            // normal submission lookup where submitterId is for a user
+            AssignmentSubmission submission = assignmentRepository.findSubmissionForUser(assignmentId, submitterId);
+            if (submission == null) {
+                // if not found submitterId could be a group id
+                submission = assignmentRepository.findSubmissionForGroup(assignmentId, submitterId);
+            }
 
-                if (assignment.getIsGroup()) {
-                    submission = assignmentRepository.findSubmissionForGroup(assignmentId, submitterId);
+            if (submission != null) {
+                String reference = AssignmentReferenceReckoner.reckoner().submission(submission).reckon().getReference();
+                if (allowGetSubmission(reference)) {
+                    return submission;
                 } else {
-                    submission = assignmentRepository.findSubmissionForUser(assignmentId, submitterId);
+                    throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ACCESS_ASSIGNMENT_SUBMISSION, reference);
                 }
-
-                if (submission != null) {
-                    String reference = AssignmentReferenceReckoner.reckoner().submission(submission).reckon().getReference();
-                    if (allowGetSubmission(reference)) {
-                        return submission;
-                    } else {
-                        throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ACCESS_ASSIGNMENT_SUBMISSION, reference);
-                    }
-                } else {
-                    log.debug("No submission found for user {} in assignment {}", submitterId, assignmentId);
-                }
-            } catch (IdUnusedException e) {
-                log.warn("Could not find assignment with id {} while attempting to retrieve a submission for {}", assignmentId, submitterId);
+            } else {
+                // submission not found looked for a user submission and group submission
+                log.debug("No submission found for user {} in assignment {}", submitterId, assignmentId);
             }
         }
         return null;
@@ -1335,7 +1343,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         User user = userDirectoryService.getUser(submitter.getSubmitter());
                         userSubmissionMap.put(user, submission);
                     } catch (UserNotDefinedException e) {
-                        log.warn("Could not find user: {}, that is a submitter for submission: {}", submitter.getId(), submission.getId());
+                        log.warn("Could not find user: {}, that is a submitter for submission: {}", submitter.getSubmitter(), submission.getId());
                     }
                 }
             }
@@ -1401,7 +1409,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 if (submission.getReturned()) {
                     if (returnTime != null && returnTime.isBefore(submitTime)) {
                         if (!submission.getGraded()) {
-                            status = resourceLoader.getString("gen.resub") + " " + submitTime.toString();
+                            status = resourceLoader.getString("gen.resub") + " " + getUsersLocalDateTimeString(submitTime);
                             if (submitTime.isAfter(assignment.getDueDate())) {
                                 status = status + resourceLoader.getString("gen.late2");
                             }
@@ -1416,7 +1424,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         // ungraded submission
                         status = resourceLoader.getString("ungra");
                     } else {
-                        status = resourceLoader.getString("gen.subm4") + " " + submitTime.toString();
+                        status = resourceLoader.getString("gen.subm4") + " " + getUsersLocalDateTimeString(submitTime);
                     }
                 }
             } else {
@@ -2503,7 +2511,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
     private Assignment checkAssignmentAccessibleForUser(Assignment assignment, String currentUserId) throws PermissionException {
 
-        if (assignment.getTypeOfAccess() == Assignment.Access.GROUPED) {
+        if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
             String context = assignment.getContext();
             Collection<String> asgGroups = assignment.getGroups();
             Collection<Group> allowedGroups = getGroupsAllowFunction(SECURE_ACCESS_ASSIGNMENT, context, currentUserId);
@@ -2570,29 +2578,20 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     private boolean permissionCheckWithGroups(String permission, String resource, Assignment assignment) {
-        boolean access = securityService.unlock(permission, siteService.siteReference(assignment.getContext()));
-        // doesn't have permission for site or not in all.groups
-        if (!access || !allowAllGroups(assignment.getContext())) {
-            Collection<String> groupIds = assignment.getGroups();
-            // if there are no groups then return access
-            if (!groupIds.isEmpty()) {
-                // if there are groups then lets check
-                for (String groupId : groupIds) {
-                    if (securityService.unlock(permission, groupId)) {
-                        access = true;
-                        // no need to check other groups
-                        break;
-                    }
-                }
 
-                // TODO write a unit test to test SAK-23081
-                // if user is in group and permission is to submit a submission and the assignment is a group submission then check
-                if (!access && SECURE_ADD_ASSIGNMENT_SUBMISSION.equals(permission) && assignment.getIsGroup()) {
-                    access = securityService.unlock(permission, resource);
+        // if the user has permission asn.all.groups and has permission for the site
+        if (allowAllGroups(assignment.getContext()) && securityService.unlock(permission, siteService.siteReference(assignment.getContext()))) {
+            return true;
+        } else {
+            // otherwise check the permission in the groups
+            Collection<String> groupIds = assignment.getGroups();
+            for (String groupId : groupIds) {
+                if (securityService.unlock(permission, groupId)) {
+                    return true;
                 }
             }
         }
-        return access;
+        return false;
     }
 
     // /////////////////////////////////////////////////////////////
