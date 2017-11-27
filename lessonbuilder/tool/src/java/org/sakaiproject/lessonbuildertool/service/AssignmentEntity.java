@@ -221,9 +221,8 @@ public class AssignmentEntity implements LessonEntity, AssignmentInterface {
 	List<LessonEntity> ret = new ArrayList<LessonEntity>();
 	// security. assume this is only used in places where it's OK, so skip security checks
 	for (Assignment a : assignmentService.getAssignmentsForContext(ToolManager.getCurrentPlacement().getContext())) {
-	    String deleted = a.getProperties().get(ResourceProperties.PROP_ASSIGNMENT_DELETED);
 	    // this somewhat odd test for deleted is the one used in the Assignment code
-	    if ((deleted == null || "".equals(deleted)) && !a.getDraft()) {
+	    if (!a.getDraft()) {
 		AssignmentEntity entity = new AssignmentEntity(TYPE_ASSIGNMENT, a.getId(), 1);
 		entity.assignment = a;
 		entity.simplePageBean = bean;
@@ -312,7 +311,7 @@ public class AssignmentEntity implements LessonEntity, AssignmentInterface {
 	    assignment = getAssignment(id);
 	if (assignment == null)
 	    return null;
-	return assignment.getDueDate();
+	return Date.from(assignment.getDueDate());
     }
 
     // the following methods all take references. So they're in effect static.
@@ -565,9 +564,9 @@ public class AssignmentEntity implements LessonEntity, AssignmentInterface {
     public boolean notPublished() {
 	if (!objectExists())
 	    return true;
-	String deleted = assignment.getProperties().get(ResourceProperties.PROP_ASSIGNMENT_DELETED);
+
 	// this somewhat odd test for deleted is the one used in the Assignment code
-	if ((deleted == null || "".equals(deleted)) && !assignment.getDraft())
+	if (!assignment.getDeleted() && !assignment.getDraft())
 	    return false;
 	else
 	    return true;
@@ -724,8 +723,8 @@ public class AssignmentEntity implements LessonEntity, AssignmentInterface {
 	    attachments.add(EntityManager.newReference("/content" + href).getReference());
 	    a.setAttachments(attachments);
 	    a.setContext(context);
-	    a.setOpenDate(Date.from(Instant.now()));
-	    a.setDueDate(Date.from(Instant.now().plus(1, ChronoUnit.YEARS)));
+	    a.setOpenDate(Instant.now());
+	    a.setDueDate(Instant.now().plus(1, ChronoUnit.YEARS));
 	    a.setDraft(hide);
 	    a.setTypeOfAccess(Assignment.Access.SITE);
 	    a.setGroups(new HashSet<>());
@@ -840,8 +839,8 @@ public class AssignmentEntity implements LessonEntity, AssignmentInterface {
 		a.setAttachments(attachs);
 
 		a.setContext(context);
-	    a.setOpenDate(Date.from(Instant.now()));
-	    a.setDueDate(Date.from(Instant.now().plus(1, ChronoUnit.YEARS)));
+	    a.setOpenDate(Instant.now());
+	    a.setDueDate(Instant.now().plus(1, ChronoUnit.YEARS));
 
 	    a.setDraft(hide);
 	    a.setTypeOfAccess(Assignment.Access.SITE);
