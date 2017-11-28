@@ -88,6 +88,17 @@ CKEDITOR.plugins.add( 'audiorecorder',
 		    '}'; 
    },
 
+   onLoad: function() {
+       //v4
+     // Check to see is this.path has a proto in it, otherwise add it in
+     // Workoung around this bug http://dev.ckeditor.com/ticket/10331
+     var thisfullpath = this.path.indexOf("//") == -1 ? window.location.origin + this.path : this.path;
+     if (CKEDITOR.addCss) {
+         CKEDITOR.addCss(this.getPlaceholderCss1(thisfullpath));
+         CKEDITOR.addCss(this.getPlaceholderCss2(thisfullpath));
+     }
+   },
+ 
    init: function( editor )
    {
       var command = editor.addCommand( 'audiorecorder.cmd', new CKEDITOR.dialogCommand( 'audiorecorder.dlg' ) );
@@ -99,6 +110,11 @@ CKEDITOR.plugins.add( 'audiorecorder',
          command: 'audiorecorder.cmd',
 	 icon:  thispath + 'audiorecorder.gif'
       });
+      //v3
+      if (editor.addCss) {
+          editor.addCss(this.getPlaceholderCss1());
+          editor.addCss(this.getPlaceholderCss2());
+      }
 	//audio_plugin.js
     CKEDITOR.dialog.add( 'audiorecorder.dlg', function( api ) {
             var dialogDef = {
@@ -152,7 +168,7 @@ CKEDITOR.plugins.add( 'audiorecorder',
 
 					//Fix for IE8 because createFromHtml doesn't work, so have to create it by hand
 					var audioElement = e.createCKElement();
-					var objectElementHTML = e.getInnerHTML();
+				    //var objectElementHTML = e.getInnerHTML();
 				
 				    // Some HTML element must be inserted, so let's use a <span>.
 				    // The objectElementHTML is currently suppressed by AntiSamy, and seems superfluous anyway.
@@ -174,7 +190,49 @@ CKEDITOR.plugins.add( 'audiorecorder',
 
    },
 
+    //Add a filter for when we switch from source to HTML mode...this will preserve the "Fake" video element
+    //Note the 4 at the end, the filter in the flash plugin has a vlue of 5, so we only need a 4 to slip in before
+   afterInit : function( editor )
+   {
+           var dataProcessor = editor.dataProcessor,
+           dataFilter = dataProcessor && dataProcessor.dataFilter;
+
+           if ( dataFilter )
+           {
+                   //Here we want to add a new filter rule...if the source matches this property, it will be converted
+                   dataFilter.addRules(
+                           {
+                                   elements :
+                                   {
+                                           'audio' : function( element )
+                                           {
+                                                   if ( !isAudioEmbed( element ) )
+                                                           return null;
+                                                   //Otherwise, we return a fake element, this is the element that will be shown in WYSIWYG mode
+                                                  return editor.createFakeParserElement( element, 'cke_audiorecorder2','audiorecoder',true );
+                                           },
+                                           'cke:object' : function( element )
+                                           {
+                                                   if ( !isAudioEmbed( element ) )
+                                                           return null;
+					       //Otherwise, we return a fake element, this is the element that will be shown in WYSIWYG mode
+                                                   return editor.createFakeParserElement( element, 'cke_audiorecorder1','audiorecoder',true  );
+                                           }
+
+                                   }
+                           },
+                   4);
+           }
+        }
+
+
+
 });
+
+function isAudioEmbed(element) {
+        var attributes = element.attributes;
+        return (attributes['class'] == 'audioaudio' || attributes['class'] == 'audioobject' );
+}
 
 /** Update Audio object from Form */
 Audio.prototype.updateObject = function (tab1doc){
