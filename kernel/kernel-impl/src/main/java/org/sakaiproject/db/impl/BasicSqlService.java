@@ -1163,6 +1163,49 @@ public abstract class BasicSqlService implements SqlService
 	}
 
 	/**
+	 * @see org.sakaiproject.db.api.SqlService#dbWriteBatch(Connection, String, List<Object[]>)
+	 */
+	public boolean dbWriteBatch(Connection callerConnection, String sql, List<Object[]> fieldsList)
+	{
+		boolean success = false;
+		PreparedStatement pstmt = null;
+
+		try
+		{
+			pstmt = callerConnection.prepareStatement(sql);
+			for (Object[] fields : fieldsList)
+			{
+			    prepareStatement(pstmt, fields);
+			    pstmt.addBatch();
+			}
+			pstmt.executeBatch();
+			success = true;
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			LOG.warn("Sql.dbWriteBatch()", e);
+		}
+		catch (SQLException e)
+		{
+			LOG.warn("Sql.dbWriteBatch(): error code: " + e.getErrorCode() + " sql: " + sql + " " + e);
+		}
+		finally
+		{
+			try
+			{
+				pstmt.close();
+			}
+			catch (Exception e)
+			{
+				LOG.warn("Sql.dbWriteBatch(): " + e);
+				throw new RuntimeException("SqlService.dbWriteBatch failure", e);
+			}
+		}
+
+		return success;
+	}
+
+	/**
 	 * @see org.sakaiproject.db.api.SqlService#dbWriteCount(String, Object[], String, Connection, int)
 	 */
 	public int dbWriteCount(String sql, Object[] fields, String lastField, Connection callerConnection, int failQuiet)
@@ -1377,18 +1420,10 @@ public abstract class BasicSqlService implements SqlService
 	 */
 	public Long dbInsert(Connection callerConnection, String sql, Object[] fields, String autoColumn, InputStream last, int lastLength)
 	{
-		boolean connFromThreadLocal = false;
-		
-		// check for a transaction conncetion
+		// check for a transaction connection
 		if (callerConnection == null)
 		{
 			callerConnection = (Connection) threadLocalManager().get(TRANSACTION_CONNECTION);
-			
-			if(callerConnection != null)
-			{
-				// KNL-492 We set this so we can avoid returning a connection that is being managed elsewhere
-				connFromThreadLocal = true;
-			}
 		}
 
 		if (LOG.isDebugEnabled())
@@ -1530,7 +1565,7 @@ public abstract class BasicSqlService implements SqlService
 					{
 						conn.setAutoCommit(autoCommit);
 					}
-
+					returnConnection(conn);
 				}
 			}
 			catch (Exception e)
@@ -1538,14 +1573,6 @@ public abstract class BasicSqlService implements SqlService
 				LOG.warn("Sql.dbInsert(): " + e);
 				throw new RuntimeException("SqlService.dbInsert failure", e);
 			}
-			//make sure we return the connection even if the rollback etc above
-			// KNL-492 connFromThreadLocal is tested so we can avoid returning a
-			// connection that is being managed elsewhere
-			if (conn != null && !connFromThreadLocal)
-			{
-				returnConnection(conn);
-			}
-
 		}
 
 		if (m_showSql) debug("Sql.dbWrite(): len: " + "  time: " + connectionTime + " /  " + (System.currentTimeMillis() - start), sql, fields);
