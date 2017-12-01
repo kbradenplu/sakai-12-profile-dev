@@ -2144,3 +2144,14 @@ input#sectionTitle {
 .shortanswerDiv textarea {
     overflow: hidden !important;
 }
+
+/* Style the Back and Next buttons from the Lessons portals for Assignments, Forums, and T&Q  */
+span.nextprev a.nextbutton {
+    border: solid 1px rgb(204, 204, 204) !important;
+    border-radius: 3px !important;
+    line-height: 1em;
+    margin: 1em 8px 0.3em 2px !important;
+    font-size: 12px;
+    font-weight: normal !important;
+    padding: 0.4em 0.8em !important;
+}
