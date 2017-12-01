@@ -22,6 +22,7 @@
 package org.sakaiproject.assignment.api;
 
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.*;
 
 import org.sakaiproject.assignment.api.model.Assignment;
@@ -125,11 +126,9 @@ public interface AssignmentService extends EntityProducer {
     /**
      * Get the collection of Groups defined for the context of this site that the end user has grade assignment permissions in.
      *
-     * @param context -
-     *                Describes the portlet context - generated with DefaultId.getChannel().
      * @return The Collection (Group) of groups defined for the context of this site that the end user has grade assignment permissions in, empty if none.
      */
-    public Collection<Group> getGroupsAllowGradeAssignment(String context, String assignmentReference);
+    public Collection<Group> getGroupsAllowGradeAssignment(String assignmentReference);
 
     /**
      * Check permissions for updating an Assignment.
@@ -271,23 +270,28 @@ public interface AssignmentService extends EntityProducer {
     public Assignment addDuplicateAssignment(String context, String assignmentId) throws IdInvalidException, PermissionException, IdUsedException, IdUnusedException;
 
     /**
-     * Removes this Assignment
+     * Delete this Assignment
      *
-     * @param assignment -
-     *                   The Assignment to remove.
+     * @param assignment - The Assignment to delete.
      * @throws PermissionException if current User does not have permission to do this.
      */
-    public void removeAssignment(Assignment assignment) throws PermissionException;
-
+    public void deleteAssignment(Assignment assignment) throws PermissionException;
 
     /**
-     * Removes this Assignment and all references to it.
+     * Softly delete this Assignment
      *
-     * @param assignment -
-     *                   The Assignment to remove.
+     * @param assignment - The Assignment to softly delete.
      * @throws PermissionException if current User does not have permission to do this.
      */
-    public void removeAssignmentAndAllReferences(Assignment assignment) throws PermissionException;
+    public void softDeleteAssignment(Assignment assignment) throws PermissionException;
+
+    /**
+     * Softly delete this Assignment and remove all references to it.
+     *
+     * @param assignment - The Assignment to softly delete.
+     * @throws PermissionException if current User does not have permission to do this.
+     */
+    public void deleteAssignmentAndAllReferences(Assignment assignment) throws PermissionException;
 
     /**
      * Adds an AssignmentSubmission
@@ -726,4 +730,6 @@ public interface AssignmentService extends EntityProducer {
     * This is used when creating a new gradebook item.
     */
     public String getToolTitle();
+
+    String getUsersLocalDateTimeString(Instant date);
 }
