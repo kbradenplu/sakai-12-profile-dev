@@ -179,7 +179,7 @@
                                                                 || alert.event === 'asn.grade.submission') {
                                         faClass = 'fa-file-text';
                                     } else if (alert.event === 'lessonbuilder.comment.create') {
-                                        faClass = 'fa-leanpub';
+                                        faClass = 'fa-book';
                                     }
 
                                     markup += '<a href="' + alert.url + '" style="text-decoration: none;"><div id="portal-bullhorn-alert-' + alert.id + '" class="portal-bullhorn-academic-alert">'
