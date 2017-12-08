@@ -970,7 +970,7 @@ a.peer-eval-stats {
 	position: absolute;
 	width: 350px;
 	margin-top: 0;
-	margin-left: 0.5em;
+	/* margin-left: 0.5em; */
 	background-color: #EEE;
 	padding: 5px !important;
 	background: #eeeeee !important;
@@ -1010,6 +1010,13 @@ a.peer-eval-stats {
 }
 .dropDownDiv li div {
     font-size: .85em !important
+}
+.dropDownDiv hr {
+    margin-top: 0;
+    margin-bottom: 0.7em;
+}
+.dropDownDiv .instruction {
+    margin: 10px 0 15px 0;
 }
 .Mrphs-siteHierarchy span.nextprev {
 
