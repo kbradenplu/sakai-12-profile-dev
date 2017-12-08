@@ -174,35 +174,6 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             ['Styles','Format','Font','FontSize'],
             ['Maximize', 'ShowBlocks','A11ychecker','-','About']
 
-/*            ['About'],
-            ['Source','-','Templates'],
-            // Uncomment the next line and comment the following to enable the default spell checker.
-            // Note that it uses spellchecker.net, displays ads and sends content to remote servers without additional setup.
-            //['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
-            ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SakaiPreview'],
-            ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-            ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
-            '/',
-            ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-						['atd-ckeditor'],
-            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-            ['BidiLtr', 'BidiRtl' ],
-            ['Link','Unlink','Anchor'],
-            (sakai.editor.enableResourceSearch
-                ? ( sakai.editor.contentItemUrl
-                    ? ['ContentItem', 'AudioRecorder','ResourceSearch', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar']
-                    : ['AudioRecorder','ResourceSearch', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar']
-                  )
-		: ( sakai.editor.contentItemUrl
-                    ? ['ContentItem', 'AudioRecorder', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar']
-                    : ['AudioRecorder', 'Image','Movie','Table','HorizontalRule','Smiley','SpecialChar']
-                  )
-            ),
-            '/',
-            ['Styles','Format','Font','FontSize'],
-            ['TextColor','BGColor'],
-            ['Maximize', 'ShowBlocks']
-            ,['A11ychecker'] */
         ],
         toolbar: 'Full',
         resize_dir: 'both',
