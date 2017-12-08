@@ -2162,3 +2162,11 @@ span.nextprev a.nextbutton {
     font-weight: normal !important;
     padding: 0.4em 0.8em !important;
 }
+
+#add-multimedia-dialog label {
+    color: #111 !important;
+}
+
+#add-multimedia-dialog a {
+    color: #265b81 !important;
+}
