@@ -2163,10 +2163,27 @@ span.nextprev a.nextbutton {
     padding: 0.4em 0.8em !important;
 }
 
-#add-multimedia-dialog label {
+#add-multimedia-dialog label, #edit-item-dialog label {
     color: #111 !important;
 }
 
-#add-multimedia-dialog a {
+#add-multimedia-dialog a, #edit-item-dialog a {
     color: #265b81 !important;
+}
+
+label.block {
+    display: block !important;
+}
+
+#description {
+    margin-bottom: 1.5em;
+}
+
+#pathdiv {
+    margin-top: 1em;
+}
+
+#path {
+    margin-left: 2em;
+    background-color: #eee;
 }
