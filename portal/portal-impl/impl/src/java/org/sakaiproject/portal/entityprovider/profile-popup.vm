@@ -1,5 +1,5 @@
 <div class="profile-popup">
-    <table cols="2" class="profile-popup-table">
+    <table cols="1" class="profile-popup-table">
         <tr>
             <td class="profile-popup-icon-cell">
                 <a href="${profileUrl}" target="_blank" title="${i18n.profile_tooltip}">
@@ -7,36 +7,6 @@
                     <span class="profile-popup-label">${i18n.profile_label}</span>
                 </a>
             </td>
-            <td class="profile-popup-icon-cell">
-                <a href="mailto:${email}" title="${i18n.email_tooltip}">
-                    <span class="fa fa-envelope profile-popup-icon" aria-hidden="true"></span>
-                    <span class="profile-popup-label">${i18n.email}</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <!-- <td class="profile-popup-icon-cell">
-                #if ($facebookUrl != "")
-                <a href="${facebookUrl}" target="_blank" title="${i18n.facebook_tooltip}">
-                    <span class="fa fa-facebook profile-popup-icon" aria-hidden="true"></span>
-                    <span class="profile-popup-label">Facebook</span>
-                </a>
-                #else
-                <span class="fa fa-facebook profile-popup-icon" title="${i18n.no_facebook_tooltip}"></span>
-                <span class="profile-popup-label" title="${i18n.no_facebook_tooltip}">Facebook</span>
-                #end
-            </td>
-            <td class="profile-popup-icon-cell">
-                #if ($twitterUrl != "")
-                <a href="${twitterUrl}" target="_blank" title="${i18n.twitter_tooltip}">
-                    <span class="fa fa-twitter profile-popup-icon" aria-hidden="true"></span>
-                    <span class="profile-popup-label">Twitter</span>
-                </a>
-                #else
-                <span class="fa fa-twitter profile-popup-icon" title="${i18n.no_twitter_tooltip}"></span>
-                <span class="profile-popup-label" title="${i18n.no_twitter_tooltip}">Twitter</span>
-                #end
-            </td> -->
         </tr>
     </table>
 
