@@ -33,6 +33,7 @@ import javax.faces.context.FacesContext;
 import lombok.extern.slf4j.Slf4j;
 
 import org.sakaiproject.component.cover.ServerConfigurationService;
+import org.sakaiproject.service.gradebook.shared.GradebookService;
 import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.cover.SessionManager;
 import org.sakaiproject.tool.gradebook.Category;

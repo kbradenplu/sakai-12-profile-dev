@@ -39,6 +39,8 @@ import com.novell.ldap.LDAPSocketFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sakaiproject.user.api.*;
 
 /**
@@ -965,14 +967,14 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
                 }
                 else
                     filter = eduPersonCondition;
-                //M_log.warn("searchDirectory(): [filter = " + filter + "][reusing conn = " + receivedConn + "]")\
+                //log.warn("searchDirectory(): [filter = " + filter + "][reusing conn = " + receivedConn + "]")\
                 ;
                 /**** END hack for modifying filter for wintergreen/neem LDAP ***/
 
 
 
-		if ( M_log.isDebugEnabled() ) {
-			M_log.debug("searchDirectory(): [filter = " + filter + 
+		if ( log.isDebugEnabled() ) {
+			log.debug("searchDirectory(): [filter = " + filter + 
 					"][reusing conn = " + receivedConn + "]");
 		}
 
