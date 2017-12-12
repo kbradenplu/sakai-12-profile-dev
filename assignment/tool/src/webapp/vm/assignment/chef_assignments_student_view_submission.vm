@@ -50,7 +50,7 @@ $(document).ready(function(){
 		#set($closeDate = $submission.CloseDate)
 	#end
 	#set ($submissionType = $assignment.TypeOfSubmission.ordinal())
-	#if ($allowSubmit && $submission && $closeDate && $currentTime.isAfter($closeDate) )
+	#if ($allowSubmit && !$submission && $closeDate && $currentTime.isAfter($closeDate) )
 		<div class="alertMessage">$tlang.getString("stuviewsubm.theclodat")</div><div class="clear"></div>
 	#end
 
@@ -342,20 +342,21 @@ $(document).ready(function(){
 					</div>
 				</div>
 			#end
-			#if ($!submission && $!submission.getSubmissionLog().size() > 0)
-				<div class="row">
-					<div class="col-lg-4 col-sm-6 col-xs-12">
-						<div class="itemSummaryHeader">$tlang.getString("gen.history")</div>
-					</div>
-					<div class="col-lg-4 col-sm-6 col-xs-12">
-						<div class="itemSummaryValue">
-							#foreach ($entry in $submission.getSubmissionLog())
-								$entry<br>
-							#end
-						</div>
-					</div>
-				</div>
-			#end
+##			TODO Submission Log
+##			#if ($!submission && $!submission.getSubmissionLog().size() > 0)
+##				<div class="row">
+##					<div class="col-lg-4 col-sm-6 col-xs-12">
+##						<div class="itemSummaryHeader">$tlang.getString("gen.history")</div>
+##					</div>
+##					<div class="col-lg-4 col-sm-6 col-xs-12">
+##						<div class="itemSummaryValue">
+##							#foreach ($entry in $submission.getSubmissionLog())
+##								$entry<br>
+##							#end
+##						</div>
+##					</div>
+##				</div>
+##			#end
 		</div>
 		<div class="clearfix"></div>
 		<h4>
@@ -370,9 +371,7 @@ $(document).ready(function(){
 		#set ($aAttachments = $assignment.Attachments)
 		#if ($aAttachments)
 			#set ($size = $aAttachments.size())
-			#if ($size < 1)
-				$tlang.getString("gen.noatt")
-			#else
+			#if ($size > 0)
 				<h4>
 					$tlang.getString("gen.addres2")
 				</h4>
@@ -414,15 +413,7 @@ $(document).ready(function(){
 									#set ($size = $size + 1)
 								#end
 							#end
-							#if ($size == 0)
-								<p class="instruction">
-                                                                    #if ($submissionType == 5)
-                                                                        $tlang.getString("gen.noatt.single")
-                                                                    #else
-                                                                        $tlang.getString("gen.noatt")
-                                                                    #end
-                                                                </p>
-							#else
+							#if ($size > 0)
 								#foreach ($attachment in $mAttachments)
 									#set ($props = false)
 									#set ($props = $attachment.Properties) 

@@ -49,8 +49,6 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +63,6 @@ import org.sakaiproject.announcement.api.AnnouncementChannel;
 import org.sakaiproject.announcement.api.AnnouncementService;
 import org.sakaiproject.assignment.api.AssignmentConstants;
 import org.sakaiproject.assignment.api.AssignmentEntity;
-import org.sakaiproject.assignment.api.AssignmentPeerAssessmentService;
 import org.sakaiproject.assignment.api.AssignmentReferenceReckoner;
 import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.AssignmentServiceConstants;
@@ -78,7 +75,6 @@ import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
-import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
 import org.sakaiproject.assignment.persistence.AssignmentRepository;
@@ -103,18 +99,13 @@ import org.sakaiproject.contentreview.service.ContentReviewService;
 import org.sakaiproject.email.api.DigestService;
 import org.sakaiproject.email.api.EmailService;
 import org.sakaiproject.entity.api.Entity;
-import org.sakaiproject.entity.api.EntityAccessOverloadException;
-import org.sakaiproject.entity.api.EntityCopyrightException;
 import org.sakaiproject.entity.api.EntityManager;
-import org.sakaiproject.entity.api.EntityNotDefinedException;
-import org.sakaiproject.entity.api.EntityPermissionException;
 import org.sakaiproject.entity.api.EntityTransferrer;
 import org.sakaiproject.entity.api.EntityTransferrerRefMigrator;
 import org.sakaiproject.entity.api.HttpAccess;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entity.api.ResourceProperties;
 import org.sakaiproject.entity.api.ResourcePropertiesEdit;
-import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.event.api.Event;
 import org.sakaiproject.event.api.EventTrackingService;
 import org.sakaiproject.event.api.LearningResourceStoreService;
@@ -157,6 +148,8 @@ import org.sakaiproject.util.Validator;
 import org.sakaiproject.util.api.FormattedText;
 import org.sakaiproject.util.api.LinkMigrationHelper;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
@@ -167,12 +160,12 @@ import org.w3c.dom.Element;
  */
 @Slf4j
 @Transactional(readOnly = true)
-public class AssignmentServiceImpl implements AssignmentService, EntityTransferrer, EntityTransferrerRefMigrator {
+public class AssignmentServiceImpl implements AssignmentService, EntityTransferrer, EntityTransferrerRefMigrator, ApplicationContextAware {
 
     @Setter private AnnouncementService announcementService;
+    @Setter private ApplicationContext applicationContext;
     @Setter private AssignmentActivityProducer assignmentActivityProducer;
     @Setter private ObjectFactory<AssignmentEntity> assignmentEntityFactory;
-    @Setter private AssignmentPeerAssessmentService assignmentPeerAssessmentService;
     @Setter private AssignmentRepository assignmentRepository;
     @Setter private AssignmentSupplementItemService assignmentSupplementItemService;
     @Setter private AuthzGroupService authzGroupService;
@@ -180,7 +173,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Setter private CandidateDetailProvider candidateDetailProvider;
     @Setter private ContentHostingService contentHostingService;
     @Setter private ContentReviewService contentReviewService;
-    @Setter private DeveloperHelperService developerHelperService;
     @Setter private DigestService digestService;
     @Setter private EmailService emailService;
     @Setter private EmailUtil emailUtil;
@@ -231,6 +223,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         functionManager.registerFunction(SECURE_GRADE_ASSIGNMENT_SUBMISSION);
         functionManager.registerFunction(SECURE_ASSIGNMENT_RECEIVE_NOTIFICATIONS);
         functionManager.registerFunction(SECURE_SHARE_DRAFTS);
+
+        // this is needed to avoid a circular dependency, notice we set the AssignmentService proxy and not this
+        assignmentSupplementItemService.setAssignmentService(applicationContext.getBean(AssignmentService.class));
     }
 
     @Override
@@ -270,7 +265,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public boolean parseEntityReference(String stringReference, Reference reference) {
         if (StringUtils.startsWith(stringReference, REFERENCE_ROOT)) {
             AssignmentReferenceReckoner.AssignmentReference reckoner = AssignmentReferenceReckoner.reckoner().reference(stringReference).reckon();
-            reference.set(APPLICATION_ID, reckoner.getSubtype(), reckoner.getId(), reckoner.getContainer(), reckoner.getContext());
+            reference.set(SAKAI_ASSIGNMENT, reckoner.getSubtype(), reckoner.getId(), reckoner.getContainer(), reckoner.getContext());
             return true;
         }
         return false;
@@ -442,37 +437,43 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
     @Override
     public HttpAccess getHttpAccess() {
-        return new HttpAccess() {
-            @Override
-            public void handleAccess(HttpServletRequest req, HttpServletResponse res, Reference ref, Collection copyrightAcceptedRefs)
-                    throws EntityPermissionException, EntityNotDefinedException, EntityAccessOverloadException, EntityCopyrightException {
-                if (sessionManager.getCurrentSessionUserId() == null) {
-                    // fail the request, user not logged in yet.
-                } else {
-                    if (REF_TYPE_SUBMISSIONS.equals(ref.getSubType())) {
-                        String queryString = req.getQueryString();
-                        res.setContentType("application/zip");
-                        res.setHeader("Content-Disposition", "attachment; filename = bulk_download.zip");
+        return (req, res, ref, copyrightAcceptedRefs) -> {
+            if (sessionManager.getCurrentSessionUserId() == null) {
+                log.warn("Only logged in users can access assignment downloads");
+            } else {
+                // determine the type of download to create using the reference that was requested
+                AssignmentReferenceReckoner.AssignmentReference refReckoner = AssignmentReferenceReckoner.reckoner().reference(ref.getReference()).reckon();
+                if (REFERENCE_ROOT.equals("/" + refReckoner.getType())) {
+                    // don't process any references that are not of type assignment
+                    switch (refReckoner.getSubtype()) {
+                        case REF_TYPE_CONTENT:
+                        case REF_TYPE_ASSIGNMENT:
+                            String queryString = req.getQueryString();
+                            if (StringUtils.isNotBlank(refReckoner.getId())) {
+                                // if subtype is assignment then were downloading all submissions for an assignment
+                                res.setContentType("application/zip");
+                                res.setHeader("Content-Disposition", "attachment; filename = bulk_download.zip");
 
-                        try (OutputStream out = res.getOutputStream()) {
-                            // get the submissions zip blob
-                            getSubmissionsZip(out, ref.getReference(), queryString);
+                                try (OutputStream out = res.getOutputStream()) {
+                                    getSubmissionsZip(out, ref.getReference(), queryString);
+                                } catch (Exception ignore) {
+                                    log.warn("Could not stream the zip of submissions for reference: {}", ref.getReference());
+                                }
+                            } else {
+                                // if subtype is assignment and there is no assignmentId then were downloading grades
+                                res.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                                res.setHeader("Content-Disposition", "attachment; filename = export_grades_file.xlsx");
 
-                        } catch (Exception ignore) {
-                            log.error("Could not stream the zip of submissions for ref = {}", ref.getReference());
-                        }
-                    } else if (REF_TYPE_GRADES.equals(ref.getSubType())) {
-                        res.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                        res.setHeader("Content-Disposition", "attachment; filename = export_grades_file.xlsx");
-
-                        try (OutputStream out = res.getOutputStream()) {
-                            gradeSheetExporter.getGradesSpreadsheet(out, ref.getReference());
-                        } catch (Exception ignore) {
-                            log.error("Could not stream the grades for ref = {}", ref.getReference());
-                        }
-                    } else {
-                        log.warn("Unhandled reference = {}", ref.getReference());
-                        throw new EntityNotDefinedException(ref.getReference());
+                                try (OutputStream out = res.getOutputStream()) {
+                                    gradeSheetExporter.getGradesSpreadsheet(out, ref.getReference(), queryString);
+                                } catch (Exception ignore) {
+                                    log.warn("Could not stream the grades for reference: {}", ref.getReference());
+                                }
+                            }
+                            break;
+                        case REF_TYPE_SUBMISSION:
+                        default:
+                            log.warn("Assignments download unhandled download type for reference: {}", ref.getReference());
                     }
                 }
             }
@@ -565,9 +566,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     @Override
-    public boolean allowAddSubmissionCheckGroups(String context, Assignment assignment) {
-        String resourceString = AssignmentReferenceReckoner.reckoner().context(context).subtype("s").reckon().getReference();
-        return permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, resourceString, assignment);
+    public boolean allowAddSubmissionCheckGroups(Assignment assignment) {
+        return permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignment);
     }
 
     @Override
@@ -690,9 +690,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         log.debug("Created new assignment {}", assignment.getId());
 
-        String reference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
-        // event for tracking
-        eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, reference, true));
+        // String reference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
+        // AssignmentAction#post_save_assignment contains the logic for adding a new assignment
+        // the event should come at the end of that logic, eventually that logic should be moved here
+        // eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, reference, true));
 
         return assignment;
     }
@@ -930,7 +931,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
             String assignmentReference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
             if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
-                if (!permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference, assignment)) {
+                if (!permissionCheckWithGroups(SECURE_ADD_ASSIGNMENT_SUBMISSION, assignment)) {
                     throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT_SUBMISSION, assignmentReference);
                 }
             } else {
@@ -1153,7 +1154,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Override
     public Assignment getAssignment(Reference reference) throws IdUnusedException, PermissionException {
         Assert.notNull(reference, "Reference cannot be null");
-        if (StringUtils.equals("assignment", reference.getType())) {
+        if (StringUtils.equals(SAKAI_ASSIGNMENT, reference.getType())) {
             return getAssignment(reference.getId());
         }
         return null;
@@ -1208,7 +1209,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     assignments.add(assignment);
                 }
             } else if (assignment.getTypeOfAccess() == Assignment.Access.GROUP) {
-                if (permissionCheckWithGroups(AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, context, assignment)) {
+                if (permissionCheckWithGroups(AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, assignment)) {
                     assignments.add(assignment);
                 }
             } else if (allowGetAssignment(context)) {
@@ -1582,20 +1583,20 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         byte[] rv = null;
 
         try {
-            String aRef = AssignmentReferenceReckoner.reckoner().reference(reference).reckon().getId();
-            Assignment assignment = getAssignment(aRef);
+            String id = AssignmentReferenceReckoner.reckoner().reference(reference).reckon().getId();
+            Assignment assignment = getAssignment(id);
 
             if (assignment.getIsGroup()) {
                 Collection<Group> submitterGroups = getSubmitterGroupList(searchFilterOnly,
                         viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
                         searchString,
-                        aRef,
+                        id,
                         contextString == null ? assignment.getContext() : contextString);
                 if (submitterGroups != null && !submitterGroups.isEmpty()) {
                     List<AssignmentSubmission> submissions = new ArrayList<>();
                     for (Group g : submitterGroups) {
                         log.debug("ZIP GROUP " + g.getTitle());
-                        AssignmentSubmission sub = getSubmission(aRef, g.getId());
+                        AssignmentSubmission sub = getSubmission(id, g.getId());
                         log.debug("ZIP GROUP " + g.getTitle() + " SUB " + (sub == null ? "null" : sub.getId()));
                         if (sub != null) {
                             submissions.add(sub);
@@ -1603,12 +1604,12 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     }
                     StringBuilder exceptionMessage = new StringBuilder();
 
-                    if (allowGradeSubmission(aRef)) {
-                        zipGroupSubmissions(aRef,
+                    if (allowGradeSubmission(reference)) {
+                        zipGroupSubmissions(reference,
                                 assignment.getTitle(),
                                 assignment.getTypeOfGrade().toString(),
                                 assignment.getTypeOfSubmission(),
-                                new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(siteService)),
+                                new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(applicationContext.getBean(AssignmentService.class), siteService, userDirectoryService)),
                                 out,
                                 exceptionMessage,
                                 withStudentSubmissionText,
@@ -1632,7 +1633,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 Map<User, AssignmentSubmission> submitters = getSubmitterMap(searchFilterOnly,
                         viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
                         searchString,
-                        aRef,
+                        reference,
                         contextString == null ? assignment.getContext() : contextString);
 
                 if (!submitters.isEmpty()) {
@@ -1640,18 +1641,12 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                     StringBuilder exceptionMessage = new StringBuilder();
 
-                    if (allowGradeSubmission(aRef)) {
-                        SortedIterator sortedIterator;
-                        if (assignmentUsesAnonymousGrading(assignment)) {
-                            sortedIterator = new SortedIterator(submissions.iterator(), new AnonymousSubmissionComparator());
-                        } else {
-                            sortedIterator = new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(siteService));
-                        }
-                        zipSubmissions(aRef,
+                    if (allowGradeSubmission(reference)) {
+                        zipSubmissions(reference,
                                 assignment.getTitle(),
                                 assignment.getTypeOfGrade(),
                                 assignment.getTypeOfSubmission(),
-                                sortedIterator,
+                                new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(applicationContext.getBean(AssignmentService.class), siteService, userDirectoryService)),
                                 out,
                                 exceptionMessage,
                                 withStudentSubmissionText,
@@ -1696,25 +1691,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     @Override
-    public String gradesSpreadsheetReference(String context, String assignmentId) {
-        // TODO does ref get handled by ReferenceReckoner?
-        // based on all assignment in that context
-        String s = REFERENCE_ROOT + Entity.SEPARATOR + REF_TYPE_GRADES + Entity.SEPARATOR + context;
-        if (assignmentId != null) {
-            // based on the specified assignment only
-            s = s.concat(Entity.SEPARATOR + assignmentId);
-        }
-        return s;
-    }
-
-    @Override
-    public String submissionsZipReference(String context, String assignmentReference) {
-        // TODO does ref get handled by ReferenceReckoner?
-        // based on the specified assignment
-        return REFERENCE_ROOT + Entity.SEPARATOR + REF_TYPE_SUBMISSIONS + Entity.SEPARATOR + context + Entity.SEPARATOR + assignmentReference;
-    }
-
-    @Override
     public boolean canSubmit(String context, Assignment a, String userId) {
         // submissions are never allowed to non-electronic assignments
         if (a.getTypeOfSubmission() == Assignment.SubmissionType.NON_ELECTRONIC_ASSIGNMENT_SUBMISSION) {
@@ -1722,7 +1698,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         // return false if not allowed to submit at all
-        if (!allowAddSubmissionCheckGroups(context, a) && !allowAddAssignment(context)) return false;
+        if (!allowAddSubmissionCheckGroups(a) && !allowAddAssignment(context)) return false;
 
         //If userId is not defined look it up
         if (userId == null) {
@@ -1757,7 +1733,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             // return true if resubmission is allowed and current time is before resubmission close time
             // get the resubmit settings from submission object first
             String allowResubmitNumString = submission != null ? submission.getProperties().get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) : null;
-            if (allowResubmitNumString != null && submission.getDateSubmitted() != null && this.hasBeenSubmitted(submission)) {
+            if (allowResubmitNumString != null && submission.getDateSubmitted() != null && submission.getSubmitted()) {
                 try {
                     int allowResubmitNumber = Integer.parseInt(allowResubmitNumString);
                     String allowResubmitCloseTime = submission.getProperties().get(AssignmentConstants.ALLOW_RESUBMIT_CLOSETIME);
@@ -1806,11 +1782,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
     @Override
     @Transactional
-    public Collection<Group> getSubmitterGroupList(String searchFilterOnly, String allOrOneGroup, String searchString, String aRef, String contextString) {
+    public Collection<Group> getSubmitterGroupList(String searchFilterOnly, String allOrOneGroup, String searchString, String assignmentId, String contextString) {
         Collection<Group> rv = new ArrayList<Group>();
         allOrOneGroup = StringUtils.trimToNull(allOrOneGroup);
         try {
-            Assignment a = getAssignment(aRef);
+            Assignment a = getAssignment(assignmentId);
             if (a != null) {
                 Site st = siteService.getSite(contextString);
                 if (StringUtils.equals(allOrOneGroup, AssignmentConstants.ALL) || StringUtils.isEmpty(allOrOneGroup)) {
@@ -1836,7 +1812,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 }
 
                 for (Group g : rv) {
-                    AssignmentSubmission uSubmission = getSubmission(aRef, g.getId());
+                    AssignmentSubmission uSubmission = getSubmission(assignmentId, g.getId());
                     if (uSubmission == null) {
                         if (allowGradeSubmission(AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference())) {
                             if (a.getIsGroup()) {
@@ -1878,9 +1854,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 }
             }
         } catch (IdUnusedException aIdException) {
-            log.warn("Assignment id not used: {}, {}", aRef, aIdException.getMessage());
+            log.warn("Assignment id not used: {}, {}", assignmentId, aIdException.getMessage());
         } catch (PermissionException aPerException) {
-            log.warn("Not allowed to get assignment {}, {}", aRef, aPerException.getMessage());
+            log.warn("Not allowed to get assignment {}, {}", assignmentId, aPerException.getMessage());
         }
 
         return rv;
@@ -2136,26 +2112,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public Integer getScaleFactor() {
         Integer decimals = serverConfigurationService.getInt("assignment.grading.decimals", AssignmentConstants.DEFAULT_DECIMAL_POINT);
         return Double.valueOf(Math.pow(10.0, decimals)).intValue();
-    }
-
-    @Override
-    public boolean hasBeenSubmitted(AssignmentSubmission submission) {
-        try {
-            List<String> submissionLog = new ArrayList<>(); // TODO - submission.getSubmissionLog();
-
-            //Special case for old submissions prior to Sakai 10 where the submission log did not exist. Just return true for backward compatibility.
-            if (submissionLog == null || submissionLog.size() == 0) {
-                return true;
-            }
-            for (String itemString : submissionLog) {
-                if (itemString.contains("submitted")) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            log.warn("Could not get submission log, {}", e.getMessage());
-        }
-        return false;
     }
 
     @Override
@@ -2576,18 +2532,20 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return access;
     }
 
-    private boolean permissionCheckWithGroups(String permission, String resource, Assignment assignment) {
-
-        // if the user has permission asn.all.groups and has permission for the site
-        if (allowAllGroups(assignment.getContext()) && securityService.unlock(permission, siteService.siteReference(assignment.getContext()))) {
-            return true;
+    private boolean permissionCheckWithGroups(String permission, Assignment assignment) {
+        Collection<String> groupIds = assignment.getGroups();
+        if (groupIds.isEmpty()) {
+            return securityService.unlock(permission, siteService.siteReference(assignment.getContext()));
         } else {
-            // otherwise check the permission in the groups
-            Collection<String> groupIds = assignment.getGroups();
+            // check the permission in the groups
             for (String groupId : groupIds) {
                 if (securityService.unlock(permission, groupId)) {
                     return true;
                 }
+            }
+            // lastly if the user has permission asn.all.groups and has permission for the site
+            if (allowAllGroups(assignment.getContext()) && securityService.unlock(permission, siteService.siteReference(assignment.getContext()))) {
+                return true;
             }
         }
         return false;
@@ -2714,7 +2672,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
     }
 
-    // TODO this needs to be refactored
+    // TODO zipSubmissions and zipGroupSubmissions should be combined
     private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId) {
         ZipOutputStream out = null;
 
@@ -2752,7 +2710,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             }
 
             // allow add assignment members
-            List allowAddSubmissionUsers = allowAddSubmissionUsers(assignmentReference);
+            List<User> allowAddSubmissionUsers = allowAddSubmissionUsers(assignmentReference);
 
             // Create the ZIP file
             String submittersName = "";
@@ -2765,10 +2723,13 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 boolean isAnon = assignmentUsesAnonymousGrading(s.getAssignment());
                 //SAK-29314 added a new value where it's by default submitted but is marked when the user submits
                 if ((s.getSubmitted() && s.getUserSubmission()) || includeNotSubmitted) {
-                    // get the submission user id and see if the user is still in site
-                    String userId = s.getSubmitters().stream().filter(AssignmentSubmissionSubmitter::getSubmittee).findFirst().orElse(null).getSubmitter();
+                    // get the submitter who submitted the submission see if the user is still in site
+                    Optional<AssignmentSubmissionSubmitter> assignmentSubmitter = s.getSubmitters().stream().findAny();
                     try {
-                        User u = userDirectoryService.getUser(userId);
+                        User u = null;
+                        if (assignmentSubmitter.isPresent()) {
+                            u = userDirectoryService.getUser(assignmentSubmitter.get().getSubmitter());
+                        }
                         if (allowAddSubmissionUsers.contains(u)) {
                             submittersName = root;
 
@@ -2776,9 +2737,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 try {
                                     return userDirectoryService.getUser(p.getSubmitter());
                                 } catch (UserNotDefinedException e) {
-                                    log.warn("User not found {}", p.getSubmitter());
-                                    return null;
+                                    log.warn("User not found {}, {}", p.getSubmitter(), e.getMessage());
                                 }
+                                return null;
                             }).filter(Objects::nonNull).toArray(User[]::new);
 
                             String submittersString = "";
@@ -2788,7 +2749,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 }
                                 String fullName = submitters[i].getSortName();
                                 // in case the user doesn't have first name or last name
-                                if (fullName.indexOf(",") == -1) {
+                                if (!fullName.contains(",")) {
                                     fullName = fullName.concat(",");
                                 }
                                 submittersString = submittersString.concat(fullName);
@@ -2805,8 +2766,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 // Work out if submission is late.
                                 String latenessStatus = whenSubmissionMade(s);
 
-                                String fullAnonId = s.getAnonymousSubmissionId();
                                 String anonTitle = resourceLoader.getString("grading.anonymous.title");
+                                String fullAnonId = s.getId() + " " + anonTitle;
 
                                 String[] params = new String[7];
                                 if (isAdditionalNotesEnabled && candidateDetailProvider != null) {
@@ -2845,8 +2806,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                                 // SAK-17606
                                 if (isAnon) {
-                                    submittersName = root + s.getAnonymousSubmissionId();
-                                    submittersString = s.getAnonymousSubmissionId();
+                                    submittersString = s.getId() + " " + resourceLoader.getString("grading.anonymous.title");
+                                    submittersName = root + submittersString;
                                 }
 
                                 if (!withoutFolders) {
@@ -2959,8 +2920,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                     submittersAdditionalNotesHtml += "<tr><td style='padding-right:10px;padding-left:10px'>" + submittersString + "</td><td style='padding-right:10px'>" + noteList + "</td></tr>";
                                 }
                             }
+                        } else {
+                            log.warn("Can't add submission: {} to zip, missing the submittee or they are no longer allowed to submit in the site", s.getId());
                         }
-
                     } catch (Exception e) {
                         caughtException = e.toString();
                         if (log.isDebugEnabled()) {
@@ -3025,7 +2987,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
     }
 
-    // TODO refactor this
+    // TODO zipSubmissions and zipGroupSubmissions should be combined
     protected void zipGroupSubmissions(String assignmentReference, String assignmentTitle, String gradeTypeString, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, String gradeFileFormat, boolean includeNotSubmitted) {
         ZipOutputStream out = null;
         try {
