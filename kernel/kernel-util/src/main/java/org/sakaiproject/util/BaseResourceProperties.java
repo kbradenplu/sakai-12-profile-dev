@@ -490,12 +490,13 @@ public class BaseResourceProperties implements ResourceProperties, SerializableP
 		Time time = getTimeProperty(name);
 		return new Date(time.getTime());
 	}
+	
+	public Instant getInstantProperty(String name) throws EntityPropertyNotDefinedException, EntityPropertyTypeException
+	{
+		Time time = getTimeProperty(name);
+		return Instant.ofEpochMilli(time.getTime());
+	}
 
-    public Instant getInstantProperty(String name) throws EntityPropertyNotDefinedException, EntityPropertyTypeException
-    {
-	Time time = getTimeProperty(name);
-	return Instant.ofEpochMilli(time.getTime());
-    }
 	/**
 	 * Access a named property as a User.
 	 * 
