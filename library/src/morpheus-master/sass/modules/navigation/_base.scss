@@ -236,7 +236,8 @@ body.is-logged-out{
 		#roleSwitch {
 			padding-right: 1em;
 			margin-right: 1em;
-			border-right: 1px solid #F0F0F0;
+			border-right: 1px solid #111;
+			/*	border-right: 1px solid #F0F0F0;  */
 			white-space: nowrap;
 
 				@media #{$phone} {
@@ -244,6 +245,9 @@ body.is-logged-out{
 						display: none;
 					}
 				}
+
+			color: #111;
+
 
 			// Show as a menu on mobile
 			#roleSwitchDropDownToggle {
@@ -263,7 +267,8 @@ body.is-logged-out{
 
 				&:hover {
 					text-decoration: none;
-					color: #FFF;
+					/*					color: #FFF; */
+					color: #111;
 					text-shadow: 0 0 5px rgba(165, 165, 165, 0.95); /* same as profile picture hover */
 				}
 			}
@@ -333,11 +338,13 @@ body.is-logged-out{
 			#roleSwitchAnchor {
 				text-decoration: none;
 				@media #{$phone} {
-					color: $primary-color;
+					/* color: $primary-color; */
+					color: #111;
 				}
 
 				@media #{$nonPhone} {
-					color: $topNav-text-color;
+				/*					color: $topNav-text-color; */
+				color: #111;
 					display: inline-block;
 				}
 
@@ -348,7 +355,8 @@ body.is-logged-out{
 				}
 
 				&.#{$namespace}roleSwitch__exit {
-					color: $topNav-text-color;
+				color: #111;
+					/* color: $topNav-text-color; */
 				}
 			}
 		}
@@ -1276,4 +1284,12 @@ body.is-logged-out{
 // HACK to force consistent color for text when hovering over a site tab
 #linkNav ul li.Mrphs-sitesNav__menuitem:hover > a {
 	 color: #000 !important;
+}
+
+// HACK to force black text when viewing sites in a different role (student, ta)
+.Mrphs-portalWrapper.swapped-view .Mrphs-topHeader a {
+  color: #111;
+}
+.Mrphs-portalWrapper.swapped-view .Mrphs-quickLinksNav__popup {
+  border-right: 1px solid #111;
 }
