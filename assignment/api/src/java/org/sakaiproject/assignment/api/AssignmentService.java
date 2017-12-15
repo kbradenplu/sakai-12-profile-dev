@@ -158,11 +158,10 @@ public interface AssignmentService extends EntityProducer {
     public boolean allowAddSubmission(String context);
 
     /**
-     * @param context
      * @param assignment - An Assignment object. Needed for the groups to be checked.
      * @return
      */
-    public boolean allowAddSubmissionCheckGroups(String context, Assignment assignment);
+    public boolean allowAddSubmissionCheckGroups(Assignment assignment);
 
     /**
      * Get the List of Users who can addSubmission() for this assignment.
@@ -521,22 +520,6 @@ public interface AssignmentService extends EntityProducer {
     public String submissionReference(String context, String id, String assignmentId);
 
     /**
-     * Get the String to form an assignment grade spreadsheet
-     *
-     * @param context      The assignment context String
-     * @param assignmentId The id for the assignment object; when null, indicates all assignment in that context
-     */
-    public String gradesSpreadsheetReference(String context, String assignmentId);
-
-    /**
-     * Get the string to form an assignment submissions zip file
-     *
-     * @param context      The assignment context String
-     * @param assignmentId The id for the assignment object;
-     */
-    public String submissionsZipReference(String context, String assignmentId);
-
-    /**
      * Whether a specific user can submit
      * @param context
      * @param a
@@ -612,13 +595,6 @@ public interface AssignmentService extends EntityProducer {
      * @return
      */
     public Integer getScaleFactor();
-
-    /**
-     * This method allows you to know if there are submissions submitted
-     *
-     * Params: AssignmentSubmission s
-     */
-    public boolean hasBeenSubmitted(AssignmentSubmission s);
 
     /**
      * Get a link directly into an assignment itself, supplying the permissions to use when

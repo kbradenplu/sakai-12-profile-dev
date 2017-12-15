@@ -71,10 +71,10 @@ CKEDITOR.plugins.add( 'html5audio', {
                 }
 
                 if ( this.data.align === 'left' ) {
-                    this.element.setStyle( 'float', this.data.align );
+/*                    this.element.setStyle( 'float', this.data.align ); */
                     this.element.setStyle( 'margin-right', '10px' );
                 } else if ( this.data.align === 'right' ) {
-                    this.element.setStyle( 'float', this.data.align );
+/*                    this.element.setStyle( 'float', this.data.align ); */
                     this.element.setStyle( 'margin-left', '10px' );
                 }
 

@@ -158,7 +158,7 @@ $ok-background-color:        lighten($ok-color, 45%) !default;
 $warn-background-color:     #F6ECB7 !default;
 $warn-color:                darken($warn-background-color, 35%) !default;
 $error-background-color:    #f2dede !default;
-$error-color:               darken($error-background-color, 30%) !default;
+$error-color:               darken($error-background-color, 50%) !default;
 
 /* PLU Unpublished Site colors */
 $unpublished-text: 	       #c00;

@@ -420,8 +420,12 @@ public class GradebookPage extends BasePage {
 		//
 		// hide/show components
 		//
-		toolbar.setVisible(this.hasAssignmentsAndGrades);
-		gradeTable.setVisible(this.hasAssignmentsAndGrades);
+
+		// Only show the toolbar if there are students and grade items
+		toolbar.setVisible(!assignments.isEmpty());
+
+		// Show the table if there are grade items
+		gradeTable.setVisible(!assignments.isEmpty());
 
 		// Only show the toolbar if there are students and grade items
 		toolbar.setVisible(!assignments.isEmpty());
