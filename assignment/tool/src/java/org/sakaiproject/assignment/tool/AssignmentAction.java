@@ -3082,16 +3082,16 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("submission", s);
             context.put("submissionReference", AssignmentReferenceReckoner.reckoner().submission(s).reckon().getReference());
 
-            StringBuilder submitterNames = new StringBuilder();
-            s.getSubmitters().forEach(u -> {
+            String submitterNames = s.getSubmitters().stream().map(u -> {
                 try {
                     User user = userDirectoryService.getUser(u.getSubmitter());
-                    submitterNames.append(user.getDisplayName()).append(" (").append(user.getDisplayId()).append(")");
+                    return user.getDisplayName() + " (" + user.getDisplayId() + ")";
                 } catch (UserNotDefinedException e) {
                     log.warn("Could not find user = {}, who is a submitter on submission = {}, {}", u, s.getId(), e.getMessage());
                 }
-            });
-            context.put("submitterNames", formattedText.escapeHtml(submitterNames.toString()));
+                return "";
+            }).collect(Collectors.joining(", "));
+            context.put("submitterNames", formattedText.escapeHtml(submitterNames));
             context.put("submissionStatus", assignmentService.getSubmissionStatus(s.getId()));
 
             if (a != null) {
@@ -3791,16 +3791,16 @@ public class AssignmentAction extends PagedResourceActionII {
             assignment.getAttachments().forEach(r -> assignmentAttachmentReferences.put(r, entityManager.newReference(r)));
             context.put("assignmentAttachmentReferences", assignmentAttachmentReferences);
 
-            StringBuilder submitterNames = new StringBuilder();
-            submission.getSubmitters().forEach(s -> {
+            String submitterNames = submission.getSubmitters().stream().map(u -> {
                 try {
-                    User user = userDirectoryService.getUser(s.getSubmitter());
-                    submitterNames.append(user.getDisplayName()).append(" (").append(user.getDisplayId()).append(")");
+                    User user = userDirectoryService.getUser(u.getSubmitter());
+                    return user.getDisplayName() + " (" + user.getDisplayId() + ")";
                 } catch (UserNotDefinedException e) {
-                    log.warn("Could not find user = {}, who is a submitter on submission = {}, {}", s, submission.getId(), e.getMessage());
+                    log.warn("Could not find user = {}, who is a submitter on submission = {}, {}", u, submission.getId(), e.getMessage());
                 }
-            });
-            context.put("submitterNames", formattedText.escapeHtml(submitterNames.toString()));
+                return "";
+            }).collect(Collectors.joining(", "));
+            context.put("submitterNames", formattedText.escapeHtml(submitterNames));
 
             setScoringAgentProperties(context, assignment, submission, false);
 
@@ -8637,12 +8637,6 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setPeerAssessmentNumberReviews(peerAssessmentNumReviews);
         a.setPeerAssessmentInstructions(peerAssessmentInstructions);
 
-        if(!a.getDraft() && a.getAllowPeerAssessment()){
-            assignmentPeerAssessmentService.schedulePeerReview(a.getId());
-        }else{
-            assignmentPeerAssessmentService.removeScheduledPeerReview(a.getId());
-        }
-
         try {
             if (Assignment.Access.SITE.toString().equals(range)) {
                 a.setTypeOfAccess(Assignment.Access.SITE);
@@ -8664,6 +8658,12 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getString("group.user.multiple.error"));
                 log.warn(":post_save_assignment at least one user in multiple groups.");
             }
+        }
+
+        if(!a.getDraft() && a.getAllowPeerAssessment()){
+            assignmentPeerAssessmentService.schedulePeerReview(a.getId());
+        }else{
+            assignmentPeerAssessmentService.removeScheduledPeerReview(a.getId());
         }
 
         // TODO content review
@@ -11915,6 +11915,8 @@ public class AssignmentAction extends PagedResourceActionII {
                             returnResources.add(us);
                         }
                     }
+                    // Have we found an anonymous assignment in the list.
+                    hasOneAnon = hasOneAnon || assignmentService.assignmentUsesAnonymousGrading(assignment);
                 }
                 break;
             }
@@ -11925,6 +11927,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String sort = "";
         ascending = (String) state.getAttribute(SORTED_ASC);
         sort = (String) state.getAttribute(SORTED_BY);
+
         if (MODE_INSTRUCTOR_GRADE_ASSIGNMENT.equals(mode) || MODE_INSTRUCTOR_GRADE_SUBMISSION.equals(mode)
                 && (sort == null || !sort.startsWith("sorted_grade_submission_by"))) {
             ascending = (String) state.getAttribute(SORTED_GRADE_SUBMISSION_ASC);
@@ -11944,16 +11947,9 @@ public class AssignmentAction extends PagedResourceActionII {
             if (SORTED_GRADE_SUBMISSION_BY_LASTNAME.equals(sort) &&
                     (MODE_INSTRUCTOR_GRADE_ASSIGNMENT.equals(mode) || MODE_INSTRUCTOR_GRADE_SUBMISSION.equals(mode))) {
                 String aRef = (String) state.getAttribute(EXPORT_ASSIGNMENT_REF);
-                try {
-                    Assignment assignment = assignmentService.getAssignment(aRef);
-                    if (assignment != null) {
-                        Map<String, String> props = assignment.getProperties();
-                        if (props != null) {
-                            ac.setAnon(Boolean.valueOf(props.get(NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING)));
-                        }
-                    }
-                } catch (IdUnusedException | PermissionException iue) {
-                    // ignore, continue with default sort
+                Assignment assignment = getAssignment(aRef, "sizeResources", state);
+                if (assignment != null) {
+                    ac.setAnon(assignmentService.assignmentUsesAnonymousGrading(assignment));
                 }
             } else if (hasOneAnon) {
                 ac.setAnon(true);

@@ -72,6 +72,17 @@
 			};
 		setupAccordion('<%= org.sakaiproject.util.Web.escapeJavascript(thisId)%>',<h:outputText value="#{SyllabusTool.editAble == 'true' ? true : false}"/>, msgs, 
 							'<h:outputText value="#{SyllabusTool.openDataId}"/>');
+					if(<h:outputText value="#{SyllabusTool.editAble == 'true'}"/>){
+						//draft/publish toggle:
+						setupToggleImages("publish", "publish", "publishOn", "publishOff", msgs);
+						//Calendar Toggle
+						setupToggleImages("linkCalendar", "linkCal", "linkCalOn", "linkCalOff", msgs);
+						//Public/Private to the world toggle
+						setupToggleImages("view", "linkWorld", "linkWorldOn", "linkWorldOff", msgs);
+						}else{
+						//remove CSS classes (otherwise you get those hover over "pencil edit" images
+						$(".editItem").removeClass("editItem");
+						}
 	});
 	
 	function showConfirmDeleteHelper(deleteButton, event){
@@ -200,7 +211,7 @@
 						<f:verbatim>"><h3></f:verbatim>
 						<f:subview id="actionIcons" rendered="#{SyllabusTool.editAble == 'true'}">
 						    <f:verbatim>
-							<span class="fa fa-arrows actionIcon" alt="</f:verbatim><h:outputText value="#{msgs.dragToReorder}"/><f:verbatim>" title="</f:verbatim><h:outputText value="#{msgs.dragToReorder}"/><f:verbatim>"></span>
+							<span class="fa fa-arrows handleIcon" alt="</f:verbatim><h:outputText value="#{msgs.dragToReorder}"/><f:verbatim>" title="</f:verbatim><h:outputText value="#{msgs.dragToReorder}"/><f:verbatim>"></span>
 							<span class="edit-actions">
 							  <span class="fa fa-eye actionIcon publish publishOn" alt="</f:verbatim><h:outputText value="#{msgs.clickToUnpublish}"/><f:verbatim>" title="</f:verbatim><h:outputText value="#{msgs.clickToUnpublish}"/><f:verbatim>" style="</f:verbatim><h:outputText value="#{eachEntry.status == eachEntry.draftStatus ? 'display:none' : ''}"/><f:verbatim>"></span>
 							  <span class="fa fa-eye-slash actionIcon publish publishOff" alt="</f:verbatim><h:outputText value="#{msgs.clickToPublish}"/><f:verbatim>" title="</f:verbatim><h:outputText value="#{msgs.clickToPublish}"/><f:verbatim>" style="</f:verbatim><h:outputText value="#{eachEntry.status == eachEntry.draftStatus ? '' : 'display:none'}"/><f:verbatim>"></span>
@@ -220,7 +231,7 @@
 							<h:outputText styleClass="draftTitlePrefix" rendered="#{eachEntry.status == eachEntry.draftStatus}" value="#{msgs.draftTitlePrefix}" />
 							<h:outputText styleClass="" value="#{eachEntry.entry.title}" />
 							<f:subview id="dateStudent" rendered="#{!SyllabusTool.editAble && (eachEntry.entry.startDate != null || eachEntry.entry.endDate != null)}">
-								<f:verbatim><span style="font-weight: normal; color: grey; float: right"></f:verbatim>
+								<f:verbatim><span style="float: right; padding-right: 1em; padding-left: 1em"></f:verbatim>
 									<h:outputText value="#{eachEntry.entry.startDate}">
 										<f:convertDateTime type="date" pattern="EEE MMM dd, yyyy hh:mm a"/>
 									</h:outputText>
@@ -228,17 +239,17 @@
 									<h:outputText value="#{eachEntry.entry.endDate}" rendered="#{!eachEntry.startAndEndDatesSameDay}">
 								  		<f:convertDateTime type="date" pattern="EEE MMM dd, yyyy hh:mm a"/>
 									</h:outputText>
-									<h:outputText value="#{eachEntry.entry.endDate}" rendered="#{eachEntry.startAndEndDatesSameDay}">
+									&nbsp;|&nbsp;<h:outputText value="#{eachEntry.entry.endDate}" rendered="#{eachEntry.startAndEndDatesSameDay}">
 								  		<f:convertDateTime type="date" pattern="hh:mm a"/>
 									</h:outputText>
 								<f:verbatim></span></f:verbatim>
 							</f:subview>
 							<f:subview id="dateInstructor" rendered="#{SyllabusTool.editAble == 'true'}">
-								<f:verbatim><span style="font-weight: normal; color: grey; float: right"></f:verbatim>
+								<f:verbatim><span style="float: right; padding-right:1em; padding-left:1em"></f:verbatim>
 									<h:outputText styleClass="" value="#{eachEntry.entry.startDate}">
 										<f:convertDateTime type="date" pattern="yyyy/MM/dd h:mm a"/>
 									</h:outputText>
-									<h:outputText styleClass="" value="#{eachEntry.entry.endDate}">
+									&nbsp;|&nbsp;<h:outputText styleClass="" value="#{eachEntry.entry.endDate}">
 								  		<f:convertDateTime type="date" pattern="yyyy/MM/dd h:mm a"/>
 									</h:outputText>
 								<f:verbatim></span></f:verbatim>

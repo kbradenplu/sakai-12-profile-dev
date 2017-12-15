@@ -343,9 +343,8 @@ implements ActionListener
 					entry.setStartDate(new Date());
 				}
 				if(!isEntryRetractEarlierThanAvailable && (entryRetractDate != null && entryDueDate != null && entryRetractDate.before(entryDueDate))) {
-					String extendedTimeError4 = getExtendedTimeErrorString("extended_time_retract_earlier_than_due", entry, assessmentSettings);
-					context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, extendedTimeError4, null));
-					error = true;
+					// Retract date should be pushed to the due date
+					entry.setRetractDate(entryDueDate);
 				}
 			}
 			if(entryDueDate != null && entryStartDate != null && entryDueDate.equals(entryStartDate)) {
@@ -563,17 +562,21 @@ implements ActionListener
 		control.setStartDate(assessmentSettings.getStartDate());
 		control.setDueDate(assessmentSettings.getDueDate());
 
-		if (assessmentSettings.getLateHandling() != null) {
-			control.setLateHandling(new Integer(assessmentSettings.getLateHandling()));
+		Integer lateHandling = assessmentSettings.getLateHandling() != null ? new Integer(assessmentSettings.getLateHandling()) : -1;
+		if (lateHandling > 0) {
+			control.setLateHandling(lateHandling);
 		}
 
-		if (retractNow)
-		{
+		if (retractNow && lateHandling.equals(AssessmentAccessControl.ACCEPT_LATE_SUBMISSION)) {
 			control.setRetractDate(new Date());
+			if (assessmentSettings.getDueDate() != null && assessmentSettings.getDueDate().after(new Date())) {
+				control.setDueDate(new Date());
+			}
 		}
-		else if (assessmentSettings.getRetractDate() == null
-				 || "".equals(assessmentSettings.getRetractDateString()))
-		{
+		else if (retractNow) {
+			control.setDueDate(new Date());
+		}
+		else if (assessmentSettings.getRetractDate() == null || "".equals(assessmentSettings.getRetractDateString())) {
 			control.setLateHandling(AssessmentAccessControl.NOT_ACCEPT_LATE_SUBMISSION);
 			control.setRetractDate(null);
 		}

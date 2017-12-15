@@ -75,6 +75,7 @@ import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
+import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
 import org.sakaiproject.assignment.persistence.AssignmentRepository;
@@ -1640,13 +1641,18 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     List<AssignmentSubmission> submissions = new ArrayList<AssignmentSubmission>(submitters.values());
 
                     StringBuilder exceptionMessage = new StringBuilder();
-
+                    SortedIterator sortedIterator;
+                    if (assignmentUsesAnonymousGrading(assignment)){
+                        sortedIterator = new SortedIterator(submissions.iterator(), new AnonymousSubmissionComparator());
+                    } else {
+                        sortedIterator = new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(applicationContext.getBean(AssignmentService.class), siteService, userDirectoryService));
+                    }
                     if (allowGradeSubmission(reference)) {
                         zipSubmissions(reference,
                                 assignment.getTitle(),
                                 assignment.getTypeOfGrade(),
                                 assignment.getTypeOfSubmission(),
-                                new SortedIterator(submissions.iterator(), new AssignmentSubmissionComparator(applicationContext.getBean(AssignmentService.class), siteService, userDirectoryService)),
+                                sortedIterator,
                                 out,
                                 exceptionMessage,
                                 withStudentSubmissionText,
@@ -2765,7 +2771,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 submittersString = escapeInvalidCharsEntry(submittersString);
                                 // Work out if submission is late.
                                 String latenessStatus = whenSubmissionMade(s);
-
+                                log.debug("latenessStatus: " + latenessStatus);
+                                
                                 String anonTitle = resourceLoader.getString("grading.anonymous.title");
                                 String fullAnonId = s.getId() + " " + anonTitle;
 
@@ -2781,12 +2788,17 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                                 // SAK-17606
                                 if (!isAnon) {
+                                	log.debug("Zip user: " + submitters[i].toString());
                                     params[0] = submitters[i].getDisplayId();
                                     params[1] = submitters[i].getEid();
                                     params[2] = submitters[i].getLastName();
                                     params[3] = submitters[i].getFirstName();
                                     params[4] = s.getGrade(); // TODO may need to look at this
-                                    params[5] = s.getDateSubmitted().toString(); // TODO may need to be formatted
+                                    if (s.getDateSubmitted() != null) {
+                                    	params[5] = s.getDateSubmitted().toString(); // TODO may need to be formatted
+                                    } else {
+                                    	params[5] = "";	
+                                    }
                                     params[6] = latenessStatus;
                                 } else {
                                     params[0] = fullAnonId;
@@ -2794,7 +2806,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                     params[2] = anonTitle;
                                     params[3] = anonTitle;
                                     params[4] = s.getGrade();
-                                    params[5] = s.getDateSubmitted().toString(); // TODO same as above
+                                    if (s.getDateSubmitted() != null) {
+                                    	params[5] = s.getDateSubmitted().toString(); // TODO may need to be formatted
+                                    } else {
+                                    	params[5] = "";	
+                                    }
                                     params[6] = latenessStatus;
                                 }
                                 sheet.addRow(params);
@@ -2841,10 +2857,13 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                         }
                                         ZipEntry textEntry = new ZipEntry(submittersNameString + "_submissionText" + AssignmentConstants.ZIP_SUBMITTED_TEXT_FILE_TYPE);
                                         out.putNextEntry(textEntry);
-                                        byte[] text = submittedText.getBytes();
-                                        out.write(text);
-                                        textEntry.setSize(text.length);
+                                        if (submittedText != null) {
+                                          byte[] text = submittedText.getBytes();
+                                          out.write(text);
+                                          textEntry.setSize(text.length);
+                                        }
                                         out.closeEntry();
+                                        
                                     }
 
                                     // include student submission feedback text
@@ -2852,9 +2871,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                         // create a feedbackText file into zip
                                         ZipEntry fTextEntry = new ZipEntry(submittersName + "feedbackText.html");
                                         out.putNextEntry(fTextEntry);
-                                        byte[] fText = s.getFeedbackText().getBytes();
-                                        out.write(fText);
-                                        fTextEntry.setSize(fText.length);
+                                        if (s.getFeedbackText() != null) {
+                                           byte[] fText = s.getFeedbackText().getBytes();
+                                           out.write(fText);
+                                           fTextEntry.setSize(fText.length);
+                                        }
                                         out.closeEntry();
                                     }
                                 }
@@ -3211,10 +3232,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         InputStream content = null;
         Map<String, Integer> done = new HashMap<>();
         for (String r : attachments) {
-// TODO maybe be a reference
-//           Reference r = (Reference) attachments.get(j);
             try {
-                ContentResource resource = contentHostingService.getResource(r);
+                String attachId = removeReferencePrefix(r);
+                ContentResource resource = contentHostingService.getResource(attachId);
 
                 String contentType = resource.getContentType();
 
@@ -3513,7 +3533,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         for (AssignmentSupplementItemAttachment oAttachment : oModelAnswerItemAttachments) {
                             AssignmentSupplementItemAttachment nAttachment = assignmentSupplementItemService.newAttachment();
                             // New attachment creation
-                            String nAttachmentId = transferAttachment(fromContext, toContext, oAttachment.getAttachmentId().replaceFirst("/content", ""));
+                            String nAttachmentId = transferAttachment(fromContext, toContext, removeReferencePrefix(oAttachment.getAttachmentId()));
                             if (StringUtils.isNotEmpty(nAttachmentId)) {
                                 nAttachment.setAssignmentSupplementItemWithAttachment(nModelAnswerItem);
                                 nAttachment.setAttachmentId(nAttachmentId);
@@ -3553,7 +3573,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         for (AssignmentSupplementItemAttachment oAttachment : oAllPurposeItemAttachments) {
                             AssignmentSupplementItemAttachment nAttachment = assignmentSupplementItemService.newAttachment();
                             // New attachment creation
-                            String nAttachId = transferAttachment(fromContext, toContext, oAttachment.getAttachmentId().replaceFirst("/content", ""));
+                            String nAttachId = transferAttachment(fromContext, toContext, removeReferencePrefix(oAttachment.getAttachmentId()));
                             if (StringUtils.isNotEmpty(nAttachId)) {
                                 nAttachment.setAssignmentSupplementItemWithAttachment(nAllPurposeItem);
                                 nAttachment.setAttachmentId(nAttachId);
@@ -3801,5 +3821,12 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public String getUsersLocalDateTimeString(Instant date) {
         ZoneId zone = userTimeService.getLocalTimeZone().toZoneId();
         return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT).withZone(zone).format(date);
+    }
+
+    private String removeReferencePrefix(String referenceId) {
+        if (referenceId.startsWith(REF_PREFIX)) {
+            referenceId = referenceId.replaceFirst(REF_PREFIX, "");
+        }
+        return referenceId;
     }
 }
