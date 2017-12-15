@@ -282,15 +282,6 @@ public interface ResourceProperties extends Serializable
 	 */
 	Time getTimeProperty(String name) throws EntityPropertyNotDefinedException, EntityPropertyTypeException;
 
-    /**
-     * Access a named property as a Instant
-     * @param name The property name.
-     * @return the property value
-     * @throws EntityPropertyNotDefinedException if not found
-     * @throws EntityPropertyTypeException if the property is not a date
-     */
-    Instant getInstantProperty(String name) throws EntityPropertyNotDefinedException, EntityPropertyTypeException;
-
 	/**
 	 * Access a named property as a Instant
 	 * @param name The property name.
