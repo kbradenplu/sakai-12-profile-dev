@@ -268,7 +268,7 @@
 */
         };
 
-    if (portal.loggedIn) {
+    if (portal.loggedIn && portal.bullhorns && portal.bullhorns.enabled) {
         updateCounts();
         portal.bullhornCountIntervalId = setInterval(updateCounts, portal.bullhorns.pollInterval);
     }
