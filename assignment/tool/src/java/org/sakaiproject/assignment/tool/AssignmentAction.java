@@ -1424,7 +1424,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 submitter = user;
             }
             context.put("submitter", submitter);
-            s = getSubmission(assignment.getId(), submitter, "build_student_view_submission_context", state);
+            s = getSubmission(currentAssignmentReference, submitter, "build_student_view_submission_context", state);
             List<Reference> currentAttachments = (List<Reference>) state.getAttribute(ATTACHMENTS);
 
             if (s != null) {
@@ -1463,8 +1463,19 @@ public class AssignmentAction extends PagedResourceActionII {
                     context.put("prevFeedbackAttachments", getPrevFeedbackAttachments(p));
                 }
 
-                // figure out if attachments have been modified
+                String resubmitNumber = p.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null ? p.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) : "0";
+                context.put("allowResubmitNumber", resubmitNumber);
+                if (!"0".equals(resubmitNumber)) {
+                    Instant resubmitTime = null;
+                    if (p.get(AssignmentConstants.ALLOW_RESUBMIT_CLOSETIME) == null) {
+                        resubmitTime = assignment.getCloseDate();
+                    } else {
+                        resubmitTime = Instant.ofEpochSecond(Long.parseLong(p.get(AssignmentConstants.ALLOW_RESUBMIT_CLOSETIME)));
+                    }
+                    context.put("allowResubmitCloseTime", resubmitTime);
+                }
 
+                // figure out if attachments have been modified
                 // the attachments from the previous submission
                 Set<String> submittedAttachments = s.getAttachments();
                 newAttachments = areAttachmentsModified(submittedAttachments, currentAttachments);
@@ -3876,6 +3887,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         if (assignment != null) {
             context.put("assignment", assignment);
+            context.put("isPeerAssessmentClosed", assignmentService.isPeerAssessmentClosed(assignment));
             context.put("assignmentReference", assignmentRef);
             state.setAttribute(EXPORT_ASSIGNMENT_ID, assignment.getId());
             context.put("value_SubmissionType", assignment.getTypeOfSubmission().ordinal());
@@ -4292,7 +4304,7 @@ public class AssignmentAction extends PagedResourceActionII {
         }
         String submissionId = "";
         SecurityAdvisor secAdv = (userId, function, reference) -> {
-            if ("asn.submit".equals(function) || "asn.submit".equals(function) || "asn.grade".equals(function)) {
+            if ("asn.submit".equals(function) || "asn.grade".equals(function)) {
                 return SecurityAdvisor.SecurityAdvice.ALLOWED;
             }
             return null;
@@ -4311,8 +4323,20 @@ public class AssignmentAction extends PagedResourceActionII {
             }
         }
         if (s != null) {
-            submissionId = s.getId();
+            submissionId = AssignmentReferenceReckoner.reckoner().submission(s).reckon().getReference();
             context.put("submission", s);
+            context.put("submissionReference", AssignmentReferenceReckoner.reckoner().submission(s).reckon().getReference());
+
+            String submitterNames = s.getSubmitters().stream().map(u -> {
+                try {
+                    User user = userDirectoryService.getUser(u.getSubmitter());
+                    return user.getDisplayName() + " (" + user.getDisplayName() + ")";
+                } catch (UserNotDefinedException e) {
+                    log.warn("Could not find user = {}, who is a submitter on a submission (build_student_review_edit_context) , {}", u, e.getMessage());
+                }
+                return "";
+            }).collect(Collectors.joining(", "));
+            context.put("submitterNames", formattedText.escapeHtml(submitterNames));
 
             Map<String, String> p = s.getProperties();
             if (p.get(ResourceProperties.PROP_SUBMISSION_PREVIOUS_FEEDBACK_TEXT) != null) {
@@ -4410,7 +4434,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 //set previous/next values
                 List<SubmitterSubmission> userSubmissionsState = state.getAttribute(STATE_PAGEING_TOTAL_ITEMS) != null ? (List<SubmitterSubmission>) state.getAttribute(STATE_PAGEING_TOTAL_ITEMS) : null;
                 List<String> userSubmissions = new ArrayList<>();
-                if (userSubmissionsState != null && !userSubmissionsState.isEmpty()) {
+                if (userSubmissionsState != null && !userSubmissionsState.isEmpty() && userSubmissionsState.get(0) instanceof SubmitterSubmission) {
                     //from instructor view
                     for (SubmitterSubmission userSubmission : userSubmissionsState) {
                         if (!userSubmissions.contains(userSubmission.getSubmission().getId()) && userSubmission.getSubmission().getSubmitted()) {
@@ -5958,7 +5982,9 @@ public class AssignmentAction extends PagedResourceActionII {
                         submission.setHonorPledge(Boolean.valueOf(honorPledgeYes));
                         submission.setDateSubmitted(Instant.now());
                         submission.setSubmitted(post);
-                        submission.setUserSubmission(true);
+                        String currentUser = sessionManager.getCurrentSessionUserId();
+                        // identify who the submittee is using the session
+                        submission.getSubmitters().stream().filter(s -> s.getSubmitter().equals(currentUser)).findFirst().ifPresent(s -> s.setSubmittee(true));
 
                         // decrease the allow_resubmit_number, if this submission has been submitted.
                         if (submission.getSubmitted() && isPreviousSubmissionTime && properties.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null) {
@@ -8630,7 +8656,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         a.setAllowPeerAssessment(usePeerAssessment);
         if (peerAssessmentPeriodTime != null) {
-            a.setPeerAssessmentPeriodDate(Date.from(peerAssessmentPeriodTime));
+            a.setPeerAssessmentPeriodDate(peerAssessmentPeriodTime);
         }
         a.setPeerAssessmentAnonEval(peerAssessmentAnonEval);
         a.setPeerAssessmentStudentReview(peerAssessmentStudentViewReviews);
@@ -8918,7 +8944,6 @@ public class AssignmentAction extends PagedResourceActionII {
 
     } // doView_assignment_as_student
 
-    // TODO: investigate if this method can be removed
     public void doView_submissionReviews(RunData data) {
         String submissionId = data.getParameters().getString("submissionId");
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
@@ -8943,9 +8968,8 @@ public class AssignmentAction extends PagedResourceActionII {
         } else {
             addAlert(state, rb.getString("peerassessment.notavailable"));
         }
-    }
+    } // doView_submissionReviews
 
-    // TODO: investigate if this method can be removed
     public void doEdit_review(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
         ParameterParser params = data.getParameters();
@@ -8991,7 +9015,7 @@ public class AssignmentAction extends PagedResourceActionII {
         } else {
             addAlert(state, rb.getString("peerassessment.notavailable"));
         }
-    }
+    } // doEdit_review
 
     /**
      * Action is to show the edit assignment screen
@@ -9132,16 +9156,16 @@ public class AssignmentAction extends PagedResourceActionII {
                 assignment_resubmission_option_into_state(a, null, state);
 
                 // set whether we use peer assessment or not
-                Date peerAssessmentPeriod = a.getPeerAssessmentPeriodDate();
+                Instant peerAssessmentPeriod = a.getPeerAssessmentPeriodDate();
                 //check if peer assessment time exist? if not, this could be an old assignment, so just set it
                 //to 10 min after accept until date
                 if (peerAssessmentPeriod == null && a.getCloseDate() != null) {
                     // set the peer period time to be 10 mins after accept until date
-                    peerAssessmentPeriod = Date.from(a.getCloseDate().plus(Duration.ofMinutes(10)));
+                    peerAssessmentPeriod = a.getCloseDate().plus(Duration.ofMinutes(10));
                 }
                 if (peerAssessmentPeriod != null) {
                     state.setAttribute(NEW_ASSIGNMENT_USE_PEER_ASSESSMENT, a.getAllowPeerAssessment().toString());
-                    putTimePropertiesInState(state, peerAssessmentPeriod.toInstant(), NEW_ASSIGNMENT_PEERPERIODMONTH, NEW_ASSIGNMENT_PEERPERIODDAY, NEW_ASSIGNMENT_PEERPERIODYEAR, NEW_ASSIGNMENT_PEERPERIODHOUR, NEW_ASSIGNMENT_PEERPERIODMIN);
+                    putTimePropertiesInState(state, peerAssessmentPeriod, NEW_ASSIGNMENT_PEERPERIODMONTH, NEW_ASSIGNMENT_PEERPERIODDAY, NEW_ASSIGNMENT_PEERPERIODYEAR, NEW_ASSIGNMENT_PEERPERIODHOUR, NEW_ASSIGNMENT_PEERPERIODMIN);
                     state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_ANON_EVAL, a.getPeerAssessmentAnonEval());
                     state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_STUDENT_VIEW_REVIEWS, a.getPeerAssessmentStudentReview());
                     state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_NUM_REVIEWS, a.getPeerAssessmentNumberReviews());
@@ -10354,16 +10378,7 @@ public class AssignmentAction extends PagedResourceActionII {
             return false;
         }
         ParameterParser params = data.getParameters();
-        String submissionRef = params.getString("submissionId");
-        String submissionId = null;
-        if (submissionRef != null) {
-            int i = submissionRef.lastIndexOf(Entity.SEPARATOR);
-            if (i == -1) {
-                submissionId = submissionRef;
-            } else {
-                submissionId = submissionRef.substring(i + 1);
-            }
-        }
+        String submissionId = params.getString("submissionId");
         if (submissionId != null) {
 
             //call the DB to make sure this user can edit this assessment, otherwise it wouldn't exist

@@ -23,7 +23,7 @@
 				input: '#syllabusEdit\\:dataStartDate',
 				useTime: 0,
 				parseFormat: 'YYYY-MM-DD',
-				allowEmptyDate: false,
+				allowEmptyDate: true,
 				val: '<h:outputText value="#{SyllabusTool.bulkEntry.startDate}"><f:convertDateTime pattern="yyyy-MM-dd"/></h:outputText>',
 				ashidden: {iso8601: 'dataStartDateISO8601'}
 			});
@@ -31,7 +31,7 @@
 				input: '#syllabusEdit\\:dataEndDate',
 				useTime: 0,
 				parseFormat: 'YYYY-MM-DD',
-				allowEmptyDate: false,
+				allowEmptyDate: true,
 				val: '<h:outputText value="#{SyllabusTool.bulkEntry.endDate}"><f:convertDateTime pattern="yyyy-MM-dd"/></h:outputText>',
 				ashidden: {iso8601: 'dataEndDateISO8601'}
 			});
