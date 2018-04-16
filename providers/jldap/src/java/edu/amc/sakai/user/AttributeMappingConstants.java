@@ -61,6 +61,8 @@ public abstract class AttributeMappingConstants {
 	 * name of a user entry's email attribute
 	 */
 	public static final String EMAIL_ATTR_MAPPING_KEY = "email";
+
+        public static final String ALT_EMAIL_ATTR_MAPPING_KEY = "mailAlternateAddress";
 	
 	/** Key into {@link #DEFAULT_ATTR_MAPPINGS} representing the logical
 	 * name of a user entry's group membership attribute

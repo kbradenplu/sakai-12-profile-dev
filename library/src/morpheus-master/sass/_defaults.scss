@@ -160,8 +160,10 @@ $warn-color:                darken($warn-background-color, 35%) !default;
 $error-background-color:    #f2dede !default;
 $error-color:               darken($error-background-color, 50%) !default;
 
+$plu-red: #c00;
+
 /* PLU Unpublished Site colors */
-$unpublished-text: 	       #c00;
+$unpublished-text: 	       $plu-red;
 $unpublished-bg:	       #e3e3e3;
 $unpublished-border:	       #aaa;
 
