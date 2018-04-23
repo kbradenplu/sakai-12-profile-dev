@@ -145,13 +145,18 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 		
 		String emailAttr = 
 			attributeMappings.get(AttributeMappingConstants.EMAIL_ATTR_MAPPING_KEY);
+		String altEmailAttr = 
+			attributeMappings.get(AttributeMappingConstants.ALT_EMAIL_ATTR_MAPPING_KEY);
 		MessageFormat valueFormat = valueMappings.get(AttributeMappingConstants.EMAIL_ATTR_MAPPING_KEY);
+		String searchTerm = null;
 		if (valueFormat == null) {
-			return emailAttr + "=" + escapeSearchFilterTerm(emailAddr);
+		    searchTerm = escapeSearchFilterTerm(emailAddr);
 		} else {
 			valueFormat = (MessageFormat) valueFormat.clone();
-			return emailAttr + "=" + escapeSearchFilterTerm(valueFormat.format(new Object[]{emailAddr}));
+			searchTerm = escapeSearchFilterTerm(valueFormat.format(new Object[]{emailAddr}));
 		}
+		return "(|(" + emailAttr + "=" + searchTerm + ")(" +
+                    altEmailAttr + "=" + searchTerm + "))";
 	}
 
 	/**
@@ -200,17 +205,31 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
         
 		setUserDataDn(ldapEntry, userData);
         
+	boolean hasAlternateEmailAddr = false;	
         Set<LDAPAttribute> ldapAttributeSet = ldapEntry.getAttributeSet();
         for (LDAPAttribute ldapAttribute : ldapAttributeSet) {
+	    String attr = ldapAttribute.getName();
             // we do the reverse lookup here since it will always need to
             // be performed and we want to ensure it only happens once
             // per attribute, regardless of the complexity of the actual
             // mapping onto the user object
             Collection<String> logicalAttrNames = 
-                getReverseAttributeMappings(ldapAttribute.getName());
+                getReverseAttributeMappings(attr);
+
+	    if (attr.equals(AttributeMappingConstants.ALT_EMAIL_ATTR_MAPPING_KEY))
+		hasAlternateEmailAddr = true;
+
             mapLdapAttributeOntoUserData(ldapAttribute, userData, logicalAttrNames);
         }
         
+	if (hasAlternateEmailAddr) {
+	    Properties p = userData.getProperties();
+	    String altEmail = p.getProperty(AttributeMappingConstants.ALT_EMAIL_ATTR_MAPPING_KEY);
+	    log.info("Alternate email address set as primary address: "  + altEmail);
+	    userData.setEmail(altEmail);
+	}
+
+
         //enforce use of firstNamePreferred if its set
         userData.setFirstName(usePreferredFirstName(userData));
         
