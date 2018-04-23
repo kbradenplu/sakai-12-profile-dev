@@ -195,6 +195,7 @@
                                 <entry key="firstName"><value>givenName</value></entry>
                                 <entry key="lastName"><value>sn</value></entry>
                                 <entry key="email"><value>mail</value></entry>
+				<entry key="mailAlternateAddress"><value>mailAlternateAddress</value></entry>
 			</map>
 		</property>
 		
