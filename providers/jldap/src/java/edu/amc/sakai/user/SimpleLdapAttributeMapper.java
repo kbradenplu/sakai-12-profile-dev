@@ -145,13 +145,18 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 		
 		String emailAttr = 
 			attributeMappings.get(AttributeMappingConstants.EMAIL_ATTR_MAPPING_KEY);
+		String altEmailAttr = 
+			attributeMappings.get(AttributeMappingConstants.ALT_EMAIL_ATTR_MAPPING_KEY);
 		MessageFormat valueFormat = valueMappings.get(AttributeMappingConstants.EMAIL_ATTR_MAPPING_KEY);
+		String searchTerm = null;
 		if (valueFormat == null) {
-			return emailAttr + "=" + escapeSearchFilterTerm(emailAddr);
+		    searchTerm = escapeSearchFilterTerm(emailAddr);
 		} else {
 			valueFormat = (MessageFormat) valueFormat.clone();
-			return emailAttr + "=" + escapeSearchFilterTerm(valueFormat.format(new Object[]{emailAddr}));
+			searchTerm = escapeSearchFilterTerm(valueFormat.format(new Object[]{emailAddr}));
 		}
+		return "(|(" + emailAttr + "=" + searchTerm + ")(" +
+                    altEmailAttr + "=" + searchTerm + "))";
 	}
 
 	/**
