@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.AssignmentServiceConstants;
@@ -34,6 +36,7 @@ import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.SecurityAdvisor;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.entity.api.Entity;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.exception.IdUnusedException;
@@ -75,12 +78,10 @@ public class AssignmentGradeInfoProvider implements ExternalAssignmentProvider, 
     //NOTE: This is pretty hackish because the AssignmentService
     //      does strenuous checking of current user and group access,
     //      while we want to be able to check for any user.
-    private Assignment getAssignment(String id) {
+    private Assignment getAssignment(String assignmentReference) {
         Assignment assignment = null;
-        String assignmentReference = assignmentService.assignmentReference(id);
-        Reference aref = null;
         if (assignmentReference != null) {
-            aref = entityManager.newReference(assignmentReference);
+            Reference aref = entityManager.newReference(assignmentReference);
             SecurityAdvisor accessAssignmentAdvisor = new MySecurityAdvisor(sessionManager.getCurrentSessionUserId(),
                 AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, assignmentReference);
             SecurityAdvisor accessGroupsAdvisor = new MySecurityAdvisor(sessionManager.getCurrentSessionUserId(),
@@ -88,19 +89,19 @@ public class AssignmentGradeInfoProvider implements ExternalAssignmentProvider, 
             try {
                 securityService.pushAdvisor(accessAssignmentAdvisor);
                 securityService.pushAdvisor(accessGroupsAdvisor);
-                assignment = assignmentService.getAssignment(assignmentReference);
+                assignment = assignmentService.getAssignment(aref);
             } catch (IdUnusedException e) {
-                log.info("Unexpected IdUnusedException after finding assignment with ID: " + id);
+                log.info("Unexpected IdUnusedException after finding assignment with ID: " + assignmentReference);
             } catch (PermissionException e) {
                 log.info("Unexpected Permission Exception while using security advisor "
-                        + "for assignment with ID: " + id);
+                        + "for assignment with ID: " + assignmentReference);
             } finally {
-                securityService.popAdvisor(accessAssignmentAdvisor);
                 securityService.popAdvisor(accessGroupsAdvisor);
+                securityService.popAdvisor(accessAssignmentAdvisor);
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Assignment not found with ID: " + id);
+                log.debug("Assignment not found with ID: " + assignmentReference);
             }
         }
         return assignment;
@@ -130,33 +131,27 @@ public class AssignmentGradeInfoProvider implements ExternalAssignmentProvider, 
             List<AuthzGroup> matched = authzGroupService.getAuthzUserGroupIds(azgList, userId);
             visible = (matched.size() > 0);
         } else {
-            visible = securityService.unlock(userId, AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, assignmentService.createAssignmentEntity(a.getId()).getReference());
+            visible = securityService.unlock(userId, AssignmentServiceConstants.SECURE_ACCESS_ASSIGNMENT, assignmentService.createAssignmentEntity(a).getReference());
         }
         return visible;
     }
 
     public List<String> getExternalAssignmentsForCurrentUser(String gradebookUid) {
-        List<String> externalIds = new ArrayList<String>();
-        Collection<Assignment> assignments = assignmentService.getAssignmentsForContext(gradebookUid);
-        for (Assignment a : assignments) {
-            externalIds.add(assignmentService.createAssignmentEntity(a.getId()).getReference());
-        }
-        return externalIds;
+        return getAllExternalAssignments(gradebookUid);
     }
 
     public List<String> getAllExternalAssignments(String gradebookUid) {
         // We check and cast here on the very slim chance that something other than
-        // a BaseAssignmentService is registered as the service. If that is the case,
+        // a AssignmentService is registered as the service. If that is the case,
         // we won't have access to the protected method to get unfiltered assignments
         // and the best we can do is return the filtered list, which is exposed on
         // the AssignmentService interface.
 
-        List<String> externalIds = new ArrayList<String>();
-        Collection<Assignment> assignments = assignmentService.getAssignmentsForContext(gradebookUid);
-        for (Assignment a : assignments) {
-            externalIds.add(assignmentService.createAssignmentEntity(a.getId()).getReference());
-        }
-        return externalIds;
+        return assignmentService.getAssignmentsForContext(gradebookUid).stream()
+                .map(assignmentService::createAssignmentEntity) // get the assignment entity
+                .map(Entity::getReference) // return the reference
+                .filter(Objects::nonNull) // filter nulls
+                .collect(Collectors.toList()); // return the list
     }
 
     public Map<String, List<String>> getAllExternalAssignments(String gradebookUid, Collection<String> studentIds) {
@@ -167,7 +162,7 @@ public class AssignmentGradeInfoProvider implements ExternalAssignmentProvider, 
 
         Map<Assignment, List<String>> submitters = assignmentService.getSubmittableAssignmentsForContext(gradebookUid);
         for (Assignment assignment : submitters.keySet()) {
-            String externalId = assignmentService.createAssignmentEntity(assignment.getId()).getReference();
+            String externalId = assignmentService.createAssignmentEntity(assignment).getReference();
             for (String userId : submitters.get(assignment)) {
                 if (allExternals.containsKey(userId)) {
                     allExternals.get(userId).add(externalId);

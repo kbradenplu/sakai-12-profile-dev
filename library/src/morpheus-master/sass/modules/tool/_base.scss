@@ -71,44 +71,51 @@
 	position: relative;
 
 	.#{$namespace}toolTitleNav__title{
-                display: none;
-                & ~ .#{$namespace}toolTitleNav__button_container > .#{$namespace}directUrl__dropDown{
-                        display: none;
-                        .dropDown_close{
-                                color: #952525;
-                                cursor: pointer;
-                                float: right;
-                                @media #{$phone}{
-                                        font-size: 1.4em;
-                                }
-                        }
-                        &.active{
-                                padding: 0.8em;
-                                position:   absolute;
-                                display:    block;
-                                background: #FFF;
-                                width: 250px;
-                                margin: 10px 0 0 -250px;
-                                z-index: 2;
-                                box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
-                                label{
-                                        font-size: $default-font-size;
-                                        margin: 5px 0 0 5px;
-                                        vertical-align: middle;
-                                }
-                                textarea{
-                                        display: block;
-                                        height: 120px;
-                                        margin: 0.5em 0 0 0;
-                                        width: 98%;
-                                }
-                                @media #{$phone}{
-                                        margin: -1px 0 0 -214px;
-                                }
-                        }
-                }
-        }
-
+		display: none;
+		& ~ .#{$namespace}toolTitleNav__button_container > .#{$namespace}directUrl__dropDown{
+			display: none;
+			.dropDown_close{
+				color: #952525;
+				cursor: pointer;
+				float: right;
+				@media #{$phone}{
+					font-size: 1.4em;
+				}
+			}
+			&.active{
+				padding: 0.8em;
+				position:   absolute;
+				display:    block;
+				background: #FFF;
+				width: 250px;
+				margin: 10px 0 0 -250px;
+				z-index: 2;
+				box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+				label{
+					font-size: $default-font-size;
+					margin: 5px 0 0 5px;
+					vertical-align: middle;
+					&.dropDown_title {
+						display: block;
+					    font-size: 1.1rem;
+					    font-weight: 500;
+					    margin: 0;
+					    padding: 1px 0 5px 0;
+					    white-space: nowrap;
+					}
+				}
+				textarea{
+					display: block;
+					height: 120px;
+					margin: 0.5em 0 0 0;
+					width: 98%;
+				}
+				@media #{$phone}{
+					margin: -1px 0 0 -214px;
+				}
+			}
+		}
+	}
 
 	.#{$namespace}toolTitleNav__link{
 		@include sakai_secondary_button();

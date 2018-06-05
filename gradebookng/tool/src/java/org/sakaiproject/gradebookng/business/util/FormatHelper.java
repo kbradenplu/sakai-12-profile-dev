@@ -15,20 +15,27 @@
  */
 package org.sakaiproject.gradebookng.business.util;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.DoubleValidator;
 import org.sakaiproject.util.ResourceLoader;
+
+import lombok.extern.slf4j.Slf4j;
+import org.sakaiproject.service.gradebook.shared.CategoryDefinition;
 
 @Slf4j
 public class FormatHelper {
@@ -87,11 +94,11 @@ public class FormatHelper {
 	public static String formatDoubleToMatch(final Double score, final String toMatch) {
 		int numberOfDecimalPlaces = 0;
 
-		if (toMatch.indexOf(".") >= 0) {
+		if (toMatch.contains(".")) {
 			numberOfDecimalPlaces = toMatch.split("\\.")[1].length();
 		}
 
-		if (toMatch.indexOf(",") >= 0) {
+		if (toMatch.contains(",")) {
 			numberOfDecimalPlaces = toMatch.split("\\,")[1].length();
 		}
 
@@ -165,7 +172,7 @@ public class FormatHelper {
 			return "";
 		}
 
-		String s = null;
+		String s;
 		try {
 			final DecimalFormat dfParse = (DecimalFormat) NumberFormat.getInstance(Locale.ROOT);
 			dfParse.setParseBigDecimal(true);
@@ -173,13 +180,11 @@ public class FormatHelper {
 
 			final DecimalFormat dfFormat = (DecimalFormat) NumberFormat.getInstance(rl.getLocale());
 			dfFormat.setMinimumFractionDigits(0);
+			dfFormat.setMaximumFractionDigits(2);
 			dfFormat.setGroupingUsed(true);
 			s = dfFormat.format(d);
-		} catch (final NumberFormatException e) {
-			log.debug("Bad format, returning original string: " + grade);
-			s = grade;
-		} catch (final ParseException e) {
-			log.debug("Bad format, returning original string: " + grade);
+		} catch (final NumberFormatException | ParseException e) {
+			log.debug("Bad format, returning original string: {}", grade);
 			s = grade;
 		}
 
@@ -198,7 +203,7 @@ public class FormatHelper {
 			return "";
 		}
 
-		String s = null;
+		String s;
 		try {
 			final DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(locale);
 			final Double d = df.parse(grade).doubleValue();
@@ -207,11 +212,8 @@ public class FormatHelper {
 			df.setGroupingUsed(false);
 
 			s = df.format(d);
-		} catch (final NumberFormatException e) {
-			log.debug("Bad format, returning original string: " + grade);
-			s = grade;
-		} catch (final ParseException e) {
-			log.debug("Bad format, returning original string: " + grade);
+		} catch (final NumberFormatException | ParseException e) {
+			log.debug("Bad format, returning original string: {}", grade);
 			s = grade;
 		}
 
@@ -275,8 +277,8 @@ public class FormatHelper {
 	 * @param value - The value validation is being performed on.
 	 * @return true if the value is valid
 	 */
-	public static boolean isValidDouble(String value) {
-		DoubleValidator dv = new DoubleValidator();
+	public static boolean isValidDouble(final String value) {
+		final DoubleValidator dv = new DoubleValidator();
 		return dv.isValid(value, rl.getLocale());
 	}
 
@@ -286,8 +288,75 @@ public class FormatHelper {
 	 * @param value - The value validation is being performed on.
 	 * @return The parsed Double if valid or null if invalid.
 	 */
-	public static Double validateDouble(String value) {
-		DoubleValidator dv = new DoubleValidator();
+	public static Double validateDouble(final String value) {
+		final DoubleValidator dv = new DoubleValidator();
 		return dv.validate(value, rl.getLocale());
+	}
+
+	/**
+	 * Helper to encode a string and avoid the ridiculous exception that is never thrown
+	 *
+	 * @param s
+	 * @return encoded s
+	 */
+	public static String encode(final String s) {
+		if (StringUtils.isBlank(s)) {
+			return s;
+		}
+		try {
+			return URLEncoder.encode(s, "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			throw new AssertionError("UTF-8 not supported");
+		}
+	}
+
+	/**
+	 * Helper to decode a string and avoid the ridiculous exception that is never thrown
+	 *
+	 * @param s
+	 * @return decoded s
+	 */
+	public static String decode(final String s) {
+		if (StringUtils.isBlank(s)) {
+			return s;
+		}
+		try {
+			return URLDecoder.decode(s, "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			throw new AssertionError("UTF-8 not supported");
+		}
+	}
+
+	/**
+	 * Returns a list of drop highest/lowest labels based on the settings of the given category.
+	 * @param category the category
+	 * @return a list of 1 or 2 labels indicating that drop highest/lowest is in use, or an empty list if not in use.
+	 */
+	public static List<String> formatCategoryDropInfo(CategoryDefinition category) {
+
+		if (category == null) {
+			return Collections.emptyList();
+		}
+
+		int dropHighest = category.getDropHighest() == null ? 0 : category.getDropHighest();
+		int dropLowest = category.getDropLowest() == null ? 0 : category.getDropLowest();
+		int keepHighest = category.getKeepHighest() == null ? 0 : category.getKeepHighest();
+
+		if (dropHighest == 0 && dropLowest == 0 && keepHighest == 0) {
+			return Collections.emptyList();
+		}
+
+		List<String> info = new ArrayList<>(2);
+		if (dropHighest > 0) {
+			info.add(MessageHelper.getString("label.category.drophighest", dropHighest));
+		}
+		if (dropLowest > 0) {
+			info.add(MessageHelper.getString("label.category.droplowest", dropLowest));
+		}
+		if (keepHighest > 0) {
+			info.add(MessageHelper.getString("label.category.keephighest", keepHighest));
+		}
+
+		return info;
 	}
 }
