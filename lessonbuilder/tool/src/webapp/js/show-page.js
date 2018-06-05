@@ -1554,6 +1554,12 @@ $(document).ready(function() {
 			return false;
 		    });
 
+		$('#calendar-link').click(function() {
+			$("#calendar-addBefore").val(addAboveItem);
+                        $("#add-calendar").click();
+			return false;
+		    });
+
 		$('#add-student-link').click(function() {
 			$("#add-student-addBefore").val(addAboveItem);
                         $("#add-student").click();
@@ -2019,7 +2025,8 @@ $(document).ready(function() {
 		$(".add-resource").click(function(){
 			oldloc = $(this);
 			closeDropdowns();
-			$("#mm-name-section").show();
+			$('#mm-name-section').addClass('fileTitles');
+			$("#mm-name-section").hide();
 			$("#mm-name").val('');
 			$("#mm-prerequisite").prop('checked',false);
 			if ($(this).hasClass("add-at-end"))
@@ -3168,9 +3175,11 @@ $(function() {
 	    var defaultInput = $(".mm-file-input").first();
 	    var lastInput = $(".mm-file-input").last();
 	    if (lastInput[0].files.length !== 0) {
-		// embed dialog doesn't have names
-		var doingNames = ($('#mm-name-section').is(':visible') ||
-				  $('.mm-file-input-names').size() > 0);
+		// establish whether user has chosen the option to add file titles for the upload.
+		var doingNames = false;
+		if ($('.fileTitles')[0]) {
+			doingNames = true;
+		}
 		// user has chosen a file. 
 		// Add another button for user to pick more file
 		lastInput.parent().after(defaultInput.parent().clone().show());

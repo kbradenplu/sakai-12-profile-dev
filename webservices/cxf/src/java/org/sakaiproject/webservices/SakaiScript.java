@@ -3133,13 +3133,6 @@ public class SakaiScript extends AbstractWebService {
                 sitePageEdit.setTitle(pagetitle);
                 sitePageEdit.setLayout(pagelayout);
 
-                //KNL-250, SAK-16819 - if position too large, will throw ArrayIndexOutOfBoundsException
-                //deal with this here and just set to the number of pages - 1 so its at the bottom.
-                int numPages = siteEdit.getPages().size();
-                if (position > numPages) {
-                    position = numPages - 1;
-                }
-
                 sitePageEdit.setPosition(position);
                 sitePageEdit.setPopup(popup);
 
@@ -3563,13 +3556,6 @@ public class SakaiScript extends AbstractWebService {
             sitePageEdit.setTitle(pagetitle);
             sitePageEdit.setLayout(pagelayout);
 
-            //KNL-250, SAK-16819 - if position too large, will throw ArrayIndexOutOfBoundsException
-            //deal with this here and just set to the number of pages - 1 so its at the bottom.
-            int numPages = siteEdit.getPages().size();
-            if (position > numPages) {
-                position = numPages - 1;
-            }
-
             sitePageEdit.setPosition(position);
             sitePageEdit.setPopup(popup);
             siteService.save(siteEdit);
@@ -3650,7 +3636,7 @@ public class SakaiScript extends AbstractWebService {
      * <tools>
      * <tool id="dafd2a4d-8d3f-4f4c-8e12-171968b259cd">
      * <tool-id>sakai.iframe.site</tool-id>
-     * <tool-title>Site Information Display</tool-title>
+     * <tool-title>Welcome</tool-title>
      * </tool>
      * ...
      * </tools>
@@ -3958,13 +3944,6 @@ public class SakaiScript extends AbstractWebService {
                 sitePageEdit.setTitleCustom(true);
             }
             sitePageEdit.setLayout(pagelayout);
-
-            //KNL-250, SAK-16819 - if position too large, will throw ArrayIndexOutOfBoundsException
-            //deal with this here and just set to the number of pages - 1 so its at the bottom.
-            int numPages = siteEdit.getPages().size();
-            if (position > numPages) {
-                position = numPages - 1;
-            }
 
             sitePageEdit.setPosition(position);
             sitePageEdit.setPopup(popup);

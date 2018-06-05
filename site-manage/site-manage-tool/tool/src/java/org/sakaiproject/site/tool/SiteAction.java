@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -101,6 +102,7 @@ import org.sakaiproject.entity.api.Reference;
 import org.sakaiproject.entity.api.ResourceProperties;
 import org.sakaiproject.entity.api.ResourcePropertiesEdit;
 import org.sakaiproject.entity.cover.EntityManager;
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.event.api.SessionState;
 import org.sakaiproject.event.api.NotificationService;
 import org.sakaiproject.event.cover.EventTrackingService;
@@ -222,6 +224,8 @@ public class SiteAction extends PagedResourceActionII {
 	private static ShortenedUrlService shortenedUrlService = (ShortenedUrlService) ComponentManager.get(ShortenedUrlService.class);
 	
 	private PreferencesService preferencesService = (PreferencesService)ComponentManager.get(PreferencesService.class);
+
+	private static DeveloperHelperService devHelperService = (DeveloperHelperService) ComponentManager.get(DeveloperHelperService.class);
 
 	private static final String SITE_MODE_SITESETUP = "sitesetup";
 
@@ -4813,11 +4817,11 @@ public class SiteAction extends PagedResourceActionII {
 		// read the search form field into the state object
 		String search = StringUtils.trimToNull(Validator.escapeHtml(data.getParameters().getString(FORM_SEARCH)));
 
-		// set the flag to go to the prev page on the next list
-		if (StringUtils.isNotBlank(search)) {
+		// If there is no search term provided, remove any previous search term from state
+		if (StringUtils.isBlank(search)) {
 			state.removeAttribute(SITE_USER_SEARCH);
 		} else {
-			//search item is present, if the result was paged clear the top position from the state
+			// Search term is present, reset the paging and set the search term in state
 			resetPaging(state);
 			state.setAttribute(SITE_USER_SEARCH, search);
 		}
@@ -13423,25 +13427,22 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		List<AcademicSession> academicSessions = new ArrayList<AcademicSession>();
 		User user = UserDirectoryService.getCurrentUser();
 		
-		if( cms != null && user != null)
+		if( cms != null && user != null && groupProvider != null)
 		{
-			Map<String, String> sectionRoles = cms.findSectionRoles( user.getEid() );			
-			if( sectionRoles != null )
+			Map<String, String> sectionsToRoles = groupProvider.getGroupRolesForUser(user.getEid());
+			final Set<String> rolesAllowed = getRolesAllowedToAttachSection();
+			Map<String, String> filteredSectionsToRoles = sectionsToRoles.entrySet().stream()
+				.filter(entry->rolesAllowed.contains(entry.getValue()))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			for (String sectionEid : filteredSectionsToRoles.keySet())
 			{
-				// Iterate through all the sections and add their corresponding academic sessions to our return value
-				Set<String> sectionEids = sectionRoles.keySet();
-				Iterator<String> itr = sectionEids.iterator();
-				while( itr.hasNext() )
+				Section section = cms.getSection(sectionEid);
+				if (section != null)
 				{
-					String sectionEid = itr.next();
-					Section section = cms.getSection( sectionEid );
-					if( section != null )
+					CourseOffering courseOffering = cms.getCourseOffering(section.getCourseOfferingEid());
+					if (courseOffering != null)
 					{
-						CourseOffering courseOffering = cms.getCourseOffering( section.getCourseOfferingEid() );
-						if( courseOffering != null )
-						{
-							academicSessions.add( courseOffering.getAcademicSession() );
-						}
+						academicSessions.add(courseOffering.getAcademicSession());
 					}
 				}
 			}
@@ -13565,7 +13566,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		return includeRole;
 	} // includeRole
 
-	protected Set getRolesAllowedToAttachSection() {
+	protected Set<String> getRolesAllowedToAttachSection() {
 		// Use !site.template.[site_type]
 		String azgId = "!site.template.course";
 		AuthzGroup azgTemplate;
@@ -13575,7 +13576,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 			log.error(this + ".getRolesAllowedToAttachSection: Could not find authz group " + azgId, e);
 			return new HashSet();
 		}
-		Set roles = azgTemplate.getRolesIsAllowed("site.upd");
+		Set<String> roles = azgTemplate.getRolesIsAllowed("site.upd");
 		roles.addAll(azgTemplate.getRolesIsAllowed("realm.upd"));
 		return roles;
 	} // getRolesAllowedToAttachSection
@@ -14940,7 +14941,16 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					}
 					else
 					{
-						state.setAttribute(STATE_TEMPLATE_INDEX, "37");
+						if (ServerConfigurationService.getBoolean(SAK_PROP_FILTER_TERMS, Boolean.FALSE))
+						{
+							// Filter terms is intended to prevent users from hitting case 37 (manual creation).
+							// This will handle element inspecting the academic session dropdown
+							state.setAttribute(STATE_TEMPLATE_INDEX, "36");
+						}
+						else
+						{
+							state.setAttribute(STATE_TEMPLATE_INDEX, "37");
+						}
 					}		
 				}
 
@@ -15001,40 +15011,33 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 	
 	/**
 	 * Handle the eventSubmit_doUnjoin command to have the user un-join this site.
+	 * @param data
 	 */
 	public void doUnjoin(RunData data) {
 		
-		SessionState state = ((JetspeedRunData) data)
-			.getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+		SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
 		final ParameterParser params = data.getParameters();
-
 		final String id = params.get("itemReference");
-		String siteTitle = null;
-		
-		if (id != null)	{
-			try	{
-				siteTitle = SiteService.getSite(id).getTitle();
+
+		if (id != null) {
+			try {
 				SiteService.unjoin(id);
-				String msg = rb.getString("sitinfimp.youhave") + " " + siteTitle;
-				addAlert(state, msg);
-				
-			} catch (IdUnusedException ignore) {
-				
-			} catch (PermissionException e)	{
-				// This could occur if the user's role is the maintain role for the site, and we don't let the user
-				// unjoin sites they are maintainers of
-			 	log.warn(e.getMessage());
-				//TODO can't access site so redirect to portal
-				
+				String userHomeURL = devHelperService.getUserHomeLocationURL(devHelperService.getCurrentUserReference());
+				addAlert(state, rb.getFormattedMessage("site.unjoin", new Object[] {userHomeURL}));
+			} catch (IdUnusedException e) {
+				// Something strange happened, log and notify the user
+				log.debug("Unexpected error: ", e);
+				addAlert(state, rb.getFormattedMessage("site.unjoin.error", new Object[] {ServerConfigurationService.getString("mail.support")}));
+			} catch (PermissionException e) {
+				// This could occur if the user's role is the maintain role for the site, and unjoining would leave the site without
+				// a user with the maintain role
+				log.warn(e.getMessage());
+				addAlert(state, rb.getString("site.unjoin.permissionException"));
 			} catch (InUseException e) {
-				addAlert(state, siteTitle + " "
-						+ rb.getString("sitinfimp.sitebeing") + " ");
+				log.debug("InUseException: ", e);
+				addAlert(state, rb.getString("site.unjoin.inUseException"));
 			}
 		}
-		
-		// refresh the whole page
-		scheduleTopRefresh();
-		
 	} // doUnjoin
 
 	

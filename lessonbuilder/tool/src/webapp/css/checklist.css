@@ -188,6 +188,7 @@ span.externally-linked, label input.checklist-checkbox:checked + span.externally
     display: none;
 }
 
+
 h2 {
     margin-top: 0.5em !important;
 }
@@ -199,3 +200,8 @@ h2 {
     top: 3px;
     margin-right: 5px;
 }
+
+h3.ui-accordion-header span:last-child {
+	margin-left: 1.5em;
+}
+
