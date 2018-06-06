@@ -306,7 +306,7 @@ public class SakaiScript extends AbstractWebService {
      * @return success or exception message
      * @throws RuntimeException
      */
-    @WebMethod
+    /*    @WebMethod
     @Path("/changeUserEid")
     @Produces("text/plain")
     @GET
@@ -324,7 +324,7 @@ public class SakaiScript extends AbstractWebService {
             log.error("WS changeUserEid(): " + e.getClass().getName() + " : " + e.getMessage());
             return e.getClass().getName() + " : " + e.getMessage();
         }
-    }
+	} */
 
     /**
      * Edit a user's firstname/lastname
