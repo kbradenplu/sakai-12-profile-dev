@@ -4271,7 +4271,13 @@ public class SakaiScript extends AbstractWebService {
                             break;
                         }
                     }
-                    toolIds.add(toolConfig.getToolId());
+
+		    // Skip Forums because it seems to be overwriting the native forum and topic
+		    // with draft versions coming from the template 
+		    String toolToSkip = "Forums";
+                    if (! toolToSkip.matches(toolConfig.getTitle())) {
+			toolIds.add(toolConfig.getToolId());
+		    }
                 }
             }
 
