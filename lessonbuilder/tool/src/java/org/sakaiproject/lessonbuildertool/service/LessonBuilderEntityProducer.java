@@ -131,6 +131,11 @@ import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.util.Xml;
 import org.sakaiproject.util.RequestFilter;
 
+// DEBUG
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+// DEBUG
+
 /**
  * @author hedrick
  * The goal is to get sites to save and copy. However there's actually no data 
@@ -142,6 +147,9 @@ import org.sakaiproject.util.RequestFilter;
 public class LessonBuilderEntityProducer extends AbstractEntityProvider
     implements EntityProducer, EntityTransferrer, EntityTransferrerRefMigrator, Serializable, 
 	       CoreEntityProvider, AutoRegisterEntityProvider, Statisticable, InputTranslatable, Createable, ToolApi  {
+
+   private static final String INSTRUCTOR_NOTES = "Instructor Notes -- hidden from students";
+
    private static final String ARCHIVE_VERSION = "2.4"; // in case new features are added in future exports
    private static final String VERSION_ATTR = "version";
    private static final String NAME = "name";
@@ -164,7 +172,7 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 
    // other tools don't copy group access restrictions, so I think we probably shouldn't. The data is
    // there in the archive
-   public final boolean RESTORE_GROUPS = false;
+   public final boolean RESTORE_GROUPS = true;
 
    private ToolManager toolManager;
    private SecurityService securityService;
@@ -480,6 +488,11 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 
 		Collection<Group> siteGroups = site.getGroups();
 		addGroup(doc, itemElement, item.getOwnerGroups(), "ownerGroup", siteGroups);
+
+		// PLU correction - Seems to be missing from ootb Sakai 12
+		String groupString = item.getGroups();
+		if (groupString != null)
+		    addGroup(doc, itemElement, groupString, "group", siteGroups);
 		
 		if (item.getType() == SimplePageItem.FORUM || item.getType() == SimplePageItem.ASSESSMENT || item.getType() == SimplePageItem.ASSIGNMENT) {
 		    LessonEntity e = null;
@@ -500,6 +513,8 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 		if (item.isSameWindow() != null)
 		    addAttr(doc, itemElement, "samewindow", item.isSameWindow() ? "true" : "false");
 		
+
+
 		String attrString = item.getAttributeString(); //json encoded attributes
 		if (attrString != null) {
 		    Element attributeElement = doc.createElement("attributes");
@@ -610,6 +625,16 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 
          ((Element) stack.peek()).appendChild(lessonbuilder);
          stack.push(lessonbuilder);
+
+	 // DEBUG
+         /* Document document = lessonbuilder.getOwnerDocument();                                                                           
+         DOMImplementationLS domImplLS = (DOMImplementationLS) document                                                                     
+             .getImplementation();                                                                                                          
+         LSSerializer serializer = domImplLS.createLSSerializer();                                                                          
+         String str = serializer.writeToString(lessonbuilder);                                                                              
+         log.warn("Dumping lessonbuilder element: " + str);  */
+	 // DEBUG
+
 
          stack.pop();
       }
@@ -826,8 +851,10 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 
 		   if (RESTORE_GROUPS) {
 		       String groupString = mergeGroups(itemElement, "ownerGroup", siteGroups);
-		       if (groupString != null)
+		       if (groupString != null) {
 			   item.setOwnerGroups(groupString);
+		       }
+
 		   }
 
 		   // save objectid for dummy items so we can do mapping; alt isn't otherwise used for these items
@@ -841,8 +868,9 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 		   // inconsistent results
 		   if (RESTORE_GROUPS) {
 		       String groupString = mergeGroups(itemElement, "group", siteGroups);
-		       if (groupString != null)
+		       if (groupString != null) {
 			   item.setGroups(groupString);
+		       }
 		   }
 
 		   NodeList attributes = itemElement.getElementsByTagName("attributes");
@@ -948,10 +976,14 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
 	
 	// translate groups from title to ID
 	if (groups != null && siteGroups != null) {
+
 	    for (int n = 0; n < groups.getLength(); n ++) {
 		Element group = (Element)groups.item(n);
 		String title = group.getAttribute("title");
-		if (title != null && !title.equals("")) {
+
+		// PLU customized to honor only groups with INSTRUCTOR_NOTES title
+		if (title != null && title.equals(INSTRUCTOR_NOTES)) {
+		//if (title != null && !title.equals("")) {
 		    for (Group g: siteGroups) {
 			if (title.equals(g.getTitle())) {
 			    if (groupString == null)
@@ -1020,6 +1052,17 @@ public class LessonBuilderEntityProducer extends AbstractEntityProvider
    public String merge(String siteId, Element root, String archivePath, String fromSiteId, Map attachmentNames, Map userIdTrans,
 		       Set userListAllowImport, Map<String, String> entityMap)
    {
+
+       // DEBUG
+       /* Document document = root.getOwnerDocument();                                                                                       
+         DOMImplementationLS domImplLS = (DOMImplementationLS) document                                                                     
+             .getImplementation();                                                                                                          
+         LSSerializer serializer = domImplLS.createLSSerializer();                                                                          
+         String str = serializer.writeToString(root);                                                                                       
+         log.warn("root node name: " + root.getNodeName());                                                                              
+         log.warn("Dumping root element: " + str); */                                                                                     
+        // DEBUG
+
       StringBuilder results = new StringBuilder();
       // map old to new page ids
       Map <Long,Long> pageMap = new HashMap<Long,Long>();

@@ -111,6 +111,8 @@ public class SakaiScript extends AbstractWebService {
     private static final String SESSION_ATTR_NAME_ORIGIN = "origin";
     private static final String SESSION_ATTR_VALUE_ORIGIN_WS = "sakai-axis";
 
+    private static final String LESSON_TOOL_REGISTRATION = "sakai.lessonbuildertool";
+
     /**
      * Check if a session is active
      *
@@ -4273,12 +4275,22 @@ public class SakaiScript extends AbstractWebService {
                 }
             }
 
+
+	    // If Lessons content is present, copy it last 
+	    // so that siteInfo groups will be copied before Lessons
+	    boolean copyLessonsContent = false;
             for (String toolId : toolIds)
             {
                 Map<String,String> entityMap;
                 Map transversalMap = new HashMap();
                 
-        		if (!toolId.equalsIgnoreCase("sakai.resources"))
+		if (toolId.equalsIgnoreCase(LESSON_TOOL_REGISTRATION))
+		    {
+			copyLessonsContent = true;
+			continue;
+		    }
+
+		else if (!toolId.equalsIgnoreCase("sakai.resources"))
         		{
         			entityMap = transferCopyEntities(toolId, sourcesiteid, destinationsiteid);
         		}
@@ -4287,13 +4299,32 @@ public class SakaiScript extends AbstractWebService {
         			entityMap = transferCopyEntities(toolId, contentHostingService.getSiteCollection(sourcesiteid), contentHostingService.getSiteCollection(destinationsiteid));
         		}
         		
-        		if(entityMap != null)
+		
+
+		if(entityMap != null)
         		{
         			transversalMap.putAll(entityMap);
         		}
 
         		updateEntityReferences(toolId, sourcesiteid, transversalMap, site);
             }
+
+
+            if (copyLessonsContent) {
+                Map<String,String> entityMap;
+                Map transversalMap = new HashMap();
+		
+                entityMap = transferCopyEntities(LESSON_TOOL_REGISTRATION, sourcesiteid, destinationsiteid);
+
+		// TODO: Assess if we actually need the remaing part of this conditional block
+		if(entityMap != null) {
+		    transversalMap.putAll(entityMap);
+		}
+		updateEntityReferences(LESSON_TOOL_REGISTRATION, sourcesiteid, transversalMap, site);
+            }
+
+
+
         } catch (Exception e) {
             log.error("WS copySiteContent(): " + e.getClass().getName() + " : " + e.getMessage(), e);
             return e.getClass().getName() + " : " + e.getMessage();
@@ -5962,6 +5993,33 @@ public class SakaiScript extends AbstractWebService {
 	    return e.getClass().getName() + " : " + e.getMessage();
         }
         return "success";
+    }
+
+    public String changeWorksiteInformationPanelTitle(String sessionid, String siteid, String pageId,
+						      String toolId, String siteTitle) throws Exception
+    {
+	Session session = establishSession(sessionid);
+	
+	try {
+	    if(! securityService.isSuperUser(session.getUserId())) {
+		String msg = "WS changeWorksiteInformationPanelTitle: Permission denied. Restricted to super users.";
+		throw new Exception(msg);
+	    }
+
+	    Site siteEdit = siteService.getSite(siteid);
+
+	    SitePage page = siteEdit.getPage(pageId);
+	    ToolConfiguration toolConfig = page.getTool(toolId);
+
+	    // We're changing "Worksite Information" to the title of the site
+	    toolConfig.setTitle(siteTitle);
+	    siteService.save(siteEdit);
+	}
+	catch (Exception e) {  
+		log.error("WS changeWorksiteInformationPanelTitle: " + e.getClass().getName() + " : " + e.getMessage());
+	 	return e.getClass().getName() + " : " + e.getMessage();
+	}
+	return "success";
     }
 
 
