@@ -4245,9 +4245,15 @@ public class SakaiScript extends AbstractWebService {
                 throw new RuntimeException("WS copySiteContent(): Permission denied. Must be super user to copy a site in which you are not a maintainer.");
             }
 
+
             List<SitePage> pages = site.getPages();
             Set<String> toolIds = new HashSet();
+	    // Hash the original positions for all the pages
+	    Map<String, Integer> pagePositions = new HashMap(pages.size());
+
             for (SitePage page : pages) {
+		
+		pagePositions.put(page.getTitle(), new Integer(page.getPosition()));
 
                 //get tools in page
                 List<ToolConfiguration> tools = page.getTools();
@@ -4284,54 +4290,52 @@ public class SakaiScript extends AbstractWebService {
             }
 
 
-	    // If Lessons content is present, copy it last 
-	    // so that siteInfo groups will be copied before Lessons
-	    boolean copyLessonsContent = false;
             for (String toolId : toolIds)
-            {
-                Map<String,String> entityMap;
-                Map transversalMap = new HashMap();
+		{
+		    Map<String,String> entityMap;
+		    Map transversalMap = new HashMap();
                 
-		if (toolId.equalsIgnoreCase(LESSON_TOOL_REGISTRATION))
-		    {
-			copyLessonsContent = true;
-			continue;
-		    }
-
-		else if (!toolId.equalsIgnoreCase("sakai.resources"))
+		    if (!toolId.equalsIgnoreCase("sakai.resources"))
         		{
-        			entityMap = transferCopyEntities(toolId, sourcesiteid, destinationsiteid);
+			    entityMap = transferCopyEntities(toolId, sourcesiteid, destinationsiteid);
         		}
-        		else
+		    else
         		{
-        			entityMap = transferCopyEntities(toolId, contentHostingService.getSiteCollection(sourcesiteid), contentHostingService.getSiteCollection(destinationsiteid));
+			    entityMap = transferCopyEntities(toolId, contentHostingService.getSiteCollection(sourcesiteid), contentHostingService.getSiteCollection(destinationsiteid));
         		}
         		
-		
-
-		if(entityMap != null)
+		    if(entityMap != null)
         		{
-        			transversalMap.putAll(entityMap);
+			    transversalMap.putAll(entityMap);
         		}
 
-        		updateEntityReferences(toolId, sourcesiteid, transversalMap, site);
-            }
-
-
-            if (copyLessonsContent) {
-                Map<String,String> entityMap;
-                Map transversalMap = new HashMap();
-		
-                entityMap = transferCopyEntities(LESSON_TOOL_REGISTRATION, sourcesiteid, destinationsiteid);
-
-		// TODO: Assess if we actually need the remaing part of this conditional block
-		if(entityMap != null) {
-		    transversalMap.putAll(entityMap);
+		    updateEntityReferences(toolId, sourcesiteid, transversalMap, site);
 		}
-		updateEntityReferences(LESSON_TOOL_REGISTRATION, sourcesiteid, transversalMap, site);
-            }
 
 
+	    // Restore the original page positions for pages whose position had changed 
+	    // These will most likely be the Lessons pages
+            site = siteService.getSite(destinationsiteid);
+	    pages = site.getPages();
+	    Map<SitePage, Integer> pagesToModify = new HashMap();
+
+            for (SitePage page : pages) {
+		Integer pagePosition = (Integer) pagePositions.get(page.getTitle());
+
+		if (pagePosition.intValue() != page.getPosition())
+		    pagesToModify.put(page, pagePosition);
+		
+	    }		
+
+	    Iterator it = pagesToModify.entrySet().iterator();
+	    while (it.hasNext()) {
+		Map.Entry pair = (Map.Entry) it.next();
+		SitePage page = (SitePage) pair.getKey();
+		Integer pagePosition = (Integer) pair.getValue();
+		page.setPosition(pagePosition.intValue());	
+	    }
+
+            siteService.save(site);
 
         } catch (Exception e) {
             log.error("WS copySiteContent(): " + e.getClass().getName() + " : " + e.getMessage(), e);
