@@ -2191,3 +2191,11 @@ label.block {
     margin-left: 2em;
     background-color: #eee;
 }
+
+#editgroups, #grouplist {
+    margin-top: 1em;
+}
+
+#grouplist input[type="checkbox"] {
+    margin-right: 0.5em;
+}
