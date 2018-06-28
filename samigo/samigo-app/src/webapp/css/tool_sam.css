@@ -1337,6 +1337,12 @@ input[type='reset'].linearButton {
 	padding: 6px 12px;
 }
 
+label#itemForm\:noFeedbackMsg {
+	font-weight: normal;
+	margin-left: 1em;
+	font-style: italic;
+}
+
 /* Fix margins for paragraphs in the markup text instructions */
 .inopPanel p {
     margin: 1em 0;
@@ -1359,3 +1365,4 @@ input[type='reset'].linearButton {
 #export_imagemap_message {
     display: none;
 }
+

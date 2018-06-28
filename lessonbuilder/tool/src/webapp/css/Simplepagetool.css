@@ -1501,7 +1501,7 @@ div.navIntraTool {
 }
 
 .edit-col {
-margin-top:5px;
+margin-top:4px;
 display:inline-block;
 position:absolute;
 background-color:#eee;
@@ -2190,4 +2190,12 @@ label.block {
 #path {
     margin-left: 2em;
     background-color: #eee;
+}
+
+#editgroups, #grouplist {
+    margin-top: 1em;
+}
+
+#grouplist input[type="checkbox"] {
+    margin-right: 0.5em;
 }
