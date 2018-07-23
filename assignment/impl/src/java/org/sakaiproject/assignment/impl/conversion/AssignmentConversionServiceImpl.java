@@ -115,6 +115,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
     @Override
     public void runConversion(int numberOfAttributes, int lengthOfAttribute) {
+        log.warn("<===== #$%#$%#$% runConversion in AssignmentConversionServiceImpl start #$%#$% =====>");
         int assignmentsTotal, progress = 0;
         assignmentsConverted = submissionsConverted = submissionsFailed = assignmentsFailed = 0;
 
@@ -553,7 +554,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     }
 
     public static String decodeBase64(String text) {
-	log.info("*******************************************inside of decodeBase64, which is taking in: ", text); 
+	    log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64, which is taking in: ", text); 
         if (StringUtils.isBlank(text)) return null;
         try {
             String decoded = new String(Base64.getDecoder().decode(text));
