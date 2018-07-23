@@ -47,20 +47,14 @@
          border-color: light grey;
        }
        
-       #delivPageWrapper
-       {
-            width: 100%
-            float: left;
-       }
-       
        #delivAssessmentWrapper
        {
             width: 96%;
+            float: left;
        }
       </style>
 
       <%@ include file="/jsf/delivery/deliveryjQuery.jsp" %>
-      <samigo:script path="/../library/js/headscripts.js"/>
       <samigo:script path="/../sakai-editor/editor-bootstrap.js"/>
       <samigo:script path="/../sakai-editor/editor.js"/>
       <samigo:script path="/../sakai-editor/editor-launch.js"/>
@@ -103,7 +97,7 @@
 		</div>
  
 <div class="portletBody Mrphs-sakai-samigo">
- <h:outputText value="<div style='#{delivery.settings.divBgcolor};#{delivery.settings.divBackground}'>" escape="false"/>
+<div>
 
 <!-- content... -->
 <h:form id="takeAssessmentForm" enctype="multipart/form-data"
@@ -302,7 +296,7 @@ document.links[newindex].onclick();
 </h:panelGroup>
 
 <div id="delivPageWrapper">
-  <div id="delivAssessmentWrapper">
+<h:outputText value="<div id='delivAssessmentWrapper' style='#{delivery.settings.divBgcolor};#{delivery.settings.divBackground}'>" escape="false"/>
 
     <!-- IF A SECURE DELIVERY MODULE HAS BEEN SELECTED, INJECT ITS HTML FRAGMENT (IF ANY) HERE -->
     <h:outputText  value="#{delivery.secureDeliveryHTMLFragment}" escape="false"  />
@@ -353,9 +347,14 @@ document.links[newindex].onclick();
            <h:outputText value="#{deliveryMessages.q} #{question.sequence} #{deliveryMessages.of} #{part.numbering}"/>
          </h:panelGroup>
          <h:panelGroup styleClass="col-md-6 pull-right" layout="block">
-          <h:outputText value=" #{question.pointsDisplayString} #{question.roundedMaxPoints} #{deliveryMessages.pt}" rendered="#{delivery.actionString=='reviewAssessment'}"/>
-          <h:outputText value="#{question.roundedMaxPoints} #{deliveryMessages.pt}" rendered="#{delivery.settings.displayScoreDuringAssessments != '2' && question.itemData.scoreDisplayFlag && delivery.actionString!='reviewAssessment'}"  />
-          <h:outputText value="#{deliveryMessages.discount} #{question.itemData.discount} "  rendered="#{question.itemData.discount!='0.0' && delivery.settings.displayScoreDuringAssessments != '2' && question.itemData.scoreDisplayFlag}"  />
+          <h:outputText value=" #{question.pointsDisplayString} #{question.roundedMaxPointsToDisplay} #{deliveryMessages.pt}" rendered="#{delivery.actionString=='reviewAssessment'}"/>
+          <h:outputText value="#{question.roundedMaxPoints}" rendered="#{delivery.settings.displayScoreDuringAssessments != '2' && question.itemData.scoreDisplayFlag && delivery.actionString!='reviewAssessment'}"  >
+			<f:convertNumber maxFractionDigits="2"/>
+          </h:outputText>
+		  <h:outputText value=" #{deliveryMessages.pt}" rendered="#{delivery.settings.displayScoreDuringAssessments != '2' && question.itemData.scoreDisplayFlag && delivery.actionString!='reviewAssessment'}"  />
+          <h:outputText value="#{deliveryMessages.discount} #{question.itemData.discount} "  rendered="#{question.itemData.discount!='0.0' && delivery.settings.displayScoreDuringAssessments != '2' && question.itemData.scoreDisplayFlag}"  >
+			<f:convertNumber maxFractionDigits="2"/>
+          </h:outputText>
          </h:panelGroup>
        </h:panelGroup>
 
