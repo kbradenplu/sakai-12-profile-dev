@@ -28,6 +28,7 @@ public class Assignment12ConversionJob implements Job {
         if (context.isRecovering()) {
             log.warn("<===== Assignment Conversion Job doesn't support recovery, job will terminate... =====>");
         } else {
+	    log.warn("<===== #$%#$%#$% IN ELSE OF execute() in Assignment12ConversionJob #$%#$%#$% =====>");	
             JobDataMap map = context.getMergedJobDataMap();
             Integer size = Integer.parseInt((String) map.get(SIZE_PROPERTY));
             Integer number = Integer.parseInt((String) map.get(NUMBER_PROPERTY));
