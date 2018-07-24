@@ -554,7 +554,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     }
 
     public static String decodeBase64(String text) {
-	    log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64, which is taking in: ", text); 
         if (StringUtils.isBlank(text)) return null;
         try {
             String decoded = new String(Base64.getDecoder().decode(text));
@@ -563,6 +562,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
                 // with the last 3 byte char
                 decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
             }
+            log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64. ** decoded: ", decoded);
             return decoded;
         } catch (IllegalArgumentException iae) {
             log.warn("invalid base64 string during decode: {}", text);
