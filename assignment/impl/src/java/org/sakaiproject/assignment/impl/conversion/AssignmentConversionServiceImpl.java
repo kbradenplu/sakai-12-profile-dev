@@ -149,7 +149,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         ServerConfigurationService.ConfigItem configItem = BasicConfigItem.makeConfigItem(
                 AssignableUUIDGenerator.HIBERNATE_ASSIGNABLE_ID_CLASSES,
                 configValue,
-                AssignmentConversionServiceImpl.class.getName(),
+                this.getClass().getName(),
                 true);
         serverConfigurationService.registerConfigItem(configItem);
 
@@ -177,7 +177,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         configItem = BasicConfigItem.makeConfigItem(
                 AssignableUUIDGenerator.HIBERNATE_ASSIGNABLE_ID_CLASSES,
                 StringUtils.trimToEmpty(currentValue),
-                AssignmentConversionServiceImpl.class.getName());
+                this.getClass().getName());
         serverConfigurationService.registerConfigItem(configItem);
 
         log.info("<===== Assignments converted {} =====>", assignmentsConverted);
@@ -294,16 +294,17 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     }
 
     private Assignment assignmentReintegration(O11Assignment assignment, O11AssignmentContent content) {
-        Map<String, Object> assignmentAny = assignment.getAny();
-        Map<String, Object> contentAny = content.getAny();
-        String[] assignmentAnyKeys = assignmentAny.keySet().toArray(new String[assignmentAny.size()]);
-        String[] contentAnyKeys = contentAny.keySet().toArray(new String[contentAny.size()]);
 
         // if an assignment context is missing we ignore the assignment
         if (StringUtils.isBlank(assignment.getContext())) {
             log.warn("Assignment {} does not have a CONTEXT", assignment.getId());
             return null;
         }
+
+        Map<String, Object> assignmentAny = assignment.getAny();
+        Map<String, Object> contentAny = content.getAny();
+        String[] assignmentAnyKeys = assignmentAny.keySet().toArray(new String[assignmentAny.size()]);
+        String[] contentAnyKeys = contentAny.keySet().toArray(new String[contentAny.size()]);
 
         Assignment a = new Assignment();
         a.setAllowAttachments(content.getAllowattach());
@@ -562,10 +563,12 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
                 // with the last 3 byte char
                 decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
             }
-            log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64. ** decoded: ", decoded);
+            log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64. ** decoded: {}", decoded);
             return decoded;
         } catch (IllegalArgumentException iae) {
             log.warn("invalid base64 string during decode: {}", text);
+        } catch (Exception e) {
+            log.warn("General decoding failure: {}", text, e);
         }
         return text;
     }
