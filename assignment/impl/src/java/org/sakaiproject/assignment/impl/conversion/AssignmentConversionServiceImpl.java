@@ -319,7 +319,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setDueDate(convertStringToTime(assignment.getDuedate()));
         a.setHideDueDate(content.getHideduedate());
         a.setHonorPledge(content.getHonorpledge() == 2 ? Boolean.TRUE : Boolean.FALSE);
-        a.setId(assignment.getId());
+        a.setId(assignment.getId());   //log this $$$
         a.setIndividuallyGraded(content.getIndivgraded());
         a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         a.setIsGroup(assignment.getGroup());
@@ -334,7 +334,10 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setReleaseGrades(content.getReleasegrades());
         a.setScaleFactor(content.getScaled_factor() == null ? AssignmentConstants.DEFAULT_SCALED_FACTOR : content.getScaled_factor());
         a.setSection(assignment.getSection());
-        a.setTitle(assignment.getTitle());
+        a.setTitle(assignment.getTitle());  //log this $$$
+        System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
+        System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
+        log.info(assignment.getTitle());   //logging $$$
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
@@ -425,7 +428,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         s.setGradeReleased(submission.getGradereleased());
         s.setHiddenDueDate(submission.getHideduedate());
         s.setHonorPledge(submission.getPledgeflag());
-        s.setId(submission.getId());
+        s.setId(submission.getId());  //log this $$$
         s.setReturned(submission.getReturned());
         s.setSubmitted(submission.getSubmitted());
         s.setSubmittedText(decodeBase64(submission.getSubmittedtextHtml()));
@@ -563,7 +566,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
                 // with the last 3 byte char
                 decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
             }
-            log.info("<===== #$%#$% $%^$%^$%^$%^ $%^$%^ inside of decodeBase64. ** decoded: {}", decoded);
+            log.info("inside of decodeBase64. ** decoded: {}", decoded);
+            System.console.writer().println(decoded);  //logging $$$
             return decoded;
         } catch (IllegalArgumentException iae) {
             log.warn("invalid base64 string during decode: {}", text);
