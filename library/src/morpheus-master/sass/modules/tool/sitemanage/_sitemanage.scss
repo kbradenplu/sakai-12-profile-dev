@@ -525,6 +525,14 @@
   label.onoffswitch-label {
     font-weight: normal;
   }
+
+  legend {
+    font-size: 16px;
+
+    &.nopad {
+      padding: 0.5em 0;
+    }
+  }
 }
 
 table h5 {
