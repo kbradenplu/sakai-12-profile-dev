@@ -267,8 +267,8 @@ public class ShowItemProducer implements ViewComponentProducer, NavigationCaseRe
 
 	    if (helpurl != null) {
 		UILink.make(tofill, "helpbutton2", helpurl).
-		    decorate(new UIFreeAttributeDecorator("onclick",
-					  "openWindow('" + helpurl + "', 'Help', 'resizeable=yes,toolbar=no,scrollbars=yes,menubar=yes,width=800,height=600'); return false")).
+		    decorate(new UIFreeAttributeDecorator("href", 
+							  messageLocator.getMessage("simplepage.helpurl"))).
 		    decorate(new UIFreeAttributeDecorator("title",
 				 messageLocator.getMessage("simplepage.help-button")));
 		if (!inline)
