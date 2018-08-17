@@ -49,7 +49,7 @@ $(document).ready(function(){
 	#end
 
 	#if ($!canSubmit)
-		#if ($alertMessage)<div class="alertMessage">$tlang.getString("gen.alert") $alertMessage</div><div class="clear"></div>#end
+		#if ($alertMessage)<div class="alertMessage"><strong>$tlang.getString("gen.alert")</strong> $alertMessage</div><div class="clear"></div>#end
 		#if ($!submission && $dateSubmitted)
 			## if there is a submitted submission
 			## get the properies
@@ -557,7 +557,7 @@ $(document).ready(function(){
 							<span style="font-size: smaller; color: blue;">	
 								#set($gusers = $!service.getSortedGroupUsers($group))
 								#foreach ($user in $gusers)
-									$user.getDisplayName()
+									$validator.escapeHtml($user.getDisplayName()) ($validator.escapeHtml($user.getDisplayId()))
 									##$!userDirectoryService.getUser($user).getDisplayName()
 									#if ($velocityCount < $gusers.size()),#end
 								#end
@@ -616,6 +616,19 @@ $(document).ready(function(){
 										#end
 									</em>
 								</p>
+							#end
+							#if ($plagiarismEULALink)
+								<p class="checkbox highlightPanel form-required">
+									<label for="$name_plagiarism_eula_agreement">
+										#if ($value_plagiarism_eula_agreement.equals("true"))
+											<input id="$name_plagiarism_eula_agreement" type="checkbox" name="$name_plagiarism_eula_agreement" value="true" checked="checked"/>
+										#else
+											<input id="$name_plagiarism_eula_agreement" type="checkbox" name="$name_plagiarism_eula_agreement" value="true"/>
+										#end
+										$tlang.getString("review.eula.agreement")&nbsp;<a href="$plagiarismEULALink" target="_blank">$tlang.getString("review.eula")</a>
+									</label>
+								</p>
+								<input type="hidden" name="$name_check_plagiarism_eula_agreement" id="$name_check_plagiarism_eula_agreement" value="true" checked="checked"/>
 							#end
 							</p>
 							<table border="0">
@@ -897,7 +910,7 @@ $(document).ready(function(){
 				#end
 			#end
 
-				#if ($returned && $dateReturned && ($dateSubmitted && $dateReturned && $dateReturned.isAfter($dateSubmitted) || !$dateSubmitted))
+				#if ($returned && $dateReturned && ($dateSubmitted && $dateReturned && $dateReturned.isAfter($dateSubmitted) || !$dateSubmitted || !$!submitted))
 					#if (($!submission.FeedbackComment) && ($submission.FeedbackComment.trim().length()>0))
 						#if ($submissionType==2)
 							<h3>$tlang.getString("gen.addinst2")</h3>
