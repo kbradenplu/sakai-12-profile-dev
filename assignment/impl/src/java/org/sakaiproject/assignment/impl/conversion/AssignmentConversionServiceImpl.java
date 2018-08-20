@@ -335,9 +335,11 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setScaleFactor(content.getScaled_factor() == null ? AssignmentConstants.DEFAULT_SCALED_FACTOR : content.getScaled_factor());
         a.setSection(assignment.getSection());
         a.setTitle(assignment.getTitle());  //log this $$$
-        System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
-        System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
+        //System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
+        //System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
+        log.info("logging assignment.getTitle below: ")
         log.info(assignment.getTitle());   //logging $$$
+        //work on above log, system log attempts are causing build to fail
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
@@ -567,7 +569,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
                 decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
             }
             log.info("inside of decodeBase64. ** decoded: {}", decoded);
-            System.console.writer().println(decoded);  //logging $$$
+            //logging $$$
             return decoded;
         } catch (IllegalArgumentException iae) {
             log.warn("invalid base64 string during decode: {}", text);
