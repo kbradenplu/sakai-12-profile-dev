@@ -337,7 +337,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setTitle(assignment.getTitle());  //log this $$$
         //System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
         //System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
-        log.info("logging assignment.getTitle below: ")
+        log.info("logging assignment.getTitle below: ");
         log.info(assignment.getTitle());   //logging $$$
         //work on above log, system log attempts are causing build to fail
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
