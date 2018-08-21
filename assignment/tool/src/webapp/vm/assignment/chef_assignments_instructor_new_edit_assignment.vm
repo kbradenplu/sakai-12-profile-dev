@@ -595,9 +595,8 @@
 			$tlang.getString("gen.stusub")
 		</h4>
 		<div class="form-group row form-required">
-			<div id="submissionType">
-
-			<label for="subType" form-control-label">
+			<div class="submissionType">
+			<label for="subType" class="form-control-label">
 				$tlang.getString("gen.submissionType")
 			</label>
 
@@ -625,11 +624,9 @@
 			<div class="col-sm-12">
 				<div id="tempAllowRes" #if ($value_SubmissionType == 4) style = "display:none"#end>
 					<input type="checkbox" id="allowResToggle" name ="allowResToggle" #if($!value_allowResubmitNumber) checked="checked"#end onclick="if(checked){document.getElementById('allowResubmitNumber').style.display = 'block';document.getElementById('allowResubmitTime').style.display = 'block';document.getElementById('resubmitNotification').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('allowResubmitNumber').style.display = 'none';document.getElementById('allowResubmitTime').style.display = 'none';document.getElementById('resubmitNotification').style.display = 'none';}" />
-
 			<label class="control-label" for="allowResToggle">
 				$tlang.getString("allowResubmit")
 			</label>
-
 				</div>
 			</div>
 		</div>
@@ -754,17 +751,6 @@
 				#else
 					<div id="reviewServiceOptions" style="display:none" class="col-sm-offset-1">
 				#end
-
-					## This is the location where AllowStudentView checkbox originated,
-					## to allow for different checkers, though we (PLU) moved it to improve layout.
-
-					<!-- Start TII custom options -->
-					#if($reviewServiceName.equals("Turnitin"))
-
-					#if ($content_review_note)
-						$content_review_note
-					#end
-
 					<div class="checkbox">
 						<label for="$name_AllowStudentView">
 						#if ($!value_AllowStudentView.equals("true"))
@@ -812,6 +798,7 @@
 						#end
 					</div>
 
+					<br/>
 					#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_SMALL_MATCHES)
 						<h5>
 							$tlang.getString("review.exclude.matches.header")
@@ -1124,9 +1111,9 @@
 						#if ($content_review_note)
 							$content_review_note
 						#end
-						<h4>
+						<h5>
 							$tlang.getString("review.originality.reports")
-						</h4>
+						</h5>
 						<div class="radio">
 							#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY))
 								<label for="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO">
@@ -1362,9 +1349,9 @@
 
 		## whether to notify student about released grade
 		<fieldset>
-			<h4>
+			<h5>
 				$tlang.getString("send.submission.releasegrade.email.options")
-			</h4>
+			</h5>
 			<div class="radio">
 				<label for="notsendreleasegradenotif">
 				<input type="radio" name="$!name_assignment_releasegrade_notification" id="notsendreleasegradenotif" value="$!value_assignment_releasegrade_notification_none" #if($!value_assignment_releasegrade_notification.equals($!value_assignment_releasegrade_notification_none))checked="checked" #end />
@@ -1379,9 +1366,9 @@
 			</div>
 		</fieldset>
 
-		<h4>
+		<h5>
 			$tlang.getString("additionalOptionsName")
-		</h4>
+		</h5>
 		<p class="text-muted small">
 			$tlang.getString("gen.cant.change.after.draft")
 		</p>
@@ -1508,9 +1495,9 @@
 		#end
 
 	<a name="extraNodesTop"></a>
-	<h4>
+	<h5>
 		$tlang.getString("additional_information")
-	</h4>
+	</h5>
 
 	<div class="col-sm-12 row table-reponsive">
 		<table class="table table-striped" id="extraNodeLinkList">
