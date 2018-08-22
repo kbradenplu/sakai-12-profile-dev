@@ -115,7 +115,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
     @Override
     public void runConversion(int numberOfAttributes, int lengthOfAttribute) {
-        log.warn("<===== #$%#$%#$% runConversion in AssignmentConversionServiceImpl start #$%#$% =====>");
+        log.warn("<===== #$%#$%#$%$$$ runConversion in AssignmentConversionServiceImpl start #$%#$% =====>");
         int assignmentsTotal, progress = 0;
         assignmentsConverted = submissionsConverted = submissionsFailed = assignmentsFailed = 0;
 
@@ -165,6 +165,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             try {
                 convert(assignmentId);
             } catch (Exception e) {
+                // add more to this warning - $$$ logging
                 log.warn("Assignment conversion exception for {}", assignmentId, e);
             }
             int percent = new Double(((assignmentsConverted + assignmentsFailed) / (double) assignmentsTotal) * 100).intValue();
@@ -233,6 +234,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         if (StringUtils.isNotBlank(aXml)) {
             O11Assignment o11a = (O11Assignment) serializeFromXml(aXml, O11Assignment.class);
             if (o11a != null) {
+                //get more assignment content ----$$$
                 String contentReference = o11a.getAssignmentcontent();
                 String contentId = AssignmentReferenceReckoner.reckoner().reference(contentReference).reckon().getId();
                 String cXml = dataProvider.fetchAssignmentContent(contentId);
@@ -338,7 +340,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         //System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
         //System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
         log.info("logging assignment.getTitle below: ");
-        log.info(assignment.getTitle());   //logging $$$
+        log.warn("assignment title: {} :", assignment.getTitle());   //logging $$$
         //work on above log, system log attempts are causing build to fail
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
@@ -544,6 +546,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         // remove any properties that are null or blank
         properties.values().removeIf(StringUtils::isBlank);
 
+        //print this s $$$
+        log.info("submission info: {} site: {}",s.getId(),assignment.getContext());
         return s;
     }
 
