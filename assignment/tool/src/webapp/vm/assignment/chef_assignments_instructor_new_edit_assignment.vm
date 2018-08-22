@@ -596,7 +596,7 @@
 		</h4>
 		<div class="form-group row form-required">
 			<div class="submissionType">
-			<label for="subType" class="form-control-label">
+			<label for="subType" class="form-control-label" style="margin-left: 1.5rem">
 				$tlang.getString("gen.submissionType")
 			</label>
 
@@ -624,7 +624,7 @@
 			<div class="col-sm-12">
 				<div id="tempAllowRes" #if ($value_SubmissionType == 4) style = "display:none"#end>
 					<input type="checkbox" id="allowResToggle" name ="allowResToggle" #if($!value_allowResubmitNumber) checked="checked"#end onclick="if(checked){document.getElementById('allowResubmitNumber').style.display = 'block';document.getElementById('allowResubmitTime').style.display = 'block';document.getElementById('resubmitNotification').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('allowResubmitNumber').style.display = 'none';document.getElementById('allowResubmitTime').style.display = 'none';document.getElementById('resubmitNotification').style.display = 'none';}" />
-			<label class="control-label" for="allowResToggle">
+			<label class="control-label" for="allowResToggle" style="margin-left: 0.5rem; font-weight: normal">
 				$tlang.getString("allowResubmit")
 			</label>
 				</div>
@@ -1349,9 +1349,9 @@
 
 		## whether to notify student about released grade
 		<fieldset>
-			<h5>
+			<h4>
 				$tlang.getString("send.submission.releasegrade.email.options")
-			</h5>
+			</h4>
 			<div class="radio">
 				<label for="notsendreleasegradenotif">
 				<input type="radio" name="$!name_assignment_releasegrade_notification" id="notsendreleasegradenotif" value="$!value_assignment_releasegrade_notification_none" #if($!value_assignment_releasegrade_notification.equals($!value_assignment_releasegrade_notification_none))checked="checked" #end />
@@ -1366,9 +1366,9 @@
 			</div>
 		</fieldset>
 
-		<h5>
+		<h4>
 			$tlang.getString("additionalOptionsName")
-		</h5>
+		</h4>
 		<p class="text-muted small">
 			$tlang.getString("gen.cant.change.after.draft")
 		</p>
@@ -1495,9 +1495,10 @@
 		#end
 
 	<a name="extraNodesTop"></a>
-	<h5>
+
+	<h4 style="margin-top: 2.5rem; margin-bottom: -1rem">
 		$tlang.getString("additional_information")
-	</h5>
+	</h4>
 
 	<div class="col-sm-12 row table-reponsive">
 		<table class="table table-striped" id="extraNodeLinkList">
