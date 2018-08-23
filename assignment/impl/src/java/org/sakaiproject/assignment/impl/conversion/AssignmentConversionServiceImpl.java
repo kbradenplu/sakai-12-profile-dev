@@ -314,6 +314,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setCloseDate(convertStringToTime(assignment.getClosedate()));
         a.setContentReview(content.getAllowreview());
         a.setContext(assignment.getContext());
+        log.info("logging assignment.getContext below: ");
+        log.warn("assignment context: {} :", assignment.getTitle());   //logging $$$
         a.setDateCreated(convertStringToTime(content.getDatecreated()));
         a.setDateModified(convertStringToTime(content.getLastmod()));
         a.setDraft(assignment.getDraft());
@@ -322,6 +324,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setHideDueDate(content.getHideduedate());
         a.setHonorPledge(content.getHonorpledge() == 2 ? Boolean.TRUE : Boolean.FALSE);
         a.setId(assignment.getId());   //log this $$$
+        log.info("logging assignment.getId below: ");
+        log.warn("assignment id: {} :", assignment.getId());   //logging $$$
         a.setIndividuallyGraded(content.getIndivgraded());
         a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         a.setIsGroup(assignment.getGroup());
@@ -346,6 +350,10 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
+
+        //log content passed in as 011AssignmentContent 
+        log.info("logging assignment content information below ");
+        log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
 
         // support for list of attachment0
         Set<String> attachmentKeys = Arrays.stream(contentAnyKeys).filter(attachmentFilter).collect(Collectors.toSet());
