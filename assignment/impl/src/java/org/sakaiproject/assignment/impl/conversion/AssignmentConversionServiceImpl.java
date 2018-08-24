@@ -347,11 +347,18 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         log.warn("assignment title: {} :", assignment.getTitle());   //logging $$$
         //work on above log, system log attempts are causing build to fail
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
+        //a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+        log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
+        //below seems to be causing the array index out of bounds error $$$
+        log.warn("Printing Assignment.GradeType.values(): {} ", Assignment.GradeType.values() );
+        log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values());
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+        //values is each array item $$$
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
+        log.warn("Assignment.Submission.values(): {}", Assignment.Submission.values());
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
-        //log content passed in as 011AssignmentContent 
+        //log content passed in as 011AssignmentContent
         log.info("logging assignment content information below ");
         log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
 
