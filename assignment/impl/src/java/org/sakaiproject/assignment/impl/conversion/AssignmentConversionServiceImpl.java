@@ -350,12 +350,12 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         //a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
         //below seems to be causing the array index out of bounds error $$$
-        log.warn("Printing Assignment.GradeType.values(): {} ", Assignment.GradeType.values() );
-        log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values());
+        log.warn("Printing Assignment.GradeType.values().length: {} ", Assignment.GradeType.values().length );
+        log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values()[content.getTypeofgrade()]);
+        //get the length as well
         a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         //values is each array item $$$
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
-        log.warn("Assignment.Submission.values(): {}", Assignment.Submission.values());
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
         //log content passed in as 011AssignmentContent
