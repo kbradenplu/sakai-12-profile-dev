@@ -355,17 +355,15 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         //get the length as well
         //if -1 change to 0 else
 
-//        if(content.getTypeofgrade() < 0 || (!(content.getTypeofgrade() instanceof Integer))){
-//            //GradeType.values()[0] is the enum's 'gradetype none' option
-//            a.setTypeOfGrade(Assignment.GradeType.values()[0]);
-//        } else {
-//            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
-//        }
+        if(content.getTypeofgrade() < 0 || (!(content.getTypeofgrade() instanceof Integer))){
+            //GradeType.values()[0] is the enum's 'gradetype none' option
+            log.warn('hit a.setTypeOfGrade(Assignment.GradeType.values()[0]) : {}', a.setTypeOfGrade(Assignment.GradeType.values()[0]);)
+            a.setTypeOfGrade(Assignment.GradeType.values()[0]);
+        } else {
+            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+        }
 
         //values is each array item $$$
-        //set all to grade type none
-        a.setTypeOfGrade(Assignment.GradeType.values()[0]);
-
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
