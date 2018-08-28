@@ -363,6 +363,9 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 //        }
 
         //values is each array item $$$
+        //set all to grade type none
+        a.setTypeOfGrade(Assignment.GradeType.values()[0]);
+
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
