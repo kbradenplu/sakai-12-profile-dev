@@ -351,7 +351,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
         //below seems to be causing the array index out of bounds error $$$
         log.warn("Printing Assignment.GradeType.values().length: {} ", Assignment.GradeType.values().length );
-        log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values()[content.getTypeofgrade()]);
+        //log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values()[content.getTypeofgrade()]);
         //get the length as well
         //check for -1 impossible
         try {
