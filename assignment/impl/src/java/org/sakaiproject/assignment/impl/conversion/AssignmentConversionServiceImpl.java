@@ -359,7 +359,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         }
         catch(ArrayIndexOutOfBoundsException e) {
             log.warn("catching ArrayIndexOutOfBoundsException: {} ", e);
-            a.setTypeOfGrade(0);
+            a.setTypeOfGrade("GRADE_TYPE_NONE");
         }
         //values is each array item $$$
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
