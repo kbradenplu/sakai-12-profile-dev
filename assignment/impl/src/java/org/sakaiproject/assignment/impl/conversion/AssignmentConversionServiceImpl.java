@@ -354,13 +354,14 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         //log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values()[content.getTypeofgrade()]);
         //get the length as well
         //check for -1 impossible
-        try {
-            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
-        }
-        catch(ArrayIndexOutOfBoundsException e) {
-            log.warn("catching ArrayIndexOutOfBoundsException: {} ", e);
-            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade() + 1]);
-        }
+        a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
+//        try {
+//            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+//        }
+//        catch(ArrayIndexOutOfBoundsException e) {
+//            log.warn("catching ArrayIndexOutOfBoundsException: {} ", e);
+//            a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
+//        }
         //values is each array item $$$
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
