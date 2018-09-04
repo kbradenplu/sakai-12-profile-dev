@@ -589,24 +589,34 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     }
 
     //try returning empty string instead of null - then add null check (originally returning null)
+    //try adding StringUtils.isBlank(text.trim())   next
     public static String decodeBase64(String text) {
-        //if (StringUtils.isBlank(text)) return null;  //original line
-        if (StringUtils.isBlank(text)) return "";
-        try {
-            String decoded = new String(Base64.getDecoder().decode(text));
-            if (cleanUTF8) {
-                // replaces any unicode characters outside the first 3 bytes
-                // with the last 3 byte char
-                decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
+        //if (StringUtils.isBlank(text)) return null;
+        if(text != null && !text.isEmpty()){
+            try {
+                String decoded = new String(Base64.getDecoder().decode(text));
+                if (cleanUTF8) {
+                    // replaces any unicode characters outside the first 3 bytes
+                    // with the last 3 byte char
+                    decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
+                }
+                log.info("inside of decodeBase64. ** decoded: {}", decoded);
+                //logging $$$
+                return decoded;
+            } catch (IllegalArgumentException iae) {
+                log.warn("invalid base64 string during decode: {}", text);
+            } catch (Exception e) {
+                log.warn("General decoding failure: {}", text, e);
             }
-            log.info("inside of decodeBase64. ** decoded: {}", decoded);
-            //logging $$$
-            return decoded;
-        } catch (IllegalArgumentException iae) {
-            log.warn("invalid base64 string during decode: {}", text);
-        } catch (Exception e) {
-            log.warn("General decoding failure: {}", text, e);
+
+        } else {
+            log.warn("passed text != null && !text.isEmpty() check ");
         }
+
+
         return text;
     }
+
+
+
 }
