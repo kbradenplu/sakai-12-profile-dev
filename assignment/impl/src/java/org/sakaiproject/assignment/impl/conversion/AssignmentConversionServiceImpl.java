@@ -367,7 +367,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
         //setTypeOfSubmission is giving array index exception
         //a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
-        a.setTypeOfSubmission(0);
+        a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
         //log content passed in as 011AssignmentContent
