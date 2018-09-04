@@ -327,7 +327,9 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         log.info("logging assignment.getId below: ");
         log.warn("assignment id: {} :", assignment.getId());   //logging $$$
         a.setIndividuallyGraded(content.getIndivgraded());
-        a.setInstructions(decodeBase64(content.getInstructionsHtml()));
+        //a.setInstructions(decodeBase64(content.getInstructionsHtml()));
+        //setting instructions to empty string instead of above
+        a.setInstructions("");
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
         a.setOpenDate(convertStringToTime(assignment.getOpendate()));
