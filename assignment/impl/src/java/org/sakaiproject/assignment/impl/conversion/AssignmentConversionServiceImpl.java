@@ -329,7 +329,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setIndividuallyGraded(content.getIndivgraded());
         //a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         //setting instructions to empty string instead of above
-        a.setInstructions("");
+        //a.setInstructions("");
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
         a.setOpenDate(convertStringToTime(assignment.getOpendate()));
