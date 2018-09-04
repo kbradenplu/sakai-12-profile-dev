@@ -362,6 +362,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 //            log.warn("catching ArrayIndexOutOfBoundsException: {} ", e);
 //            a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
 //        }
+
+        //log content.getInstructions()  ???
         //values is each array item $$$
         a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
@@ -586,8 +588,10 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         return null;
     }
 
+    //try returning empty string instead of null - then add null check (originally returning null)
     public static String decodeBase64(String text) {
-        if (StringUtils.isBlank(text)) return null;
+        //if (StringUtils.isBlank(text)) return null;  //original line
+        if (StringUtils.isBlank(text)) return "";
         try {
             String decoded = new String(Base64.getDecoder().decode(text));
             if (cleanUTF8) {
