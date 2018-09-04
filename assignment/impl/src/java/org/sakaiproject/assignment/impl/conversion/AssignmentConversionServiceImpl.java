@@ -590,6 +590,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
     //try returning empty string instead of null - then add null check (originally returning null)
     //try adding StringUtils.isBlank(text.trim())   next
+    //this is hitting else and returning null, follow downstream
     public static String decodeBase64(String text) {
         //if (StringUtils.isBlank(text)) return null;
         if(text != null && !text.isEmpty()){
@@ -610,8 +611,9 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             }
 
         } else {
-            log.warn("passed text != null && !text.isEmpty() check ");
-            return "";
+            log.warn("text != null: {}", text != null);
+            log.warn("!text.isEmpty(): {}", !text.isEmpty());
+            return null;
         }
 
 
