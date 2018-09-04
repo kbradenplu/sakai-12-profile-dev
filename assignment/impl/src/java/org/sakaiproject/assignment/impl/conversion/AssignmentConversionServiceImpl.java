@@ -611,6 +611,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
         } else {
             log.warn("passed text != null && !text.isEmpty() check ");
+            return "";
         }
 
 
