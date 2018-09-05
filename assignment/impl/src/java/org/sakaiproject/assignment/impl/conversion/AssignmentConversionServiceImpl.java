@@ -329,7 +329,14 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setIndividuallyGraded(content.getIndivgraded());
         //a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         //setting instructions to empty string instead of above
-        a.setInstructions("no instructions provided");
+        //a.setInstructions("no instructions provided");   //explicitly setting instructions works
+        try {
+            a.setInstructions(decodeBase64(content.getInstructionsHtml()));
+        } catch(Exception e) {
+            log.warn("Error getting grade type from assignment: {} , setting to no instructions message ", assignment.getId());
+            log.info("caught: {} ", e);
+            a.setInstructions("no instructions provided");
+        }
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
         a.setOpenDate(convertStringToTime(assignment.getOpendate()));
@@ -343,31 +350,32 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setScaleFactor(content.getScaled_factor() == null ? AssignmentConstants.DEFAULT_SCALED_FACTOR : content.getScaled_factor());
         a.setSection(assignment.getSection());
         a.setTitle(assignment.getTitle());  //log this $$$
-        //System.console.writer().println(a.setTitle(assignment.getTitle()));  //logging $$$
-        //System.out.println(a.setTitle(assignment.getTitle()));  //logging $$$
-        log.info("logging assignment.getTitle below: ");
         log.warn("assignment title: {} :", assignment.getTitle());   //logging $$$
-        //work on above log, system log attempts are causing build to fail
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
         //a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
         //below seems to be causing the array index out of bounds error $$$
         log.warn("Printing Assignment.GradeType.values().length: {} ", Assignment.GradeType.values().length );
-        //log.warn("Printing Assignment.GradeType.values()[content.getTypeofgrade()]: {} ", Assignment.GradeType.values()[content.getTypeofgrade()]);
-        //get the length as well
-        //check for -1 impossible
-        a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
-//        try {
-//            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
-//        }
-//        catch(ArrayIndexOutOfBoundsException e) {
-//            log.warn("catching ArrayIndexOutOfBoundsException: {} ", e);
-//            a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
-//        }
 
-        //setTypeOfSubmission is giving array index exception
-        //a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
-        a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);
+        //a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);  //explicitly setting grade_type_none works
+        try {
+            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+        }
+        catch(ArrayIndexOutOfBoundsException oob) {
+            log.warn("Error getting grade type from assignment: {} , setting to type-none ", assignment.getId());
+            log.info("caught: {} ", oob);
+            a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
+        }
+
+        //a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);  //explicitly setting to values()[0] works
+        try {
+            a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
+        } catch(ArrayIndexOutOfBoundsException oob){
+            log.warn("Error getting submission type from assignment: {} , setting to type-none ", assignment.getId());
+            log.info("caught: {} ", oob)
+            a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);
+        }
+
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
         //log content passed in as 011AssignmentContent
@@ -609,7 +617,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             } catch (IllegalArgumentException iae) {
                 log.warn("invalid base64 string during decode: {}", text);
             } catch (Exception e) {
-                log.warn("General decoding failure: {}", text, e);
+                log.warn("General decoding failure for: {} --exception: {}", text, e);
             }
 
         } else {
