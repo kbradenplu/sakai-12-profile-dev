@@ -372,7 +372,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         } catch(ArrayIndexOutOfBoundsException oob){
             log.warn("Error getting submission type from assignment: {} , setting to type-none ", assignment.getId());
-            log.info("caught: {} ", oob)
+            log.info("caught: {} ", oob);
             a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);
         }
 
