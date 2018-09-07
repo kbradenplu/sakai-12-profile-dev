@@ -1477,19 +1477,13 @@ public class AssignmentAction extends PagedResourceActionII {
             if (s != null) {
                 log.debug("BUILD SUBMISSION FORM HAS SUBMISSION FOR USER {}", user);
                 context.put("submission", s);
+                String currentUser = userDirectoryService.getCurrentUser().getId();
+                String grade = assignmentService.getGradeForSubmitter(s, currentUser);
+                context.put("grade", grade);
                 if (assignment.getIsGroup()) {
                     context.put("selectedGroup", s.getGroupId());
                     context.put("originalGroup", s.getGroupId());
                     context.put("submitterId", s.getGroupId());
-
-                    String currentUser = userDirectoryService.getCurrentUser().getId();
-
-                    String gradeOverride = assignmentService.getGradeForSubmitter(s, currentUser);
-
-                    // if still no grade then there is no override
-                    if (gradeOverride != null) {
-                        context.put("override", gradeOverride);
-                    }
                 }
 
                 setScoringAgentProperties(context, assignment, s, false);
@@ -1979,6 +1973,9 @@ public class AssignmentAction extends PagedResourceActionII {
             AssignmentSubmission submission = getSubmission(aReference, user, "build_student_preview_submission_context", state);
             if (submission != null) {
                 context.put("submission", submission);
+                String currentUser = userDirectoryService.getCurrentUser().getId();
+                String grade = assignmentService.getGradeForSubmitter(submission, currentUser);
+                context.put("grade", grade);
                 context.put("submissionReference", AssignmentReferenceReckoner.reckoner().submission(submission).reckon().getReference());
             }
 
@@ -2530,20 +2527,23 @@ public class AssignmentAction extends PagedResourceActionII {
         putGradebookCategoryInfoIntoContext(state, context);
 
         context.put("value_totalSubmissionTypes", Assignment.SubmissionType.values().length - 1);
-        context.put("value_GradeType", state.getAttribute(NEW_ASSIGNMENT_GRADE_TYPE));
-        // format to show one decimal place
-        String maxGrade = (String) state.getAttribute(NEW_ASSIGNMENT_GRADE_POINTS);
+
+        Integer scaleFactor;
+        Boolean anonGrading;
         if (a != null) {
-            context.put("value_GradePoints", assignmentService.getGradeDisplay(maxGrade, a.getTypeOfGrade(), a.getScaleFactor() != null ? a.getScaleFactor() : assignmentService.getScaleFactor()));
-            context.put("value_CheckAnonymousGrading", assignmentService.assignmentUsesAnonymousGrading(a));
+            scaleFactor = a.getScaleFactor() != null ? a.getScaleFactor() : assignmentService.getScaleFactor();
+            anonGrading = assignmentService.assignmentUsesAnonymousGrading(a);
+        } else {
+            scaleFactor = assignmentService.getScaleFactor();
+            anonGrading = (Boolean) state.getAttribute(NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
         }
-        else {
-        	if (!StringUtils.isBlank(maxGrade)){
-        		context.put("value_GradePoints", assignmentService.getGradeDisplay(maxGrade, SCORE_GRADE_TYPE, assignmentService.getScaleFactor()));
-        	}    	
-        	context.put("value_CheckAnonymousGrading", state.getAttribute(NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING)); 
-        }      
+
+        Assignment.GradeType gradeType = values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_GRADE_TYPE)];
+        String maxGrade = (String) state.getAttribute(NEW_ASSIGNMENT_GRADE_POINTS);
+        context.put("value_GradeType", gradeType.ordinal());
+        context.put("value_GradePoints", assignmentService.getGradeDisplay(maxGrade, gradeType, scaleFactor));
         context.put("value_Description", state.getAttribute(NEW_ASSIGNMENT_DESCRIPTION));
+        context.put("value_CheckAnonymousGrading", anonGrading);
 
         //Peer Assessment
         String peer = (String) state.getAttribute(NEW_ASSIGNMENT_USE_PEER_ASSESSMENT);
@@ -3083,9 +3083,12 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("value_assignment_id", assignmentId);
             Assignment a = getAssignment(assignmentId, "build_instructor_preview_assignment_context", state);
             if (a != null) {
+            	context.put("gradeName", getGradeName(a, assignmentId));
                 context.put("value_CheckAnonymousGrading", assignmentService.assignmentUsesAnonymousGrading(a));
-                context.put("isDraft", Boolean.valueOf(a.getDraft()));
-                context.put("value_GradePoints", displayGrade(state, maxGrade, a.getScaleFactor()));
+                context.put("isDraft", a.getDraft());
+                if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
+                    context.put("value_GradePoints", displayGrade(state, maxGrade, a.getScaleFactor()));
+                }
             }
         } else {
             // new assignment
@@ -5549,14 +5552,11 @@ public class AssignmentAction extends PagedResourceActionII {
             ParameterParser params = data.getParameters();
             String submissionRef = params.getString("submissionId");
             String submissionId = null;
+            String assignmentRef = null;
+            AssignmentSubmission submission = null;
             if(submissionRef != null){
             	submissionRef = submissionRef.endsWith("/") ? StringUtils.chop(submissionRef) : submissionRef;
-                int i = submissionRef.lastIndexOf(Entity.SEPARATOR);
-                if (i == -1){
-                    submissionId = submissionRef;
-                }else{
-                    submissionId = submissionRef.substring(i + 1);
-                }
+            	submissionId = AssignmentReferenceReckoner.reckoner().reference(submissionRef).reckon().getId();
             }
             if (submissionId != null) {
                 //call the DB to make sure this user can edit this assessment, otherwise it wouldn't exist
@@ -5568,15 +5568,14 @@ public class AssignmentAction extends PagedResourceActionII {
                         //item was part of the calculation, re-calculate
                         boolean saved = assignmentPeerAssessmentService.updateScore(submissionId, peerAssessor);
                         if (saved) {
-                            //we need to make sure the GB is updated correctly (or removed)
-                            String assignmentId = item.getAssignmentId();
-                            if (assignmentId != null) {
-                                Assignment a = getAssignment(assignmentId, "saveReviewGradeForm", state);
-                                if (a != null) {
-                                    String aReference = AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference();
+                        	submission = getSubmission(submissionRef, "saveReviewGradeForm", state);
+                        	Assignment a = submission.getAssignment();
+                        	if (a != null) {
+                        		assignmentRef = AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference();
+                                if (assignmentRef != null) {
                                     String associateGradebookAssignment = a.getProperties().get(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT);
                                     // update grade in gradebook
-                                    integrateGradebook(state, aReference, associateGradebookAssignment, null, null, null, -1, null, submissionId, "update", -1);
+                                    integrateGradebook(state, assignmentRef, associateGradebookAssignment, null, null, null, -1, null, submissionId, "update", -1);
                                 }
                             }
                         }
@@ -8555,7 +8554,7 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setOpenDate(openTime);
         a.setDueDate(dueTime);
         a.setDropDeadDate(dueTime);
-        a.setVisibleDate(visibleTime != null ? visibleTime : openTime);
+        a.setVisibleDate(visibleTime);
         if (closeTime != null) a.setCloseDate(closeTime);
 
         Map<String, String> p = a.getProperties();
@@ -9063,7 +9062,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 state.setAttribute(NEW_ASSIGNMENT_SECTION, a.getSection());
 
                 state.setAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE, a.getTypeOfSubmission().ordinal());
-                state.setAttribute(NEW_ASSIGNMENT_CATEGORY, getAssignmentCategoryAsInt(a));
+                state.setAttribute(NEW_ASSIGNMENT_CATEGORY, 0);
                 state.setAttribute(NEW_ASSIGNMENT_GRADE_TYPE, a.getTypeOfGrade().ordinal());
                 if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
                     state.setAttribute(NEW_ASSIGNMENT_GRADE_POINTS, a.getMaxGradePoint().toString());
@@ -9177,6 +9176,37 @@ public class AssignmentAction extends PagedResourceActionII {
 
     } // doEdit_Assignment
 
+    
+	private String getGradeName(final Assignment a, final String assignmentReference) {
+        final Map<String, String> properties = a.getProperties();
+        final String gradebookChoice = StringUtils.defaultIfBlank(properties.get(NEW_ASSIGNMENT_ADD_TO_GRADEBOOK), GRADEBOOK_INTEGRATION_NO);
+        final StringBuffer sb = new StringBuffer();
+
+        switch(gradebookChoice) {
+            case GRADEBOOK_INTEGRATION_ADD:
+                // add new entry to gradebook
+                sb.append(rb.getString("grading.add"))
+                        .append(rb.getString("grading.ofcategory"))
+                        .append(categoryTable().get(0));
+                break;
+            case GRADEBOOK_INTEGRATION_ASSOCIATE:
+			    // associated with one existing entry in Gradebook
+                sb.append(rb.getString("grading.associate"))
+                        .append(": ");
+                if (assignmentReference.equals(properties.get(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT))) {
+                    sb.append(a.getTitle());
+                } else {
+                    sb.append(properties.get(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT));
+                }
+                break;
+            case GRADEBOOK_INTEGRATION_NO:
+            default:
+                // not associating with gradebook
+                sb.append(rb.getString("grading.no"));
+        }
+        return sb.toString();
+	}
+    
     public List<String> getSubmissionRepositoryOptions() {
         List<String> submissionRepoSettings = new ArrayList<String>();
         String[] propertyValues = serverConfigurationService.getStrings("turnitin.repository.setting");
@@ -11127,81 +11157,110 @@ public class AssignmentAction extends PagedResourceActionII {
         // put the input value into the state attributes
         state.setAttribute(NEW_ASSIGNMENT_TITLE, "");
 
+        // get the configured date offsets in seconds  
+        // defaults: visible date - now, open date - now, due date - seven days later,   
+        //           accept until date - eight days after now, peer eval date - fifteen days after now.  
+        // note that front-end javascript code rounds the time back to the nearest five minutes.
+
+        int visibleDateOffset = serverConfigurationService.getInt("assignment.visibledate", 0);
+        int openDateOffset = serverConfigurationService.getInt("assignment.opendate", 0);
+        int dueDateOffset = serverConfigurationService.getInt("assignment.duedate", 604800);
+        int acceptUntilDateOffset = serverConfigurationService.getInt("assignment.acceptuntildate", 691200);
+        int peerEvaluationDateOffset = serverConfigurationService.getInt("assignment.peerevaluationdate", 1296000);
+
         // get current time
         Instant t = Instant.now();
-        LocalDateTime ldt = LocalDateTime.ofInstant(t, timeService.getLocalTimeZone().toZoneId());
-        int month = ldt.getMonthValue();
-        int day = ldt.getDayOfMonth();
-        int year = ldt.getYear();
+        int minute;
+        int hour;
+        int month;
+        int day;
+        int year;
 
-        // set the visible time to be 12:00 PM
-        if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLEMONTH, month);
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLEDAY, day);
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLEYEAR, year);
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLEHOUR, 12);
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLEMIN, 0);
-            state.setAttribute(NEW_ASSIGNMENT_VISIBLETOGGLE, false);
-        }
+        // open date is shifted forward by the offset
+        Instant tOpen = t.plusSeconds(openDateOffset);
+        LocalDateTime ldtOpen = LocalDateTime.ofInstant(tOpen, ZoneId.systemDefault());
+        minute = ldtOpen.getMinute();
+        hour = ldtOpen.getHour();
+        month = ldtOpen.getMonthValue();
+        day = ldtOpen.getDayOfMonth();
+        year = ldtOpen.getYear();
 
-        // set the open time to be 12:00 PM
         state.setAttribute(NEW_ASSIGNMENT_OPENMONTH, month);
         state.setAttribute(NEW_ASSIGNMENT_OPENDAY, day);
         state.setAttribute(NEW_ASSIGNMENT_OPENYEAR, year);
-        state.setAttribute(NEW_ASSIGNMENT_OPENHOUR, 12);
-        state.setAttribute(NEW_ASSIGNMENT_OPENMIN, 0);
+        state.setAttribute(NEW_ASSIGNMENT_OPENHOUR, hour);
+        state.setAttribute(NEW_ASSIGNMENT_OPENMIN, minute);
 
         // set the all purpose item release time
         state.setAttribute(ALLPURPOSE_RELEASE_MONTH, month);
         state.setAttribute(ALLPURPOSE_RELEASE_DAY, day);
         state.setAttribute(ALLPURPOSE_RELEASE_YEAR, year);
-        state.setAttribute(ALLPURPOSE_RELEASE_HOUR, 12);
-        state.setAttribute(ALLPURPOSE_RELEASE_MIN, 0);
+        state.setAttribute(ALLPURPOSE_RELEASE_HOUR, hour);
+        state.setAttribute(ALLPURPOSE_RELEASE_MIN, minute);
 
-        // due date is shifted forward by 7 days
-        Instant t7 = t.plus(Duration.ofDays(7));
-        LocalDateTime ldt7 = LocalDateTime.ofInstant(t7, timeService.getLocalTimeZone().toZoneId());
-        month = ldt7.getMonthValue();
-        day = ldt7.getDayOfMonth();
-        year = ldt7.getYear();
+        // due date is shifted forward by the offset
+        Instant tDue = t.plusSeconds(dueDateOffset);
+        LocalDateTime ldtDue = LocalDateTime.ofInstant(tDue, ZoneId.systemDefault());
+        minute = ldtDue.getMinute();
+        hour = ldtDue.getHour();
+        month = ldtDue.getMonthValue();
+        day = ldtDue.getDayOfMonth();
+        year = ldtDue.getYear();
 
-        // set the due time to be 5:00pm
         state.setAttribute(NEW_ASSIGNMENT_DUEMONTH, month);
         state.setAttribute(NEW_ASSIGNMENT_DUEDAY, day);
         state.setAttribute(NEW_ASSIGNMENT_DUEYEAR, year);
-        state.setAttribute(NEW_ASSIGNMENT_DUEHOUR, 17);
-        state.setAttribute(NEW_ASSIGNMENT_DUEMIN, 0);
+        state.setAttribute(NEW_ASSIGNMENT_DUEHOUR, hour);
+        state.setAttribute(NEW_ASSIGNMENT_DUEMIN, minute);
 
         // set the resubmit time to be the same as due time
         state.setAttribute(ALLOW_RESUBMIT_CLOSEMONTH, month);
         state.setAttribute(ALLOW_RESUBMIT_CLOSEDAY, day);
         state.setAttribute(ALLOW_RESUBMIT_CLOSEYEAR, year);
-        state.setAttribute(ALLOW_RESUBMIT_CLOSEHOUR, 17);
-        state.setAttribute(ALLOW_RESUBMIT_CLOSEMIN, 0);
+        state.setAttribute(ALLOW_RESUBMIT_CLOSEHOUR, hour);
+        state.setAttribute(ALLOW_RESUBMIT_CLOSEMIN, minute);
         state.setAttribute(AssignmentConstants.ALLOW_RESUBMIT_NUMBER, 1);
 
         // enable the close date by default
         state.setAttribute(NEW_ASSIGNMENT_ENABLECLOSEDATE, Boolean.TRUE);
-        // set the close time to be 5:00 pm, same as the due time by default
+
+        // Accept until date is shifted forward by the offset
+        Instant tAccept = t.plusSeconds(acceptUntilDateOffset);
+        LocalDateTime ldtAccept = LocalDateTime.ofInstant(tAccept, ZoneId.systemDefault());
+        minute = ldtAccept.getMinute();
+        hour = ldtAccept.getHour();
+        month = ldtAccept.getMonthValue();
+        day = ldtAccept.getDayOfMonth();
+        year = ldtAccept.getYear();
+
+        // Set the close date (accept until)
         state.setAttribute(NEW_ASSIGNMENT_CLOSEMONTH, month);
         state.setAttribute(NEW_ASSIGNMENT_CLOSEDAY, day);
         state.setAttribute(NEW_ASSIGNMENT_CLOSEYEAR, year);
-        state.setAttribute(NEW_ASSIGNMENT_CLOSEHOUR, 17);
-        state.setAttribute(NEW_ASSIGNMENT_CLOSEMIN, 0);
+        state.setAttribute(NEW_ASSIGNMENT_CLOSEHOUR, hour);
+        state.setAttribute(NEW_ASSIGNMENT_CLOSEMIN, minute);
 
         // set the all purpose retract time
         state.setAttribute(ALLPURPOSE_RETRACT_MONTH, month);
         state.setAttribute(ALLPURPOSE_RETRACT_DAY, day);
         state.setAttribute(ALLPURPOSE_RETRACT_YEAR, year);
-        state.setAttribute(ALLPURPOSE_RETRACT_HOUR, 17);
-        state.setAttribute(ALLPURPOSE_RETRACT_MIN, 0);
+        state.setAttribute(ALLPURPOSE_RETRACT_HOUR, hour);
+        state.setAttribute(ALLPURPOSE_RETRACT_MIN, minute);
 
-        // set the peer period time to be 10 mins after accept until date
+        // Peer evaluation date is shifted forward by the offset
+        Instant tPeer = t.plusSeconds(peerEvaluationDateOffset);
+        LocalDateTime ldtPeer = LocalDateTime.ofInstant(tPeer, ZoneId.systemDefault());
+        minute = ldtPeer.getMinute();
+        hour = ldtPeer.getHour();
+        month = ldtPeer.getMonthValue();
+        day = ldtPeer.getDayOfMonth();
+        year = ldtPeer.getYear();
+
         state.setAttribute(NEW_ASSIGNMENT_PEERPERIODMONTH, month);
         state.setAttribute(NEW_ASSIGNMENT_PEERPERIODDAY, day);
         state.setAttribute(NEW_ASSIGNMENT_PEERPERIODYEAR, year);
-        state.setAttribute(NEW_ASSIGNMENT_PEERPERIODHOUR, 17);
-        state.setAttribute(NEW_ASSIGNMENT_PEERPERIODMIN, 10);
+        state.setAttribute(NEW_ASSIGNMENT_PEERPERIODHOUR, hour);
+        state.setAttribute(NEW_ASSIGNMENT_PEERPERIODMIN, minute);
 
         state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_ANON_EVAL, Boolean.TRUE);
         state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_STUDENT_VIEW_REVIEWS, Boolean.TRUE);
@@ -14079,25 +14138,6 @@ public class AssignmentAction extends PagedResourceActionII {
         };
     }
 
-    /**
-     * Categories are represented as Integers. Right now this feature only will
-     * be active for new assignments, so we'll just always return 0 for the
-     * unassigned category. In the future we may (or not) want to update this
-     * to return categories for existing gradebook items.
-     *
-     * @param assignment
-     * @return
-     */
-    private int getAssignmentCategoryAsInt(Assignment assignment) {
-        int categoryAsInt;
-        categoryAsInt = 0; // zero for unassigned
-
-        return categoryAsInt;
-    }
-
-    /*
-	 * (non-Javadoc)
-	 */
     public void doOptions(RunData data, Context context) {
         doOptions(data);
     } // doOptions
