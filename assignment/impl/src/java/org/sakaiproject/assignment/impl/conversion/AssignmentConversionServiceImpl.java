@@ -313,9 +313,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setAllowPeerAssessment(assignment.getAllowpeerassessment());
         a.setCloseDate(convertStringToTime(assignment.getClosedate()));
         a.setContentReview(content.getAllowreview());
-        a.setContext(assignment.getContext());
-        log.info("logging assignment.getContext below: ");
-        log.warn("assignment context: {} :", assignment.getTitle());   //logging $$$
+        a.setContext(assignment.getContext());  //try catch here?
         a.setDateCreated(convertStringToTime(content.getDatecreated()));
         a.setDateModified(convertStringToTime(content.getLastmod()));
         a.setDraft(assignment.getDraft());
@@ -333,9 +331,11 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         try {
             a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         } catch(Exception e) {
-            log.warn("Error getting grade type from assignment: {} , setting to no instructions message ", assignment.getId());
+            log.warn("Error getting instructions from assignment: {} , setting to empty string", assignment.getId());
             log.info("caught: {} ", e);
-            a.setInstructions("no instructions provided");
+            log.warn("assignment id: {} , content.getContext: {} , content.getId: {} , content.getTitle: {} ",
+                    assignment.getId(), content.getContext(), content.getId(), content.getTitle());
+            a.setInstructions(" "); //changed no instructions message into a single blank space
         }
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
@@ -354,8 +354,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
         //a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
-        //below seems to be causing the array index out of bounds error $$$
-        log.warn("Printing Assignment.GradeType.values().length: {} ", Assignment.GradeType.values().length );
 
         //a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);  //explicitly setting grade_type_none works
         try {
@@ -364,6 +362,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         catch(ArrayIndexOutOfBoundsException oob) {
             log.warn("Error getting grade type from assignment: {} , setting to type-none ", assignment.getId());
             log.info("caught: {} ", oob);
+            log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
             a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
         }
 
@@ -373,14 +372,12 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         } catch(ArrayIndexOutOfBoundsException oob){
             log.warn("Error getting submission type from assignment: {} , setting to type-none ", assignment.getId());
             log.info("caught: {} ", oob);
-            a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);
+            log.info("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
+            a.setTypeOfSubmission(Assignment.SubmissionType.ASSIGNMENT_SUBMISSION_TYPE_NONE);
         }
 
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
 
-        //log content passed in as 011AssignmentContent
-        log.info("logging assignment content information below ");
-        log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
 
         // support for list of attachment0
         Set<String> attachmentKeys = Arrays.stream(contentAnyKeys).filter(attachmentFilter).collect(Collectors.toSet());
@@ -622,7 +619,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
         } else {
             log.warn("text != null: {}", text != null);
-            log.warn("!text.isEmpty(): {}", !text.isEmpty());
+            //log.warn("!text.isEmpty(): {}", !text.isEmpty());  //throwing null pointer
             return null;
         }
 
