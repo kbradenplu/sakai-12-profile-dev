@@ -322,11 +322,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setHideDueDate(content.getHideduedate());
         a.setHonorPledge(content.getHonorpledge() == 2 ? Boolean.TRUE : Boolean.FALSE);
         a.setId(assignment.getId());   //log this $$$
-        log.info("logging assignment.getId below: ");
-        log.warn("assignment id: {} :", assignment.getId());   //logging $$$
         a.setIndividuallyGraded(content.getIndivgraded());
-        //a.setInstructions(decodeBase64(content.getInstructionsHtml()));
-        //setting instructions to empty string instead of above
         //a.setInstructions("no instructions provided");   //explicitly setting instructions works
         try {
             a.setInstructions(decodeBase64(content.getInstructionsHtml()));
@@ -578,8 +574,8 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         // remove any properties that are null or blank
         properties.values().removeIf(StringUtils::isBlank);
 
-        //print this s $$$
-        log.info("submission info: {} site: {}",s.getId(),assignment.getContext());
+        //submission info :
+        //log.info("submission info: {} site: {}",s.getId(),assignment.getContext());
         return s;
     }
 
@@ -599,7 +595,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     //try adding StringUtils.isBlank(text.trim())   next
     //this is hitting else and returning null, follow downstream
     public static String decodeBase64(String text) {
-        //if (StringUtils.isBlank(text)) return null;
         if(text != null && !text.isEmpty()){
             try {
                 String decoded = new String(Base64.getDecoder().decode(text));
@@ -608,8 +603,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
                     // with the last 3 byte char
                     decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
                 }
-                log.info("inside of decodeBase64. ** decoded: {}", decoded);
-                //logging $$$
                 return decoded;
             } catch (IllegalArgumentException iae) {
                 log.warn("invalid base64 string during decode: {}", text);
@@ -618,15 +611,13 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             }
 
         } else {
-            log.warn("text != null: {}", text != null);
-            //log.warn("!text.isEmpty(): {}", !text.isEmpty());  //throwing null pointer
+            log.warn("text != null: {}, returning null", text != null);
             return null;
         }
 
 
         return text;
     }
-
 
 
 }
