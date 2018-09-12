@@ -188,8 +188,7 @@ span.externally-linked, label input.checklist-checkbox:checked + span.externally
     display: none;
 }
 
-
-h2 {
+.titleBorder h2 {
     margin-top: 0.5em !important;
 }
 

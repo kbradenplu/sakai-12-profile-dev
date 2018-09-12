@@ -327,10 +327,6 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .ui-button-text {
 	padding: 0.25em 0.8em !important
 }
-.itemclass {
-	margin-top: 2.0em;
-	margin-bottom: 1.0em;
-}
 .rowdescription {
 	margin: 2px  0px  0px 30px;
 }
@@ -499,7 +495,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #ccf2ff
 }
 .column a[href]{
-  color: #004860;
+/*  color: #004860; */
 }
 .colgray {
    background-color: #f0f0f0;
@@ -1692,7 +1688,8 @@ li.resourceType .right-col {
  border:none;
 }
 .itemclass {
-  margin-top: 2.0em !important;
+    margin-top: 0 !important;
+    margin-bottom: 1em;
 }
 .add-comment-button span {
 font-size: 90%;
@@ -1743,9 +1740,6 @@ font-size: 12px;
   margin-right: 10px;
   margin-top: 7px;
   margin-bottom: 5px;
-}
-.portletBody {
-/*  margin-top: 2.5em; */
 }
 .PagePicker {
   margin-top:12px;
@@ -2198,4 +2192,13 @@ label.block {
 
 #grouplist input[type="checkbox"] {
     margin-right: 0.5em;
+}
+
+.checklistForm fieldset {
+    display: block;
+    margin-top: -3.5rem;
+}
+
+hr {
+    border-top: 1px solid #777 !important;
 }

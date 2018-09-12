@@ -46,7 +46,8 @@ $background-color: 			 #FFFFFF !default;
 //$background-color-secondary: #3949AB !default;
 $background-color-secondary: #333 !default;
 
-$primary-link-color:   			 #265b81 !default;
+$primary-link-color:   			 #0064cd !default; 
+/*$primary-link-color:   			 #265b81 !default; */
 /*$primary-color:    			 #265b81 !default; */
 $primary-color:    			 #555 !default; 
 $primary-color-highContrast: darken( $primary-color, 4% ) !default;	// for use of primary on non-white light backgrounds, such as greys
