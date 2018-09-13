@@ -605,3 +605,11 @@
 .handsontable.ht_master thead {
     visibility: hidden;
 }
+
+.ht_master {
+    background-color: #ededed;
+}
+
+.wtHider {
+    border-bottom: 1px solid #999;
+}
