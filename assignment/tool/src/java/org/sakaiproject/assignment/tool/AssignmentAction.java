@@ -4916,7 +4916,8 @@ public class AssignmentAction extends PagedResourceActionII {
                                     String grade = gradeString != null ? displayGrade(state, gradeString, a.getScaleFactor()) : null;
                                     for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
                                         String submitterId = submitter.getSubmitter();
-                                        String gradeStringToUse = (a.getIsGroup() && submitter.getGrade() != null) ? submitter.getGrade() : grade;
+                                        String submitterGrade = submitter.getGrade() != null ? displayGrade(state, submitter.getGrade(), a.getScaleFactor()) : null;
+                                        String gradeStringToUse = (a.getIsGroup() && submitterGrade != null) ? submitterGrade : grade;
                                         sm.put(submitterId, gradeStringToUse);
                                         cm.put(submitterId, commentString);
                                     }
@@ -12590,6 +12591,7 @@ public class AssignmentAction extends PagedResourceActionII {
         if (a != null) {
             if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
                 //for point-based grades
+                if (a.getScaleFactor() == null) a.setScaleFactor(assignmentService.getScaleFactor());
                 validPointGrade(state, grade, a.getScaleFactor());
 
                 if (state.getAttribute(STATE_MESSAGE) == null) {
@@ -12626,7 +12628,9 @@ public class AssignmentAction extends PagedResourceActionII {
 
 
             if (grade != null && state.getAttribute(STATE_MESSAGE) == null) {
-                grade = scalePointGrade(state, grade, a.getScaleFactor());
+                if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
+                    grade = scalePointGrade(state, grade, a.getScaleFactor());
+                }
 
                 // get the user list
                 String aRef = AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference();
@@ -12671,6 +12675,7 @@ public class AssignmentAction extends PagedResourceActionII {
         if (a != null) {
             if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
                 //for point-based grades
+                if (a.getScaleFactor() == null) a.setScaleFactor(assignmentService.getScaleFactor());
                 validPointGrade(state, grade, a.getScaleFactor());
 
                 if (state.getAttribute(STATE_MESSAGE) == null) {
@@ -12706,7 +12711,9 @@ public class AssignmentAction extends PagedResourceActionII {
 
 
             if (grade != null && state.getAttribute(STATE_MESSAGE) == null) {
-                grade = scalePointGrade(state, grade, a.getScaleFactor());
+                if (a.getTypeOfGrade() == SCORE_GRADE_TYPE) {
+                    grade = scalePointGrade(state, grade, a.getScaleFactor());
+                }
 
                 // get the submission list
                 String aRef = AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference();
