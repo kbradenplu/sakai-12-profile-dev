@@ -505,7 +505,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #b8b8b8;
 }
 .colgray a[href]{
-  color:black;
+  color: #0064cd;
 }
 .colred {
    background-color: #fff0f0;
@@ -515,7 +515,10 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .colred .commentDiv, .colred .studentContentTable, .colred .questionDiv .contentCol, .colred .checklistDiv, .colred .forumSummaryHeaderDiv, .colred .announcementsHeaderDiv, .colred .fc-toolbar {
   background-color: #ffb3b3;
 }
-.colred a[href], .colred h3.author {
+.colred a[href] {
+    color: #0064cd;
+}
+.colred h3.author {
   color: black;
 }
 .colblue {
@@ -528,7 +531,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #99e7ff;
 }
 .colblue a[href] {
-  color: black;
+  color: #0064cd;
 }
 .colgreen {
    background-color: #f6fff6;
@@ -539,7 +542,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #9fc;
 }
 .colgreen a[href] {
-  color: black;
+  color: #0064cd;
 }
 .colyellow {
     background-color: rgb(255,249,229);
@@ -549,7 +552,10 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .colyellow .commentDiv, .colyellow .studentContentTable, .colyellow .questionDiv .contentCol, .colyellow .checklistDiv, .colyellow .forumSummaryHeaderDiv, .colyellow .announcementsHeaderDiv, .colyellow .fc-toolbar {
   background-color:  #ffd480
 }
-.colyellow a[href],.colyellow h3.author {
+.colyellow a[href] {
+    color: #0064cd;
+}
+.colyellow h3.author {
   color: black;
 }
 
