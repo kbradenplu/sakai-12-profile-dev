@@ -115,7 +115,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
 
     @Override
     public void runConversion(int numberOfAttributes, int lengthOfAttribute) {
-        log.warn("<===== #$%#$%#$%$$$ runConversion in AssignmentConversionServiceImpl start #$%#$% =====>");
         int assignmentsTotal, progress = 0;
         assignmentsConverted = submissionsConverted = submissionsFailed = assignmentsFailed = 0;
 
@@ -346,10 +345,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setScaleFactor(content.getScaled_factor() == null ? AssignmentConstants.DEFAULT_SCALED_FACTOR : content.getScaled_factor());
         a.setSection(assignment.getSection());
         a.setTitle(assignment.getTitle());  //log this $$$
-        log.warn("assignment title: {} :", assignment.getTitle());   //logging $$$
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
-        //a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
-        log.warn("Integer test getTypeOfGrade, content.getTypeofgrade(): {} " , content.getTypeofgrade());
 
         //a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);  //explicitly setting grade_type_none works
         try {
@@ -574,7 +570,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         // remove any properties that are null or blank
         properties.values().removeIf(StringUtils::isBlank);
 
-        //submission info :
         //log.info("submission info: {} site: {}",s.getId(),assignment.getContext());
         return s;
     }
@@ -591,9 +586,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         return null;
     }
 
-    //try returning empty string instead of null - then add null check (originally returning null)
-    //try adding StringUtils.isBlank(text.trim())   next
-    //this is hitting else and returning null, follow downstream
+
     public static String decodeBase64(String text) {
         if(text != null && !text.isEmpty()){
             try {
@@ -611,10 +604,9 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             }
 
         } else {
-            log.warn("text != null: {}, returning null", text != null);
+            //log.warn("text != null: {}, returning null", text != null);
             return null;
         }
-
 
         return text;
     }
