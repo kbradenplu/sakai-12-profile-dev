@@ -705,4 +705,6 @@ div.msgcntr-profile-qtip {
     margin-left: 13px !important;
 }
 
-
+#msgForum h1 {
+    margin-top: 0.5em;
+}

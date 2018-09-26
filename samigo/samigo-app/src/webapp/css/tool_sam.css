@@ -1370,3 +1370,11 @@ label#itemForm\:noFeedbackMsg {
     display: none;
 }
 
+.samigo-container h1 {
+    margin-bottom: 0.75em;
+}
+
+#questionpool h1 {
+    margin-top: 0.5em;
+    margin-botton: 0.25em;
+}

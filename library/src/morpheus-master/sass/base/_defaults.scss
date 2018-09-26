@@ -76,13 +76,19 @@ h1, h2, h3, h4, h5, h6{
 	font-family: $header-font-family;
 	font-weight: 400;
 	line-height: 1.2;
-	margin: 0.75em 0 0.5em 0;
+/*	margin: 0.75em 0 0.5em 0; */
+	margin: 0;
 	max-width: $text-max-width;
+}
+
+.page-header h1, .page-header h2, .page-header h3 {
+  margin-top: 0.75em;
 }
 
 p {
 /*  font-size: 1.0em; */
   max-width: $text-max-width;
+  margin-top: 1em;
 }
 
 h1{
@@ -95,13 +101,14 @@ h2{
 /*	font-size: #{$default-font-size + 6}; */
 /*	font-size: 2.15em; */
 	font-size: 30px;
-	margin-top: 1.15em;
+	margin-top: 0.75em;
 }
 
 h3{
 /*	font-size: #{$default-font-size + 4}; */
 /*	font-size: 1.7em; */
 	font-size: 24px;
+	margin-top: 0.75em;
 }
 
 h4{
@@ -109,6 +116,7 @@ h4{
 /*	font-size: 1.3em; */
 	font-size: 18px;
 	color: #777;
+	margin-top: 0.75em;
 }
 
 h5 {
