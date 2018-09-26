@@ -132,7 +132,7 @@ public class MenuBuilder
 
         addMenuToState( menu, ((JetspeedRunData) data).getPortletSessionState( portlet.getID() ) );
         addMenuToContext( menu, context );
-        addRelatedItemsToContext( menu, context, displayOptions != null && !displayOptions.isShowOnlyOptionsButton(), rl );
+        addRelatedItemsToContext( menu, context, menuOptionsEnabled, displayOptions != null && !displayOptions.isShowOnlyOptionsButton(), rl );
     }
 
     /**
@@ -166,7 +166,7 @@ public class MenuBuilder
 
         addMenuToState( menu, ((JetspeedRunData) data).getPortletSessionState( portlet.getID() ) );
         addMenuToContext( menu, context );
-        addRelatedItemsToContext( menu, context, buttonRequiringCheckboxesPresent, rl );
+        addRelatedItemsToContext( menu, context, true, buttonRequiringCheckboxesPresent, rl );
     }
 
     /**
@@ -216,9 +216,9 @@ public class MenuBuilder
      * @param buttonRequiringCheckboxesPresent
      * @param rl
      */
-    private static void addRelatedItemsToContext(Menu menu, Context context, boolean buttonRequiringCheckboxesPresent, ResourceLoader rl)
+    private static void addRelatedItemsToContext(Menu menu, Context context, boolean menuOptionsEnabled, boolean buttonRequiringCheckboxesPresent, ResourceLoader rl)
     {
-        boolean enabledItemExists = false;
+	boolean enabledItemExists = false;
         for( MenuItem item : menu.getItems() )
         {
             if( item.getIsEnabled() )
@@ -228,9 +228,9 @@ public class MenuBuilder
             }
         }
 
-        context.put( AnnouncementAction.ENABLED_MENU_ITEM_EXISTS, enabledItemExists );
+        context.put( AnnouncementAction.ENABLED_MENU_ITEM_EXISTS, enabledItemExists && menuOptionsEnabled );
         context.put( AnnouncementAction.CONTEXT_ENABLE_ITEM_CHECKBOXES, enabledItemExists && buttonRequiringCheckboxesPresent );
-        context.put( AnnouncementAction.CONTEXT_ENABLED_MENU_ITEM_EXISTS, enabledItemExists );
+        context.put( AnnouncementAction.CONTEXT_ENABLED_MENU_ITEM_EXISTS, enabledItemExists && menuOptionsEnabled );
         context.put( Menu.CONTEXT_ACTION, ANNOUNCEMENT_ACTION );
         context.put( CONTEXT_RESOURCE_LOADER, rl );
         context.put( CONTEXT_TOOL_TITLE, TM.getCurrentPlacement().getTitle() );
