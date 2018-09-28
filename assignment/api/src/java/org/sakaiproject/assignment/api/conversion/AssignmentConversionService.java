@@ -1,7 +1,5 @@
 package org.sakaiproject.assignment.api.conversion;
 
-import java.util.List;
-
 public interface AssignmentConversionService {
 
     /**

@@ -148,7 +148,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         ServerConfigurationService.ConfigItem configItem = BasicConfigItem.makeConfigItem(
                 AssignableUUIDGenerator.HIBERNATE_ASSIGNABLE_ID_CLASSES,
                 configValue,
-                AssignmentConversionServiceImpl.class.getName(),
+                this.getClass().getName(),
                 true);
         serverConfigurationService.registerConfigItem(configItem);
 
@@ -176,7 +176,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         configItem = BasicConfigItem.makeConfigItem(
                 AssignableUUIDGenerator.HIBERNATE_ASSIGNABLE_ID_CLASSES,
                 StringUtils.trimToEmpty(currentValue),
-                AssignmentConversionServiceImpl.class.getName());
+                this.getClass().getName());
         serverConfigurationService.registerConfigItem(configItem);
 
         log.info("<===== Assignments converted {} =====>", assignmentsConverted);
@@ -304,16 +304,17 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
     }
 
     private Assignment assignmentReintegration(O11Assignment assignment, O11AssignmentContent content) {
-        Map<String, Object> assignmentAny = assignment.getAny();
-        Map<String, Object> contentAny = content.getAny();
-        String[] assignmentAnyKeys = assignmentAny.keySet().toArray(new String[assignmentAny.size()]);
-        String[] contentAnyKeys = contentAny.keySet().toArray(new String[contentAny.size()]);
 
         // if an assignment context is missing we ignore the assignment
         if (StringUtils.isBlank(assignment.getContext())) {
             log.warn("Assignment {} does not have a CONTEXT", assignment.getId());
             return null;
         }
+
+        Map<String, Object> assignmentAny = assignment.getAny();
+        Map<String, Object> contentAny = content.getAny();
+        String[] assignmentAnyKeys = assignmentAny.keySet().toArray(new String[assignmentAny.size()]);
+        String[] contentAnyKeys = contentAny.keySet().toArray(new String[contentAny.size()]);
 
         Assignment a = new Assignment();
         a.setAllowAttachments(content.getAllowattach());
@@ -330,7 +331,18 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setHonorPledge(content.getHonorpledge() == 2 ? Boolean.TRUE : Boolean.FALSE);
         a.setId(assignment.getId());
         a.setIndividuallyGraded(content.getIndivgraded());
-        a.setInstructions(decodeBase64(content.getInstructionsHtml()));
+
+        // explicitly setting instructions to a single space string if error getting instructions
+        try {
+            a.setInstructions(decodeBase64(content.getInstructionsHtml()));
+        } catch(Exception e) {
+            log.warn("Error getting instructions from assignment: {} , setting to empty string", assignment.getId());
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", e);
+            log.warn("assignment id: {} , content.getContext: {} , content.getId: {} , content.getTitle: {} ",
+                    assignment.getId(), content.getContext(), content.getId(), content.getTitle());
+            a.setInstructions(" ");
+        }
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
         a.setOpenDate(convertStringToTime(assignment.getOpendate()));
@@ -345,9 +357,32 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setSection(assignment.getSection());
         a.setTitle(assignment.getTitle());
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
-        a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
-        a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
+
+        // explicitly setting to GRADE_TYPE_NONE when no type is found
+        try {
+            a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
+        }
+        catch(ArrayIndexOutOfBoundsException oob) {
+            log.warn("Error getting grade type from assignment: {} , setting to type-none ", assignment.getId());
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", oob);
+            log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
+            a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
+        }
+
+        // explicitly setting to ASSIGNMENT_SUBMISSION_TYPE_NONE when no type is found
+        try {
+            a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
+        } catch(ArrayIndexOutOfBoundsException oob){
+            log.warn("Error getting submission type from assignment: {} , setting to type-none ", assignment.getId());
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", oob);
+            log.info("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
+            a.setTypeOfSubmission(Assignment.SubmissionType.ASSIGNMENT_SUBMISSION_TYPE_NONE);
+        }
+
         a.setVisibleDate(convertStringToTime(assignment.getVisibledate()));
+
 
         // support for list of attachment0
         Set<String> attachmentKeys = Arrays.stream(contentAnyKeys).filter(attachmentFilter).collect(Collectors.toSet());
@@ -434,7 +469,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         s.setGradeReleased(submission.getGradereleased());
         s.setHiddenDueDate(submission.getHideduedate());
         s.setHonorPledge(submission.getPledgeflag());
-        s.setId(submission.getId());
+        s.setId(submission.getId());  //log this $$$
         s.setReturned(submission.getReturned());
         s.setSubmitted(submission.getSubmitted());
         s.setSubmittedText(decodeBase64(submission.getSubmittedtextHtml()));
@@ -581,19 +616,29 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         return null;
     }
 
+
     public static String decodeBase64(String text) {
-        if (StringUtils.isBlank(text)) return null;
-        try {
-            String decoded = new String(Base64.getDecoder().decode(text));
-            if (cleanUTF8) {
-                // replaces any unicode characters outside the first 3 bytes
-                // with the last 3 byte char
-                decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
+        if(text != null && !text.isEmpty()){
+            try {
+                String decoded = new String(Base64.getDecoder().decode(text));
+                if (cleanUTF8) {
+                    // replaces any unicode characters outside the first 3 bytes
+                    // with the last 3 byte char
+                    decoded = decoded.replaceAll("[^\\u0000-\\uFFFF]", replacementUTF8);
+                }
+                return decoded;
+            } catch (IllegalArgumentException iae) {
+                log.warn("invalid base64 string during decode: {}", text);
+            } catch (Exception e) {
+                log.warn("General decoding failure for: {} --exception: ", text, e);
             }
-            return decoded;
-        } catch (IllegalArgumentException iae) {
-            log.warn("invalid base64 string during decode: {}", text);
+
+        } else {
+            return null;
         }
+
         return text;
     }
+
+
 }
