@@ -586,8 +586,15 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 }
 .mainList div.textType, .mainList div.multimediaType, .mainList div.checklistType {
     margin-top: 0px;
-    margin-bottom: 10px; 
 } 
+.mainList div.multimediaType, .mainList div.checklistType {
+    margin-bottom: 10px; 
+}
+
+.mainList div.resourceType {
+    margin-top: 0.25em;
+}
+
 .mainList div.question .multipleChoiceAnswer {
 }
 .mainList div.question .multipleChoiceForm input.bold {
