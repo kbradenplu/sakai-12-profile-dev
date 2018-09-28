@@ -506,6 +506,10 @@ a.hideDivision {
     margin: 0 0 1em 0;
 }
 
+span.author_mcLabelText {
+    padding-right: 0.2em;
+}
+
 .mcColumn1 {
   	width: 40px;
 }
@@ -1366,3 +1370,11 @@ label#itemForm\:noFeedbackMsg {
     display: none;
 }
 
+.samigo-container h1 {
+    margin-bottom: 0.75em;
+}
+
+#questionpool h1 {
+    margin-top: 0.5em;
+    margin-botton: 0.25em;
+}

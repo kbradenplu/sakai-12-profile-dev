@@ -46,7 +46,8 @@ $background-color: 			 #FFFFFF !default;
 //$background-color-secondary: #3949AB !default;
 $background-color-secondary: #333 !default;
 
-$primary-link-color:   			 #265b81 !default;
+$primary-link-color:   			 #0064cd !default; 
+/*$primary-link-color:   			 #265b81 !default; */
 /*$primary-color:    			 #265b81 !default; */
 $primary-color:    			 #555 !default; 
 $primary-color-highContrast: darken( $primary-color, 4% ) !default;	// for use of primary on non-white light backgrounds, such as greys
@@ -350,8 +351,14 @@ $tool-menu-item-hover-text-color:                          #191919 !default;
 $tool-menu-item-hover-icon-color:                          #424242 !default;
 $tool-menu-item-hover-background-color:                    #ECECEC !default;
 $tool-menu-item-hover-border-left:                         4px solid #7F7F7F !default;
+
+/*
 $tool-menu-item-hidden-text-color:                         #9A9A9A !default;
 $tool-menu-item-hidden-icon-color:                         #A9A9A9 !default;
+*/
+$tool-menu-item-hidden-text-color:                         #666 !default;
+$tool-menu-item-hidden-icon-color:                         #999 !default;
+
 $tool-menu-item-hidden-background-color:                   #FAFAFA !default;
 $tool-menu-item-hidden-border-left:                        4px solid transparent !default;
 $tool-menu-item-hidden-hover-color:                        #808080 !default;

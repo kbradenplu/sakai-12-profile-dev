@@ -96,7 +96,7 @@ function resizeFrame(){
 			<input type="hidden" name="fromInterface" value="revise" />
 
 			<div class="form-group row">
-			    <label for="subject" class="form-control-label col-md-2">
+			    <label for="subject" class="form-control-label col-md-12">
 					<span class="reqStar">* </span>
 					$tlang.getString("revise.subject") 
 				</label>

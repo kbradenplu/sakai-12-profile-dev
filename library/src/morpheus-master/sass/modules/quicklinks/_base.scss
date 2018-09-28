@@ -3,6 +3,7 @@
   border-right: 1px solid $tool-border-color;
   @media #{$phone}{
     display: inline-block;
+    border-right: none;
   }
 
   .fa-external-link-square{

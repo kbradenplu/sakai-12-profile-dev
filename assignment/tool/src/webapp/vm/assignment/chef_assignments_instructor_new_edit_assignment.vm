@@ -24,6 +24,11 @@
 		if ($("#generalAlert").length <= 0) {
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
+		window.onload = function() {
+			if( $('#new_assignment_group_submit').is(':checked') ) {
+				ASN.toggleAddOptions('GROUP');
+			}
+		}
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -114,7 +119,7 @@
 
 	#if ($alertMessage)
 		<div class="alertMessage" id="generalAlert">
-			<strong>$tlang.getString("gen.alert")</strong> <small> $alertMessage </small>
+			<strong>$tlang.getString("gen.alert")</strong> $alertMessage
 		</div>
 	#end
 
@@ -218,7 +223,7 @@
                     $tlang.getString("allowVisibleDate")
 				</label>
 				<div class="col-sm-10">
-					<input type="checkbox" id="allowVisibleDateToggle" name="allowVisibleDateToggle" #if($!new_assignment_visibletoggle)checked="checked"#end onclick="if(checked){jQuery('.visibleDatePanel').show();ASN.resizeFrame();}else{jQuery('.visibleDatePanel').hide();}" />
+					<input type="checkbox" id="allowVisibleDateToggle" name="allowVisibleDateToggle" #if($!new_assignment_visibletoggle)checked="checked"#end onclick="ASN.changeVisibleDate();" />
 				</div>
 			</div>
 		</div>
@@ -590,9 +595,8 @@
 			$tlang.getString("gen.stusub")
 		</h4>
 		<div class="form-group row form-required">
-			<div id="submissionType">
-
-			<label for="subType" form-control-label">
+			<div class="submissionType">
+			<label for="subType" class="form-control-label" style="margin-left: 1.5rem">
 				$tlang.getString("gen.submissionType")
 			</label>
 
@@ -620,11 +624,9 @@
 			<div class="col-sm-12">
 				<div id="tempAllowRes" #if ($value_SubmissionType == 4) style = "display:none"#end>
 					<input type="checkbox" id="allowResToggle" name ="allowResToggle" #if($!value_allowResubmitNumber) checked="checked"#end onclick="if(checked){document.getElementById('allowResubmitNumber').style.display = 'block';document.getElementById('allowResubmitTime').style.display = 'block';document.getElementById('resubmitNotification').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('allowResubmitNumber').style.display = 'none';document.getElementById('allowResubmitTime').style.display = 'none';document.getElementById('resubmitNotification').style.display = 'none';}" />
-
-			<label class="control-label" for="allowResToggle">
+			<label class="control-label" for="allowResToggle" style="margin-left: 0.5rem; font-weight: normal">
 				$tlang.getString("allowResubmit")
 			</label>
-
 				</div>
 			</div>
 		</div>
@@ -749,17 +751,6 @@
 				#else
 					<div id="reviewServiceOptions" style="display:none" class="col-sm-offset-1">
 				#end
-
-					## This is the location where AllowStudentView checkbox originated,
-					## to allow for different checkers, though we (PLU) moved it to improve layout.
-
-					<!-- Start TII custom options -->
-					#if($reviewServiceName.equals("Turnitin"))
-
-					#if ($content_review_note)
-						$content_review_note
-					#end
-
 					<div class="checkbox">
 						<label for="$name_AllowStudentView">
 						#if ($!value_AllowStudentView.equals("true"))
@@ -771,6 +762,12 @@
 						</label>
 					</div>
 
+					<!-- Start TII custom options -->
+					#if($reviewServiceProviderId == $turnitinProviderId)
+
+					#if ($content_review_note)
+						$content_review_note
+					#end
 
 					<h5>
 						$tlang.getString("review.submit.papers.repository")
@@ -801,6 +798,7 @@
 						#end
 					</div>
 
+					<br/>
 					#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_SMALL_MATCHES)
 						<h5>
 							$tlang.getString("review.exclude.matches.header")
@@ -1009,13 +1007,113 @@
                         </div>
 
                         <!-- End VeriCite custom options -->
+					#elseif($reviewServiceProviderId == $turnitinOCProviderId)
+						<!-- Start TurnitinOC custom options -->
+						
+						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC || $show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED)
+							<br/>
+							<div>
+								<label>$tlang.getString("turnitinoc.exclude.header"):</label>
+							</div>
+							<div style="display:inline-block">
+								<!-- Exclude Bibliographic materials -->
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC)
+									<div class="checkbox">
+										<label for="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC">
+											#if ($!value_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC.equals("true"))
+												<input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC" name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC" type="checkbox" value="true" checked="checked" />
+											#else
+												<input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC" name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_BIBLIOGRAPHIC" type="checkbox" value="true" />
+											#end
+											$tlang.getString("turnitinoc.exclude.bibliography")
+										</label>
+									</div>
+								#end
+								<!-- Exclude Quoted materials -->
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED)
+		                            <div class="checkbox">
+		                                <label for="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED">
+											#if ($!value_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED.equals("true"))
+		                                        <input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED"
+		                                               name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED"
+		                                               type="checkbox" value="true" checked="checked"/>
+											#else
+		                                        <input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED"
+		                                               name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_EXCLUDE_QUOTED"
+		                                               type="checkbox" value="true"/>
+											#end
+											$tlang.getString("turnitinoc.exclude.quoted")
+		                                </label>
+		                            </div>
+								#end
+							</div>
+						#end
+						
+						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX)
+							<br/><br/>
+							<div>
+								<label>$tlang.getString("turnitinoc.index.header"):</label>
+								<p class="text-muted small">
+									$tlang.getString("turnitinoc.index.info")
+								</p>
+							</div>
+							<div style="display:inline-block">
+		                        <!-- Store Inst Index -->
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX)
+		                            <div class="checkbox">
+		                                <label for="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX">
+											#if ($!value_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX.equals("true"))
+		                                        <input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX"
+		                                               name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX"
+		                                               type="checkbox" value="true" checked="checked"/>
+											#else
+		                                        <input id="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX"
+		                                               name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_STORE_INST_INDEX"
+		                                               type="checkbox" value="true"/>
+											#end
+											$tlang.getString("turnitinoc.index.all")
+		                                </label>
+		                             </div>
+								#end
+							</div>
+						#end
+						
+						
+						#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT)
+						 	<br/><br/>
+							<div>
+								<label>$tlang.getString("turnitinoc.generate.header"):</label>
+							</div>
+							<div style="display:inline-block">
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY))
+									<div class="radio">
+										<label><input type="radio" name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO" value="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY" #if($value_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO.equals("$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY"))checked#end/>$tlang.getString("review.originality.reports.immediately")</label>
+									</div>
+								#end
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_DUE))
+									<div class="radio">
+										<label><input type="radio" name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO" value="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_DUE" #if($value_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO.equals("$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_DUE"))checked#end/>$tlang.getString("review.originality.reports.due")</label>
+									</div>
+								#end
+								#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY_AND_DUE))
+									<div class="radio">
+										<label><input type="radio" name="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO" value="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY_AND_DUE" #if($value_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO.equals("$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY_AND_DUE"))checked#end/>$tlang.getString("review.originality.reports.immediately_and_due")</label>
+									</div>
+								#end
+							</div>
+						#end
+						<br/><br/>
+						<p class="text-muted small">
+							<a href="https://guides.turnitin.com/03_Integrations/Turnitin_Partner_Integrations/Sakai" target="_blank">$tlang.getString("turnitinoc.instructions")</a>
+						</p>
+                        <!-- End TurnitinOC custom options -->
 				#elseif($reviewServiceName.equals("Compilatio"))
 						#if ($content_review_note)
 							$content_review_note
 						#end
-						<h4>
+						<h5>
 							$tlang.getString("review.originality.reports")
-						</h4>
+						</h5>
 						<div class="radio">
 							#if($show_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT.contains($name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_IMMEDIATELY))
 								<label for="$name_NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO">
@@ -1397,7 +1495,8 @@
 		#end
 
 	<a name="extraNodesTop"></a>
-	<h4>
+
+	<h4 style="margin-top: 2.5rem; margin-bottom: -1rem">
 		$tlang.getString("additional_information")
 	</h4>
 

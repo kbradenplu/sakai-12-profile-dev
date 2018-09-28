@@ -209,12 +209,12 @@
   box-shadow: 1px 1px 2px #CCC;
 }
 #gradeTableWrapper .gb-category-weight {
-  color: #999;
+  color: #777;
   font-weight: normal;
 }
 #gradeTableWrapper .gb-uncategorized {
   text-align: left;
-  color: #999;
+  color: #777;
 }
 #gradeTableWrapper tbody td .gb-value {
   line-height: 30px;
@@ -329,11 +329,13 @@
   content: "\f06a" !important;
   color: rgb(204,0,0) !important;
 }
-#gradeTableWrapper .gb-save-invalid {
+#gradeTableWrapper .gb-save-invalid,
+#gradeTableWrapper .gb-external-invalid {
   background-color: #FCF8E3 !important;
 }
 #gradeTableWrapper .gb-save-invalid .gb-notification:before,
-.gb-flag-save-invalid:before {
+.gb-flag-save-invalid:before,
+#gradeTableWrapper .gb-external-invalid .gb-notification:before {
   font-family: "gradebook-icons";
   content: "\f071" !important;
   color: rgb(200,144,0) !important;
@@ -602,4 +604,12 @@
    upwards. */
 .handsontable.ht_master thead {
     visibility: hidden;
+}
+
+.ht_master {
+    background-color: #ededed;
+}
+
+.wtHider {
+    border-bottom: 1px solid #999;
 }

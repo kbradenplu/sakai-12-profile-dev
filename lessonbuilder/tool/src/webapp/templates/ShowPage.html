@@ -165,11 +165,11 @@
 		     <span rsf:id="directurl-shorten">Short URL</span>
 		     <textarea rsf:id="directurl-textarea" class="portlet title-tools"></textarea>
 		   </div>
-		   <a role="button" href="#" rsf:id="helpbutton" target="_blank" style="display:inline" class="title-tools help Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--help-popup">
+		   <a role="button" rsf:id="helpbutton" target="_blank" style="display:inline" class="title-tools help Mrphs-toolTitleNav__link Mrphs-toolTitleNav__link--help-popup">
 		       <img rsf:id="helpimage" src="/library/image/transparent.gif"/>
 		       <span rsf:id="helpnewwindow" class="offscreen"></span>
 		   </a>
-		     <a role="button" href="#" rsf:id="helpbutton2" target="_blank" class="title-tools help">
+		     <a role="button" rsf:id="helpbutton2" target="_blank" class="title-tools help">
 			 <img rsf:id="helpimage2" src="/library/image/transparent.gif"/>
 			 <span rsf:id="helpnewwindow2" class="offscreen"></span> </a>
 	       </div>
@@ -282,9 +282,9 @@
 		  <li>
 		    <a role="menuitem button" aria-haspopup="dialog" aria-controls="subpage-dialog" href="#" rsf:id="subpage-link" class="subpage-link"><span rsf:id="msg=simplepage.subpage"></span></a>
 		  </li>
-		  <!--li>
+		  <!-- li>
 		    <a role="menuitem" href="#" rsf:id="add-folder" class="add-folder add-before-param"><span rsf:id="msg.simplepage.folder"></span></a>
-		  </li -->
+		    </li -->
 		  <hr class="addbreak" style="border:none" rsf:id="add-break1"/>
 		  <li rsf:id="add-break2" class="addbreak">
 		    <a role="menuitem button" href="#" rsf:id="add-break3" class="add-break-section"><span rsf:id="msg=simplepage.break-items"></span></a>
@@ -1100,7 +1100,7 @@
                     <p class="shorttext required">
                         <span class="reqStar">*</span>
                         <label class="pageTitle" rsf:id="subpage-label" for="subpage-title"></label>
-                        <input type="text" name="subpage-title" id="subpage-title" rsf:id="subpage-title" maxlength="255" length="30" /><br />
+                        <input type="text" name="subpage-title" id="subpage-title" rsf:id="subpage-title" maxlength="255" length="30" size="40" /><br />
                     </p>
                 
 		    <h5>Choose an existing page</h5>

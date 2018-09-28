@@ -1734,7 +1734,7 @@ public class SimplePageBean {
 				continue;
 			    }
 			}
-			if (after) {
+			if (after && item.getPageId() >= 0) {
 			    item.setSequence(item.getSequence() + 1);
 			    simplePageToolDao.quickUpdate(item);
 			}
@@ -3526,11 +3526,16 @@ public class SimplePageBean {
 		     return messageLocator.getMessage("simplepage.hiddenpage");
 		 // for index of pages we need to show even out of date release dates
 		 if (page.getReleaseDate() != null) { // && page.getReleaseDate().after(new Date())) {
-		     DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
-		     TimeZone tz = TimeService.getLocalTimeZone();
-		     df.setTimeZone(tz);
-		     String releaseDate = df.format(page.getReleaseDate());
-		     return messageLocator.getMessage("simplepage.pagenotreleased").replace("{}", releaseDate);
+		     Date releaseDate = page.getReleaseDate();
+		     Date date = new Date();
+		     if (date.before(releaseDate)) {
+		        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
+		        TimeZone tz = TimeService.getLocalTimeZone();
+		        String releaseDateStr = df.format(page.getReleaseDate());
+		        df.setTimeZone(tz);
+		        return messageLocator.getMessage("simplepage.pagenotreleased").replace("{}", releaseDateStr);
+		     }
+		     return null;
 		 }
 	     }
 	     return null;
@@ -8516,6 +8521,10 @@ public class SimplePageBean {
 		    log.info("unable to get members of group {}", group);
 		}
 	    }
+		if (groupMembers == null) {
+			return new ArrayList<String>();
+		}
+		        
 	    return groupMembers;
 	}	    
 

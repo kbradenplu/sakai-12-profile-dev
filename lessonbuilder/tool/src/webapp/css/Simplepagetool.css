@@ -327,10 +327,6 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .ui-button-text {
 	padding: 0.25em 0.8em !important
 }
-.itemclass {
-	margin-top: 2.0em;
-	margin-bottom: 1.0em;
-}
 .rowdescription {
 	margin: 2px  0px  0px 30px;
 }
@@ -499,7 +495,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #ccf2ff
 }
 .column a[href]{
-  color: #004860;
+/*  color: #004860; */
 }
 .colgray {
    background-color: #f0f0f0;
@@ -509,7 +505,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #b8b8b8;
 }
 .colgray a[href]{
-  color:black;
+  color: #0064cd;
 }
 .colred {
    background-color: #fff0f0;
@@ -519,7 +515,10 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .colred .commentDiv, .colred .studentContentTable, .colred .questionDiv .contentCol, .colred .checklistDiv, .colred .forumSummaryHeaderDiv, .colred .announcementsHeaderDiv, .colred .fc-toolbar {
   background-color: #ffb3b3;
 }
-.colred a[href], .colred h3.author {
+.colred a[href] {
+    color: #0064cd;
+}
+.colred h3.author {
   color: black;
 }
 .colblue {
@@ -532,7 +531,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #99e7ff;
 }
 .colblue a[href] {
-  color: black;
+  color: #0064cd;
 }
 .colgreen {
    background-color: #f6fff6;
@@ -543,7 +542,7 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
   background-color: #9fc;
 }
 .colgreen a[href] {
-  color: black;
+  color: #0064cd;
 }
 .colyellow {
     background-color: rgb(255,249,229);
@@ -553,7 +552,10 @@ a.edit-link:link, a.edit-link:visited, a.section-merge-link:link, a.section-merg
 .colyellow .commentDiv, .colyellow .studentContentTable, .colyellow .questionDiv .contentCol, .colyellow .checklistDiv, .colyellow .forumSummaryHeaderDiv, .colyellow .announcementsHeaderDiv, .colyellow .fc-toolbar {
   background-color:  #ffd480
 }
-.colyellow a[href],.colyellow h3.author {
+.colyellow a[href] {
+    color: #0064cd;
+}
+.colyellow h3.author {
   color: black;
 }
 
@@ -1692,7 +1694,8 @@ li.resourceType .right-col {
  border:none;
 }
 .itemclass {
-  margin-top: 2.0em !important;
+    margin-top: 0 !important;
+    margin-bottom: 1em;
 }
 .add-comment-button span {
 font-size: 90%;
@@ -1743,9 +1746,6 @@ font-size: 12px;
   margin-right: 10px;
   margin-top: 7px;
   margin-bottom: 5px;
-}
-.portletBody {
-/*  margin-top: 2.5em; */
 }
 .PagePicker {
   margin-top:12px;
@@ -2198,4 +2198,13 @@ label.block {
 
 #grouplist input[type="checkbox"] {
     margin-right: 0.5em;
+}
+
+.checklistForm fieldset {
+    display: block;
+    margin-top: -3.5rem;
+}
+
+hr {
+    border-top: 1px solid #777 !important;
 }

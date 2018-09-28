@@ -134,8 +134,8 @@
 #gradeItemsTogglePanel .gb-item-filter-signal {
   height: 1.2em;
   width: 1.2em;
-  border: 1px solid #EEE;
-  background-color: #EEE;
+  border: 1px solid #bbb;
+  background-color: #ddd;
   position: absolute;
   right: 0;
   top: 50%;
@@ -461,11 +461,11 @@ div.wicket-modal div.w_right > div {
   margin-top: 10px;
 }
 .gb-summary-grade-panel {
-  overflow: auto;
+/*  overflow: auto; */ /* <-- This causes the student view to always have a horizontal scrollbar. */
   -webkit-overflow-scrolling: touch;
   padding: 10px 0;
   margin: 0 0 10px;
-  border-bottom: 1px solid #DDD;
+/*  border-bottom: 1px solid #DDD; */
 }
 .gb-summary-grade-panel .gb-summary-grade-flags {
   padding-left: 10px;
@@ -476,7 +476,7 @@ div.wicket-modal div.w_right > div {
   color: #888;
 }
 #studentGradeSummary {
-  margin: 30px 0 0;
+  margin: 15px 0 0;
 }
 .gb-grade-summary-close-confirmation {
   z-index: 50000 !important;
@@ -553,4 +553,12 @@ div.wicket-modal div.w_right > div {
   color: #999999;
   font-weight: normal;
   margin: 0;
+}
+
+h2 {
+    margin-top: 1rem !important;
+}
+
+#gradeSummaryTable {
+    margin-top: 1rem;
 }

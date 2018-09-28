@@ -105,7 +105,6 @@ public class DeliveryBean
   //SAM-2517
   private ServerConfigurationService serverConfigurationService;
   
-  private static final String MATHJAX_ENABLED = "mathJaxEnabled";
   private static final String MATHJAX_SRC_PATH_SAKAI_PROP = "portal.mathjax.src.path";
   private static final String MATHJAX_SRC_PATH = ServerConfigurationService.getString(MATHJAX_SRC_PATH_SAKAI_PROP);
   
@@ -157,6 +156,8 @@ public class DeliveryBean
   private java.util.Date retractDate;
   private boolean statsAvailable;
   private boolean submitted;
+  // True if the assessment was completely submitted
+  private boolean assessmentSubmitted = false;
   private boolean graded;
   private String graderComment;
   private List<AssessmentGradingAttachment> assessmentGradingAttachmentList;
@@ -1187,9 +1188,19 @@ public class DeliveryBean
     return submitted;
   }
 
+  public boolean isAssessmentSubmitted()
+  {
+    return assessmentSubmitted;
+  }
+
   public void setSubmitted(boolean submitted)
   {
     this.submitted = submitted;
+  }
+
+  public void setAssessmentSubmitted(boolean assessmentSubmitted)
+  {
+    this.assessmentSubmitted = assessmentSubmitted;
   }
 
   public boolean isGraded()
@@ -1611,6 +1622,8 @@ public class DeliveryBean
 	  PublishedAssessmentService publishedAssessmentService = new PublishedAssessmentService();
 	  String siteId = publishedAssessmentService.getPublishedAssessmentOwner(adata.getPublishedAssessmentId());
 	  String resource = "siteId=" + AgentFacade.getCurrentSiteId() + ", submissionId=" + local_assessmentGradingID;
+
+	  setAssessmentSubmitted(true);
 
 	  if (!isFromTimer) {
 		  if (this.actionMode == TAKE_ASSESSMENT_VIA_URL) // this is for accessing via published url
@@ -4073,8 +4086,7 @@ public class DeliveryBean
 	  public boolean getIsMathJaxEnabled(){ 
 		  PublishedAssessmentService publishedAssessmentService = new PublishedAssessmentService();
 		  String siteId = publishedAssessmentService.getPublishedAssessmentOwner(Long.parseLong(getAssessmentId()));
-		  String strMathJaxEnabled = getCurrentSite(siteId).getProperties().getProperty(MATHJAX_ENABLED); 
-		  return StringUtils.contains(strMathJaxEnabled, "sakai.samigo");
+		  return Boolean.parseBoolean(getCurrentSite(siteId).getProperties().getProperty(Site.PROP_SITE_MATHJAX_ALLOWED));
 	  }
 	  public String getMathJaxHeader(){
 		  StringBuilder headMJ = new StringBuilder();

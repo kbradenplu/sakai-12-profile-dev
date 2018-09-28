@@ -266,6 +266,14 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
 	    CKEDITOR.plugins.addExternal('html5audio',basePath+'html5audio/', 'plugin.js');
 	    CKEDITOR.plugins.addExternal('html5video',basePath+'html5video/', 'plugin.js');
 
+            CKEDITOR.plugins.addExternal('button',basePath+'button/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('toolbar',basePath+'toolbar/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('dialogui',basePath+'dialogui/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('dialog',basePath+'dialog/', 'plugin.js');
+            CKEDITOR.plugins.addExternal('clipboard',basePath+'clipboard/', 'plugin.js');
+        //CKEDITOR.plugins.addExternal('pasteFromGoogleDoc',basePath+'pasteFromGoogleDoc/', 'plugin.js');
+	CKEDITOR.plugins.addExternal('googleDocPastePlugin',basePath+'googledocpaste/', 'plugin.js');
+
             /*
                To enable after the deadline uncomment these two lines and add atd-ckeditor to toolbar
                and to extraPlugins. This also needs extra stylesheets.
@@ -282,7 +290,8 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
             //ckconfig.extraPlugins+="atd-ckeditor,";
             //ckconfig.contentsCss = [basePath+'atd-ckeditor/atd.css'];
 
-            ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,notification${ckeditor-a11y-extra-plugins},a11ychecker,youtube,widget,html5audio,html5video,eqneditor";
+            //ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,notification${ckeditor-a11y-extra-plugins},a11ychecker,youtube,widget,html5audio,html5video,eqneditor,button,toolbar,dialogui,dialog,clipboard,pasteFromGoogleDoc";
+	ckconfig.extraPlugins+="sakaipreview,audiorecorder,movieplayer,wordcount,notification${ckeditor-a11y-extra-plugins},a11ychecker,youtube,widget,html5audio,html5video,eqneditor,button,toolbar,dialogui,dialog,clipboard,googleDocPastePlugin";
 
             // Load FontAwesome CSS in case a user wants to manually add FA markup
             ckconfig.contentsCss = [webJars+'fontawesome/4.7.0/css/font-awesome.min.css'];

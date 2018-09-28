@@ -49,7 +49,7 @@ $(document).ready(function(){
 	#end
 
 	#if ($!canSubmit)
-		#if ($alertMessage)<div class="alertMessage">$tlang.getString("gen.alert") $alertMessage</div><div class="clear"></div>#end
+		#if ($alertMessage)<div class="alertMessage"><strong>$tlang.getString("gen.alert")</strong> $alertMessage</div><div class="clear"></div>#end
 		#if ($!submission && $dateSubmitted)
 			## if there is a submitted submission
 			## get the properies
@@ -212,11 +212,7 @@ $(document).ready(function(){
 							<div class="itemSummaryValue highlight">
 								<strong>
 									#if ($gradeScale != 1)
-										#if ($!override)
-											$!service.getGradeDisplay($override, $!assignment.TypeOfGrade, $!assignment.ScaleFactor)
-										#else
-											$!service.getGradeDisplay($submission.Grade, $assignment.TypeOfGrade, $!assignment.ScaleFactor)
-										#end
+										$!grade
 									#else
 										$tlang.getString("gen.nograd")
 									#end
@@ -557,7 +553,7 @@ $(document).ready(function(){
 							<span style="font-size: smaller; color: blue;">	
 								#set($gusers = $!service.getSortedGroupUsers($group))
 								#foreach ($user in $gusers)
-									$user.getDisplayName()
+									$validator.escapeHtml($user.getDisplayName()) ($validator.escapeHtml($user.getDisplayId()))
 									##$!userDirectoryService.getUser($user).getDisplayName()
 									#if ($velocityCount < $gusers.size()),#end
 								#end
@@ -616,6 +612,19 @@ $(document).ready(function(){
 										#end
 									</em>
 								</p>
+							#end
+							#if ($plagiarismEULALink)
+								<p class="checkbox highlightPanel form-required">
+									<label for="$name_plagiarism_eula_agreement">
+										#if ($value_plagiarism_eula_agreement.equals("true"))
+											<input id="$name_plagiarism_eula_agreement" type="checkbox" name="$name_plagiarism_eula_agreement" value="true" checked="checked"/>
+										#else
+											<input id="$name_plagiarism_eula_agreement" type="checkbox" name="$name_plagiarism_eula_agreement" value="true"/>
+										#end
+										$tlang.getString("review.eula.agreement")&nbsp;<a href="$plagiarismEULALink" target="_blank">$tlang.getString("review.eula")</a>
+									</label>
+								</p>
+								<input type="hidden" name="$name_check_plagiarism_eula_agreement" id="$name_check_plagiarism_eula_agreement" value="true" checked="checked"/>
 							#end
 							</p>
 							<table border="0">
@@ -897,7 +906,7 @@ $(document).ready(function(){
 				#end
 			#end
 
-				#if ($returned && $dateReturned && ($dateSubmitted && $dateReturned && $dateReturned.isAfter($dateSubmitted) || !$dateSubmitted))
+				#if ($returned && $dateReturned && ($dateSubmitted && $dateReturned && $dateReturned.isAfter($dateSubmitted) || !$dateSubmitted || !$!submitted))
 					#if (($!submission.FeedbackComment) && ($submission.FeedbackComment.trim().length()>0))
 						#if ($submissionType==2)
 							<h3>$tlang.getString("gen.addinst2")</h3>
@@ -1018,9 +1027,7 @@ $(document).ready(function(){
 							<input class="disableme" type="button" name="save" accesskey="d" id="save" value="$tlang.getString("gen.savdra")"
 								onclick="SPNR.disableControlsAndSpin( this, null ); ASN.submitForm( 'addSubmissionForm', 'save', null, null ); return false;" />
 							#end
-							#if ($!linkInvoked)
-								<input class="disableme" type="submit" accesskey="x" onClick="SPNR.disableControlsAndSpin( this, null ); window.close();" name="eventSubmit_doConfirm_assignment_submission" value="$tlang.getString("gen.closeexit")" />
-							#else
+							#if (!$!linkInvoked)
 								<input class="disableme" type="button" name="cancel" accesskey="x" id="cancel" value="$tlang.getString("gen.can")"
 									onclick="ASN_SVS.confirmDiscardOrSubmit( '$name_submission_text', $!new_attachments ); return false;" />
 							#end
@@ -1129,9 +1136,7 @@ $(document).ready(function(){
 							</div>
 						#end
 					#end
-		#if ($!linkInvoked)
-			<input type="submit" accesskey="x" onClick="SPNR.disableControlsAndSpin( this, null ); window.close();" name="eventSubmit_doConfirm_assignment_submission" value="$tlang.getString("gen.closeexit")" class="disableme"/>
-		#else
+		#if (!$!linkInvoked)
 			<p class="act">
 				<input type="button" name="cancel" accesskey="x" id="cancel" value="$tlang.getString("gen.don")" onclick="ASN_SVS.confirmDiscardOrSubmit( '$name_submission_text', $!new_attachments ); return false;" />
 			</p>
