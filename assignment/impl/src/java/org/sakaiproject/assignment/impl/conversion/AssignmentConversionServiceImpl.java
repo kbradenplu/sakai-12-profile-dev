@@ -164,7 +164,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             try {
                 convert(assignmentId);
             } catch (Exception e) {
-                // add more to this warning - $$$ logging
                 log.warn("Assignment conversion exception for {}", assignmentId, e);
             }
             int percent = new Double(((assignmentsConverted + assignmentsFailed) / (double) assignmentsTotal) * 100).intValue();
@@ -233,7 +232,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         if (StringUtils.isNotBlank(aXml)) {
             O11Assignment o11a = (O11Assignment) serializeFromXml(aXml, O11Assignment.class);
             if (o11a != null) {
-                //get more assignment content ----$$$
                 String contentReference = o11a.getAssignmentcontent();
                 String contentId = AssignmentReferenceReckoner.reckoner().reference(contentReference).reckon().getId();
                 String cXml = dataProvider.fetchAssignmentContent(contentId);
@@ -312,7 +310,7 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setAllowPeerAssessment(assignment.getAllowpeerassessment());
         a.setCloseDate(convertStringToTime(assignment.getClosedate()));
         a.setContentReview(content.getAllowreview());
-        a.setContext(assignment.getContext());  //try catch here?
+        a.setContext(assignment.getContext());
         a.setDateCreated(convertStringToTime(content.getDatecreated()));
         a.setDateModified(convertStringToTime(content.getLastmod()));
         a.setDraft(assignment.getDraft());
@@ -320,17 +318,19 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setDueDate(convertStringToTime(assignment.getDuedate()));
         a.setHideDueDate(content.getHideduedate());
         a.setHonorPledge(content.getHonorpledge() == 2 ? Boolean.TRUE : Boolean.FALSE);
-        a.setId(assignment.getId());   //log this $$$
+        a.setId(assignment.getId());
         a.setIndividuallyGraded(content.getIndivgraded());
-        //a.setInstructions("no instructions provided");   //explicitly setting instructions works
+
+        // explicitly setting instructions to a single space string if error getting instructions
         try {
             a.setInstructions(decodeBase64(content.getInstructionsHtml()));
         } catch(Exception e) {
             log.warn("Error getting instructions from assignment: {} , setting to empty string", assignment.getId());
-            log.info("caught: {} ", e);
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", e);
             log.warn("assignment id: {} , content.getContext: {} , content.getId: {} , content.getTitle: {} ",
                     assignment.getId(), content.getContext(), content.getId(), content.getTitle());
-            a.setInstructions(" "); //changed no instructions message into a single blank space
+            a.setInstructions(" ");
         }
         a.setIsGroup(assignment.getGroup());
         a.setMaxGradePoint(content.getScaled_maxgradepoint());
@@ -344,26 +344,28 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         a.setReleaseGrades(content.getReleasegrades());
         a.setScaleFactor(content.getScaled_factor() == null ? AssignmentConstants.DEFAULT_SCALED_FACTOR : content.getScaled_factor());
         a.setSection(assignment.getSection());
-        a.setTitle(assignment.getTitle());  //log this $$$
+        a.setTitle(assignment.getTitle());
         a.setTypeOfAccess("site".equals(assignment.getAccess()) ? Assignment.Access.SITE : Assignment.Access.GROUP);
 
-        //a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);  //explicitly setting grade_type_none works
+        // explicitly setting to GRADE_TYPE_NONE when no type is found
         try {
             a.setTypeOfGrade(Assignment.GradeType.values()[content.getTypeofgrade()]);
         }
         catch(ArrayIndexOutOfBoundsException oob) {
             log.warn("Error getting grade type from assignment: {} , setting to type-none ", assignment.getId());
-            log.info("caught: {} ", oob);
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", oob);
             log.warn("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
             a.setTypeOfGrade(Assignment.GradeType.GRADE_TYPE_NONE);
         }
 
-        //a.setTypeOfSubmission(Assignment.SubmissionType.values()[0]);  //explicitly setting to values()[0] works
+        // explicitly setting to ASSIGNMENT_SUBMISSION_TYPE_NONE when no type is found
         try {
             a.setTypeOfSubmission(Assignment.SubmissionType.values()[content.getSubmissiontype()]);
         } catch(ArrayIndexOutOfBoundsException oob){
             log.warn("Error getting submission type from assignment: {} , setting to type-none ", assignment.getId());
-            log.info("caught: {} ", oob);
+            // optional logging for identifying problematic conversions
+            log.info("caught: ", oob);
             log.info("content.getContext: {} , content.getId: {} , content.getTitle: {} ", content.getContext(), content.getId(), content.getTitle());
             a.setTypeOfSubmission(Assignment.SubmissionType.ASSIGNMENT_SUBMISSION_TYPE_NONE);
         }
@@ -570,7 +572,6 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
         // remove any properties that are null or blank
         properties.values().removeIf(StringUtils::isBlank);
 
-        //log.info("submission info: {} site: {}",s.getId(),assignment.getContext());
         return s;
     }
 
@@ -600,11 +601,10 @@ public class AssignmentConversionServiceImpl implements AssignmentConversionServ
             } catch (IllegalArgumentException iae) {
                 log.warn("invalid base64 string during decode: {}", text);
             } catch (Exception e) {
-                log.warn("General decoding failure for: {} --exception: {}", text, e);
+                log.warn("General decoding failure for: {} --exception: ", text, e);
             }
 
         } else {
-            //log.warn("text != null: {}, returning null", text != null);
             return null;
         }
 
