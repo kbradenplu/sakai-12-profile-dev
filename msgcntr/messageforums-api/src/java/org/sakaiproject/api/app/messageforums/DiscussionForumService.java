@@ -85,4 +85,6 @@ public interface DiscussionForumService extends EntityProducer
 	public static final String FORUMS_TOOL_ID = "sakai.forums";
 	
 	public static final String MESSAGES_TOOL_ID = "sakai.messages";
+
+    public String removeExtraForum(String siteId, String siteTitle);
 }

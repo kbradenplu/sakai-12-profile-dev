@@ -96,6 +96,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.sakaiproject.api.app.messageforums.DiscussionForumService;
+
 /**
  * SakaiScript.jws
  * <p/>
@@ -6035,5 +6037,44 @@ public class SakaiScript extends AbstractWebService {
     }
 
 
+    /** This method is developed at PLU solely for use with the Preview Course in Sakai 12 
+        form, which needs to remove an extra forum for sites copied from the production server                                             
+        to the demo server. The extra forum pre-exists copying content into                                                                
+        the site via a Site Archive xml import.                                                                                            
+    */
+     public String removeExtraForum(String sessionid, String siteid)
+    {
+	String forumsTool = "sakai.forums";
+	Session session = establishSession(sessionid);
+	String result = "failure";
+	
+	try {
+	    if(! securityService.isSuperUser(session.getUserId())) {
+		String msg = "WS removeExtraForums: Permission denied. Restricted to super users.";
+		throw new Exception(msg);
+	    }
+
+	    boolean foundForums = false;
+	    Site site = siteService.getSite(siteid);
+	    String siteTitle = site.getTitle();
+
+	    DiscussionForumService dfs = null;
+	    for (Iterator i = entityManager.getEntityProducers().iterator(); i.hasNext();) {
+    		EntityProducer ep = (EntityProducer) i.next();
+		if (ep instanceof DiscussionForumService) {
+		    dfs = (DiscussionForumService) ep;
+		    break;
+		}
+	    }
+
+	    result = dfs.removeExtraForum(siteid, siteTitle);
+	}
+	catch (Exception e) {  
+		log.error("WS removeExtraForums: " + e.getClass().getName() + " : " + e.getMessage());
+	 	return e.getClass().getName() + " : " + e.getMessage();
+	}
+	return result;
+
+    }
 
 }
