@@ -637,6 +637,39 @@ public class DiscussionForumServiceImpl  implements DiscussionForumService, Enti
 		return transversalMap;
 	}
 
+    
+    /** This method is developed at PLU solely for use with the Preview Course in Sakai 12
+	form, which needs to remove an extra forum for sites copied from the production server
+	to the demo server. The extra forum pre-exists copying content into
+	the site via a Site Archive xml import.
+     */
+    public String removeExtraForum(String siteId, String siteTitle) 
+    {
+	List existingForums = dfManager.getDiscussionForumsByContextId(siteId);
+	int numExistingForums = existingForums.size();
+
+	if (numExistingForums > 1) {
+
+	    String targetForumTitle = siteTitle + " Forum";
+	
+	    Iterator i = existingForums.iterator();
+	    while (i.hasNext()) {
+		DiscussionForum df = (DiscussionForum) i.next();
+		Boolean isDraft = df.getDraft();
+
+		if (targetForumTitle.matches(df.getTitle()) && (! isDraft.booleanValue())) {
+		    log.warn("Deleting the forum: '" + df.getTitle() + "' (id: " + df.getId() + ")");
+		    dfManager.deleteForum(df);
+		    break;
+		}
+	    }
+
+	}
+
+	return "success";
+    }
+
+
 	public String merge(String siteId, Element root, String archivePath, String fromSiteId, Map attachmentNames, Map userIdTrans, Set userListAllowImport)
 	{
 		List existingForums = dfManager.getDiscussionForumsByContextId(siteId);
