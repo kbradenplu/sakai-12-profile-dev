@@ -39,8 +39,6 @@
 		<!--<p class="profile_instruction"><wicket:message key="text.image.refresh">Note: If the new image doesn't appear immediately, try refreshing your browser.</wicket:message></p>		-->
 		
 		<p>
-
-		<!--upload button -->
 		<input type="submit" wicket:id="submit" value="Upload" />
 		
 		&nbsp;
@@ -51,34 +49,23 @@
 		</span>
 		</p>		
 		
-
-
-	
-
 		<div wicket:id="imageSettingsContainer">
                   <div wicket:id="officialImageContainer">
                     <div class="checkbox">
                       <label for="officalimageinput">
-	
-	                <!--<input type="radio">option 1</input>
-	                <input type="radio">option 2</input>-->
-        
-
-
                         <input wicket:id="officialImage" type="checkbox" />
                         <wicket:message key="accessibility.prefs.officialimage" />
-			<input wicket:id="defaultImage" type="checkbox" />
-			<wicket:message key="Can you just put text in the html file?" />
                       </label>
                     </div>
                   </div>
 		</div>
-
-                <!--<span valign="top" wicket:id="options">
-		</span>-->
-		
-		<!-- <div wicket:id="options" /> -->
 		<p class="profile_instruction"><wicket:message key="text.image.refresh">Note: If your profile picture doesn't update immediately you may need to clear your browser cache.</wicket:message></p>
+
+	<span valign="top" wicket:id="option">
+	  <!--<input type="radio">option 1</input>
+	  <input type="radio">option 2</input>-->
+	</span>
+
 	</form>
 </wicket:panel>
 

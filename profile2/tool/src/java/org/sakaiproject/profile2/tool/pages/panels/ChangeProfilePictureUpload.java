@@ -15,6 +15,9 @@
  */
 package org.sakaiproject.profile2.tool.pages.panels;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxButton;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -31,12 +36,15 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.form.Radio;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 
 import org.sakaiproject.profile2.logic.ProfileImageLogic;
 import org.sakaiproject.profile2.logic.ProfileWallLogic;
@@ -228,9 +236,15 @@ public class ChangeProfilePictureUpload extends Panel{
                 WebMarkupContainer officialImageContainer = new WebMarkupContainer("officialImageContainer");
                 //officialImageContainer.add(new Label("officialImageLabel", new ResourceModel("preferences.image.official")));
                 CheckBox officialImage = new CheckBox("officialImage", new PropertyModel<Boolean>(preferencesModel, "useOfficialImage"));
-                officialImage.setMarkupId("officialimageinput");
+                CheckBox defaultImage = new CheckBox("defaultImage", new PropertyModel<Boolean>(preferencesModel, "useDefaultImage"));
+		ArrayList<CheckBox> imageOptions = new ArrayList<CheckBox>();
+		imageOptions.add(officialImage);
+		imageOptions.add(defaultImage);		
+		officialImage.setOutputMarkupId(false);
+		
+		officialImage.setMarkupId("officialimageinput");
                 officialImage.setOutputMarkupId(true);
-                officialImageContainer.add(officialImage);
+                officialImageContainer.add(imageOptions);
 
 		//updater
                 officialImage.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -298,8 +312,31 @@ public class ChangeProfilePictureUpload extends Panel{
 		form.add(orRemove);
 		
 		
-		//add form to page
+         	List OPTIONS = Arrays.asList(new String[] { " Diplay default icon", " Display PLU ID photo", " Display uploaded photo" });
+
+	        form.add(new RadioChoice("options", OPTIONS));
+/**
+		RadioGroup options = new RadioGroup("options");
+		Radio option1 = new Radio("Display Default Icon", new Model("")); 
+		Radio option2 = new Radio("Display PLU ID photo", new Model(""));
+
+		options.add(option1.add(new AjaxEventBehavior("onchange") { 
+   		  protected void onEvent(AjaxRequestTarget target) { 
+          		System.out.println("click!"); 
+                  } 
+                })); 
+
+		options.add(option2.add(new AjaxEventBehavior("onchange") { 
+   		  protected void onEvent(AjaxRequestTarget target) { 
+          		 // add your favorite component. 
+                  } 
+                })); 
+
+		form.add(options);
+**/
 		add(form);
+		
+
     }
 	
 	
